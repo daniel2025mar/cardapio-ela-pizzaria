@@ -56,7 +56,7 @@ logoutBtn?.addEventListener("click", () => {
 
 btnSimLogout?.addEventListener("click", () => {
   modalLogout.style.display = "none";
-  window.location.href = "./sistema/login.html";
+  window.location.href = "./Sistema/Login.html";
 });
 
 btnNaoLogout?.addEventListener("click", () => {
