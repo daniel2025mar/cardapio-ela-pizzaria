@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Login - Painel Administrativo</title>
+<link rel="icon" type="image/png" href="../Imagem/LogoTipo.png">
+
+<!-- Link externo para o CSS -->
+<link rel="stylesheet" href="login.css">
+
+</head>
+
+<body>
+
+<form id="loginForm" onsubmit="return false;">
+  <!-- LOGO DO SISTEMA -->
+  <div class="logo-container">
+    <img src="../Imagem/LogoTipo.png" alt="Logo do Sistema" class="logo-sistema">
+  </div>
+
+  <h2>Acessar Sistema</h2>
+  <p class="boas-vindas">Bem-vindo! Digite seu usuário e senha para continuar.</p>
+
+  <input type="text" id="nome" placeholder="Usuário" autocomplete="username">
+  <input type="password" id="senha" placeholder="Senha" autocomplete="current-password">
+  <button id="btnEntrar">Login</button>
+
+  <!-- Mensagem de boas-vindas -->
+ <p id="mensagemBoasVindas" class="boas-vindas-usuario"></p>
+  <!-- RODAPÉ COM NOME DA EMPRESA -->
+  <p class="rodape-empresa">© 2026 Sua Empresa</p>
+</form>
+
+<!--modais-->
+<!-- MODAL DE ERRO -->
+<div id="modalErro" class="modal-erro">
+  <div class="modal-conteudo-erro">
+    <p id="mensagemErro"></p>
+    <button id="btnFecharErro">OK</button>
+  </div>
+</div>
+<script type="module" src="login.js"></script>
+
+</body>
+</html>

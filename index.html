@@ -1,0 +1,351 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>GestioMax Sistema de Delivery</title>
+  <link rel="icon" type="image/png" href="../Imagem/LogoTipo.png">
+  <link rel="stylesheet" href="style.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+
+  <!-- HEADER -->
+  <header>
+  <button id="btnMenu" class="btn-menu">☰</button>
+
+  <div class="header-text">
+    <h1>Sistema Administrativo</h1>
+    <p class="empresaNome">Empresa NOME</p>
+  </div>
+
+  <!-- Ícone de Notificação -->
+  <div class="notificacao-container">
+    <i class="fas fa-bell"></i>
+    <span class="badge-notificacao">0</span>
+  </div>
+</header>
+
+  <div class="top-divider"></div>
+  <div class="container">
+
+    <!-- SIDEBAR MENUS -->
+    <aside class="sidebar" id="sidebar">
+      <ul>
+  <li><a href="#" id="menuDashboard"><i class="fas fa-tachometer-alt"></i> Dashboard</a></li>
+  <li><a href="#" id="menuAdicionar"><i class="fas fa-plus-circle"></i> Cadastrar Produto</a></li>
+  <li><a href="#" id="menuClientes"><i class="fas fa-users"></i> Clientes</a></li>
+  <li><a href="#" id="menuCaixa"><i class="fas fa-cash-register"></i> Caixa</a></li>
+  <li><a href="#" id="confBtn"><i class="fas fa-cog"></i> Configuração</a></li>
+  <li><a href="#" id="logoutBtn"><i class="fas fa-sign-out-alt"></i> Logout</a></li>
+</ul>
+    </aside>
+
+    <!-- CONTEÚDO PRINCIPAL -->
+    <main class="main-content">
+
+      <!-- DASHBOARD MENU -->
+      <div id="dashboard" class="secao ativa">
+
+  <!-- HEADER -->
+  <div class="dashboard-header">
+    <div class="dashboard-text">
+      <h2>Dashboard de Vendas</h2>
+      <p class="descricao-dashboard">
+        Aqui você encontra um resumo das vendas, faturamento e desempenho do seu negócio.
+      </p>
+    </div>
+    <div class="dashboard-img">
+      <img src="./Imagem/LogoTipo.png" alt="Ícone Dashboard" id="imgDashboard">
+    </div>
+  </div>
+
+  <!-- CARDS PRINCIPAIS -->
+  <div class="info-cards">
+
+    <div class="card">
+      <i class="fas fa-box"></i>
+      <div>
+        <p class="card-title">Produtos</p>
+        <p class="card-value" id="totalProdutos">0</p>
+      </div>
+    </div>
+
+    <div class="card">
+      <i class="fas fa-users"></i>
+      <div>
+        <p class="card-title">Clientes</p>
+        <p class="card-value" id="totalClientes">0</p>
+      </div>
+    </div>
+
+    <div class="card">
+      <i class="fas fa-shopping-cart"></i>
+      <div>
+        <p class="card-title">Vendas Hoje</p>
+        <p class="card-value" id="vendasHoje">0</p>
+      </div>
+    </div>
+
+    <div class="card">
+      <i class="fas fa-cash-register"></i>
+      <div>
+        <p class="card-title">Faturamento Hoje</p>
+        <p class="card-value" id="faturamentoHoje">R$ 0,00</p>
+      </div>
+    </div>
+
+    <div class="card">
+      <i class="fas fa-chart-line"></i>
+      <div>
+        <p class="card-title">Faturamento do Mês</p>
+        <p class="card-value" id="faturamentoMes">R$ 0,00</p>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- VENDAS RECENTES -->
+  <div class="dashboard-section">
+    <h3>Últimas Vendas</h3>
+    <table class="tabela-vendas">
+      <thead>
+        <tr>
+          <th>Cliente</th>
+          <th>Produto</th>
+          <th>Valor</th>
+          <th>Data</th>
+        </tr>
+      </thead>
+      <tbody id="listaVendasRecentes">
+        <!-- JS vai preencher -->
+      </tbody>
+    </table>
+  </div>
+
+  <!-- PRODUTOS MAIS VENDIDOS -->
+  <div class="dashboard-section">
+    <h3>Produtos Mais Vendidos</h3>
+    <ul id="produtosMaisVendidos">
+      <!-- JS vai preencher -->
+    </ul>
+  </div>
+
+  <!-- CARDÁPIO -->
+  <div id="cardapioContainer"></div>
+
+      </div>
+
+      <!--Cadastro de Produtos-->
+      <div id="cadastroProdutos" class="secao">
+
+  <!-- Título e descrição fora do card -->
+  <div class="secao-titulo">
+    <h2>Cadastro de Itens</h2>
+    <p>Cadastre novos produtos para venda.</p>
+  </div>
+
+  <!-- Card do formulário -->
+  <div class="card-form">
+  <form id="formProduto" class="form-produto">
+
+    <div class="form-group">
+      <label for="nomeProduto">Nome do Produto</label>
+      <input type="text" id="nomeProduto" placeholder="Ex: Refrigerante 350ml" required>
+    </div>
+
+    <div class="form-group">
+      <label for="categoriaProduto">Categoria</label>
+      <input type="text" id="categoriaProduto" placeholder="Ex: Bebidas">
+    </div>
+
+    <div class="form-group">
+      <label for="precoProduto">Preço</label>
+      <input type="number" id="precoProduto" placeholder="R$ 0,00" step="0.01" required>
+    </div>
+
+    <div class="form-group">
+      <label for="estoqueProduto">Quantidade em Estoque</label>
+      <input type="number" id="estoqueProduto" placeholder="0" required>
+    </div>
+
+    <div class="form-group">
+      <label for="descricaoProduto">Descrição</label>
+      <textarea id="descricaoProduto" placeholder="Detalhes do produto"></textarea>
+    </div>
+
+    <div class="form-group">
+      <label>Foto do Produto</label>
+      <div class="foto-preview-container">
+        <img id="previewProduto" src="./Imagem/inventory.jpg" alt="Preview" class="foto-preview">
+        <input type="file" id="fotoProduto" accept="image/*">
+      </div>
+      <small class="descricao-foto">Clique no quadrado para escolher a imagem</small>
+    </div>
+
+    <!-- Botões Salvar e Cancelar -->
+    <div class="form-botoes">
+      <button type="submit" class="btn-salvar">
+        <i class="fas fa-save"></i> Salvar Produto
+      </button>
+      <button type="button" class="btn-cancelar">
+        <i class="fas fa-times"></i> Cancelar
+      </button>
+    </div>
+
+  </form>
+</div>
+
+</div>
+
+      <!-- ADICIONAR PRODUTO -->
+      <div id="adicionarProduto" class="hidden">
+        <h2>Adicionar Produto</h2>
+        <form id="formAdicionarProduto">
+          <input type="text" id="nomeProduto" placeholder="Nome do produto" required>
+          <input type="number" id="precoProduto" placeholder="Preço" step="0.01" required>
+          <button type="submit">Adicionar</button>
+        </form>
+      </div>
+
+    </main>
+  </div>
+
+  <!-- FOOTER -->
+  <footer class="footer">
+    <p>Desenvolvido por <strong>DM DESIGN GRAFICO</strong> © 2026</p>
+  </footer>
+
+  <!--modais aqui-->
+ <!-- Modal Desenvolvedor -->
+<div id="modalDesenvolvedor" class="modal">
+  <div class="modal-content">
+    <!-- Botão fechar -->
+    <span class="close">&times;</span>
+
+    <!-- Foto e nome -->
+    <div class="dev-header">
+      <img src="./Imagem/image.png" alt="Foto do Desenvolvedor" class="dev-foto">
+      <h2>DM DESIGN GRAFICO</h2>
+    </div>
+
+    <!-- Informações -->
+    <div class="dev-info">
+      <p><strong>Nome:</strong> Daniel Antonio Martins</p>
+      <p><strong>Email:</strong> <span id="devEmail">dmdesigngrafico20@hotmail.com</span> <button class="copy-email" title="Copiar email">📋</button></p>
+      <p><strong>Site:</strong> <a href="https://www.dmdesigngrafico.com.br" target="_blank">www.dmdesigngrafico.com.br</a></p>
+      <p><strong>Função:</strong> Desenvolvimento Front-end e Back-end</p>
+      <p><strong>Design:</strong> Layout Responsivo e moderno para Descktop e celulares</p>
+      <p><strong>Build Version:</strong> 1.0</p>
+    </div>
+
+    <!-- Redes sociais -->
+    <div class="dev-social">
+      <a href="https://www.linkedin.com/in/daniel-martins-0b1b9a277/" target="_blank"><i class="fab fa-linkedin"></i></a>
+      <a href="https://github.com/danieldimas" target="_blank"><i class="fab fa-github"></i></a>
+      <a href="https://www.instagram.com/design_grafico_dm/?hl=pt-br" target="_blank"><i class="fab fa-instagram"></i></a>
+    </div>
+  </div>
+</div>
+
+<!-- Modal Cadastro da Empresa -->
+<div id="modalEmpresaNovo" class="modal-empresa">
+  <div class="modal-conteudo">
+
+    <!-- Botão Fechar -->
+    <button id="fecharModalNovo" class="fechar-btn">&times;</button>
+
+    <h2 class="modal-titulo">Cadastro da Empresa</h2>
+    <p class="modal-subtitulo">Preencha as informações da empresa</p>
+
+    <div class="linha-separadora"></div> <!-- LINHA SEPARADORA -->
+    <form id="formEmpresaNovo" class="form-empresa">
+
+      <!-- Nome da Empresa -->
+      <div class="form-group">
+        <label for="inputNomeNovo">Nome:</label>
+        <input type="text" id="inputNomeNovo" placeholder="Ex: Empresa Ltda">
+      </div>
+
+      <!-- Endereço -->
+      <div class="form-group">
+        <label for="inputEnderecoNovo">Endereço:</label>
+        <input type="text" id="inputEnderecoNovo" placeholder="Ex: Nome da rua N 000 - Cidade UP - 00000-000">
+      </div>
+
+      <!-- Telefone / WhatsApp -->
+      <div class="form-row lado-a-lado">
+        <div class="form-group">
+          <label for="inputTelefoneNovo">Telefone:</label>
+          <input type="text" id="inputTelefoneNovo" placeholder="(00) 0000-0000">
+        </div>
+        <div class="form-group">
+          <label for="inputWhatsAppNovo">WhatsApp:</label>
+          <input type="text" id="inputWhatsAppNovo" placeholder="(00) 00000-0000">
+        </div>
+      </div>
+
+      <!-- CNPJ / Criado em -->
+      <div class="form-row lado-a-lado">
+        <div class="form-group">
+          <label for="inputCNPJNovo">CNPJ:</label>
+          <input type="text" id="inputCNPJNovo" placeholder="00.000.000/0000-00">
+        </div>
+        <div class="form-group">
+          <label for="inputCriadoEmNovo">Criado em:</label>
+          <input type="text" id="inputCriadoEmNovo" readonly>
+        </div>
+      </div>
+
+      <!-- Upload de Imagens -->
+      <div class="form-row">
+        <div class="form-group upload-container">
+          <label>Logotipo:</label>
+          <input type="file" id="inputLogoNovo" class="hidden" accept="image/*">
+          <div class="upload-box" onclick="document.getElementById('inputLogoNovo').click()">
+            <img id="previewLogoNovo" class="preview-img" src="">
+            <span class="placeholder-text">Clique para adicionar</span>
+          </div>
+        </div>
+
+        <div class="form-group upload-container">
+          <label>Foto de Fundo:</label>
+          <input type="file" id="inputFundoNovo" class="hidden" accept="image/*">
+          <div class="upload-box" onclick="document.getElementById('inputFundoNovo').click()">
+            <img id="previewFundoNovo" class="preview-img" src="">
+            <span class="placeholder-text">Clique para adicionar</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Botão Salvar -->
+      <button type="button" id="btnSalvarEmpresaNovo" class="btn-salvar-modal">Salvar Alterações</button>
+
+    </form>
+  </div>
+</div>
+
+
+
+<!-- Modal -->
+<div id="modalMensagem" class="modal">
+  <div class="modal-conteudo">
+    <span id="fecharModal" class="fechar-btn">&times;</span>
+    <h2>Atenção!</h2>
+    <p>Para continuar utilizando o sistema, por favor cadastre os dados da empresa.</p>
+    <button id="okModal" class="btn-ok">OK</button>
+  </div>
+</div>
+<!-- MODAL DE CONFIRMAÇÃO DE LOGOUT -->
+<div id="modalLogout" class="modal-logout">
+  <div class="modal-conteudo-logout">
+    <p>Deseja realmente sair do sistema?</p>
+    <div class="botoes-logout">
+      <button id="btnSimLogout">Sim</button>
+      <button id="btnNaoLogout">Não</button>
+    </div>
+  </div>
+</div>
+  <script type="module" src="scriptprincipal.js"></script>
+</body>
+</html>

@@ -1,0 +1,176 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Cardapio GestioMax</title>
+  <link rel="stylesheet" href="styleCardapio.css">
+
+  <!-- Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&family=Montserrat:wght@500;700&display=swap" rel="stylesheet">
+  
+  <!-- Font Awesome para ícones -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"/>
+</head>
+<body>
+
+  <!-- ===================== Topo Estilo Perfil Restaurante ===================== -->
+  <section class="cardapio-topo-perfil">
+    <!-- Imagem de fundo -->
+  <img src="./Imagem/LogoTipo.png" alt="Fundo do Topo" class="fundo-topo">
+
+    <!-- Logo redondo -->
+    <div class="logo-redonda-container">
+      <img src="./Imagem/LogoTipo.png" alt="Logo Sistema" class="logo-redonda" id="logoSistema">
+    </div>
+
+    <!-- Nome do Restaurante -->
+    <h1 class="nome-restaurante">Empresa Nome</h1>
+
+    <!-- Localização e informações adicionais -->
+    <div class="info-restaurante">
+      <span class="localizacao"><i class="fas fa-map-marker-alt"></i> Cidade - UF</span>
+      <span id="maisInfo" class="mais-info">• Mais informações</span>
+    </div>
+
+    <!-- Status de abertura -->
+    <div class="status-abertura aberto">
+      Aberto até 23h59
+    </div>
+  </section>
+
+  <h2 class="titulo-cardapio">Conheça nosso Cardápio</h2>
+  <!-- Container principal onde categorias e produtos vão aparecer -->
+  <div id="categoriasContainer"></div>
+  <!-- ===================== Conteúdo do Cardápio ===================== -->
+  <main class="conteudo">
+
+    <div class="produtos-container" id="produtosContainerPizza">
+
+
+    </div>
+
+     <!-- Container de produtos Refrigerantes -->
+  <div class="produtos-container" id="produtosContainerRefri">
+    <!-- Produtos da categoria Refrigerantes serão adicionados aqui via JS -->
+  </div>
+  </main>
+
+  
+
+<!-- ===================== Modal do Carrinho ===================== --> 
+<div id="modalCarrinho" class="modal-carrinho">
+  <div class="modal-conteudo-carrinho">
+    <button id="fecharModalCarrinho" class="fechar-btn">&times;</button>
+    <h2>Meu Carrinho</h2>
+
+    <!-- Lista de produtos -->
+    <div id="itensCarrinho" class="itens-carrinho">
+      <p>Seu carrinho está vazio.</p>
+      <!-- Cada produto adicionado via JS terá esta estrutura:
+      <div class="item-carrinho">
+        <span class="nome-produto">Pizza Margherita</span>
+        <span class="quantidade-produto">Qtd: 1</span>
+        <span class="valor-produto">R$ 25,00</span>
+      </div>
+      -->
+    </div>
+
+    <!-- Taxa de entrega -->
+    <div class="taxa-entrega">
+      <label for="valorEntrega">Taxa de Entrega: </label>
+      <span id="valorEntrega">R$ 0,00</span>
+    </div>
+
+    <!-- Campos de endereço e telefone -->
+    <div class="dados-cliente">
+  <label for="endereco">Endereço:</label>
+  <input type="text" id="endereco" placeholder="Ex: Nome da rua N 000 - Cidade UP - 00000-000">
+
+  <label for="telefone">Telefone:</label>
+  <input type="text" id="telefone" class="telefone" placeholder="(00) 0 0000-0000">
+</div>
+
+    <!-- Total final e botão -->
+    <div class="total-carrinho">
+      <span>Total: R$ <span id="totalCarrinho">0,00</span></span>
+      <button id="finalizarCompra" class="btn-compra">Finalizar Compra</button>
+    </div>
+  </div>
+</div>
+
+<!-- ===================== Modal de Cadastro do Cliente ===================== -->
+<!-- ===================== Modal Cadastro Cliente ===================== -->
+<div id="modalCadastroCliente" class="modal-cadastro">
+  <div class="modal-conteudo-cadastro">
+    <button id="fecharModalCadastro" class="fechar-btn">&times;</button>
+    <h2>Cadastro do Cliente</h2>
+
+    <form id="formCadastroCliente">
+      <label for="nomeCliente">Nome completo:</label>
+      <input type="text" id="nomeCliente" placeholder="Digite o nome completo" required>
+
+      <label for="celularCliente">Celular:</label>
+      <input type="text" id="celularCliente" placeholder="(00) 0 0000-0000" required>
+
+      <label for="ruaCliente">Endereço (Rua):</label>
+      <input type="text" id="ruaCliente" placeholder="Rua" required>
+
+      <!-- Número e Bairro lado a lado -->
+      <div class="campo-linha">
+        <div class="campo-pequeno">
+          <label for="numeroCliente">Número:</label>
+          <input type="text" id="numeroCliente" placeholder="Número" required>
+        </div>
+        <div class="campo-pequeno">
+          <label for="bairroCliente">Bairro:</label>
+          <input type="text" id="bairroCliente" placeholder="Bairro" required>
+        </div>
+      </div>
+
+      <!-- Cidade e Estado em linha (opcional) -->
+      <div class="campo-linha">
+        <div class="campo-pequeno">
+          <label for="cidadeCliente">Cidade:</label>
+          <input type="text" id="cidadeCliente" placeholder="Cidade" required>
+        </div>
+        <div class="campo-pequeno">
+          <label for="estadoCliente">Estado:</label>
+          <input type="text" id="estadoCliente" placeholder="UF" maxlength="2" required>
+        </div>
+      </div>
+
+      <button type="submit" class="btn-compra">Cadastrar Cliente</button>
+    </form>
+  </div>
+</div>
+  <!-- ===================== Footer do Cardápio ===================== -->
+  <section class="footer-section">
+    <p class="desenvolvido">Desenvolvido por</p>
+
+    <a href="https://www.dmdesigngrafico.com.br" target="_blank" title="Visite o site da DM Design Gráfico">
+      <img src="./Imagem/DMDESIGN.png" alt="Logo DM Design Gráfico" class="footer-logo" />
+    </a>
+
+    <div class="empresa-info">
+      <p id="empresaCNPJ">Sua Empresa — CNPJ: 00.000.000/0000-00</p>
+      <p>© 2026 Todos os direitos reservados</p>
+    </div>
+
+    <p class="footer-slogan">
+      DM DESIGN GRÁFICO — Tecnologia & Soluções para Delivery
+    </p>
+  </section>
+
+  <!-- ===================== Footer do Carrinho Fixado ===================== -->
+  <footer class="cart-footer">
+    <button id="card-btn">
+      (<span id="card-count">0</span>) Veja o meu carrinho
+      <i class="fas fa-shopping-cart"></i>
+    </button>
+  </footer>
+  <script type="module" src="scriptCardapio.js"></script>
+</body>
+</html>

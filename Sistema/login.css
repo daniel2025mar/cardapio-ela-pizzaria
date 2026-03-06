@@ -1,0 +1,244 @@
+/* ================= RESET E FONTES ================= */
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+  font-family: 'Roboto', sans-serif;
+}
+
+body {
+  height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background: linear-gradient(135deg, #03172c, #1e1e2f);
+  color: #fff;
+  overflow: hidden;
+}
+
+/* ================== FORMULARIO ================== */
+form#loginForm {
+  background: #2a2a3e;
+  padding: 40px 35px;
+  border-radius: 20px;
+  box-shadow: 0 15px 40px rgba(0,0,0,0.5);
+  width: 350px;
+  max-width: 90%;
+  text-align: center;
+  position: relative;
+  overflow: hidden;
+}
+
+/* Efeito de glow animado atrás do formulário */
+form#loginForm::before {
+  content: "";
+  position: absolute;
+  top: -50%;
+  left: -50%;
+  width: 200%;
+  height: 200%;
+  background: linear-gradient(60deg, #1e90ff, #1464b3, #03305c);
+  animation: rotateGlow 6s linear infinite;
+  z-index: 0;
+}
+@keyframes rotateGlow {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+/* Conteúdo por cima do glow */
+form#loginForm * {
+  position: relative;
+  z-index: 1;
+}
+
+/* ================== TÍTULO ================== */
+form#loginForm h2 {
+  margin-bottom: 15px;
+  font-size: 2rem;
+  color: #1e90ff;
+  letter-spacing: 1px;
+}
+
+/* ================== BOAS-VINDAS ================== */
+form#loginForm .boas-vindas {
+  font-size: 0.9rem;
+  color: #ccc;
+  margin-bottom: 25px;
+}
+
+/* ================== LOGO ================== */
+.logo-container {
+  display: inline-flex;
+  justify-content: center;
+  align-items: center;
+  background: #ffffff;
+  border-radius: 50%;
+  padding: 5px;
+  box-shadow: 0 6px 15px rgba(0,0,0,0.25);
+  width: fit-content;
+  height: fit-content;
+  margin-bottom: 20px;
+}
+
+.logo-sistema {
+  width: 80px;
+  height: 80px;
+  border-radius: 50%;
+  border: 2px solid #1e90ff;
+  object-fit: cover;
+  display: block;
+  max-width: 100%;
+  height: auto;
+}
+
+/* ================== INPUTS ================== */
+form#loginForm input {
+  width: 100%;
+  padding: 14px 15px;
+  margin-bottom: 20px;
+  border-radius: 12px;
+  border: 1px solid #444;
+  background: #1f1f2e;
+  color: #fff;
+  font-size: 1rem;
+  transition: all 0.3s ease;
+}
+
+form#loginForm input::placeholder {
+  color: #888;
+}
+
+form#loginForm input:focus {
+  outline: none;
+  border-color: #1e90ff;
+  box-shadow: 0 0 12px rgba(30,144,255,0.5);
+  background-color: #2a2a3e;
+}
+
+/* ================== BOTÃO ENTRAR ================== */
+form#loginForm button {
+  width: 100%;
+  padding: 14px;
+  border: none;
+  border-radius: 12px;
+  background: #1e90ff;
+  color: #fff;
+  font-size: 1rem;
+  font-weight: bold;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  box-shadow: 0 5px 15px rgba(30,144,255,0.4);
+}
+
+form#loginForm button:hover {
+  background: #1464b3;
+  transform: translateY(-2px);
+  box-shadow: 0 8px 20px rgba(30,144,255,0.6);
+}
+
+/* ================== LINKS ================== */
+form#loginForm .links {
+  margin-top: 15px;
+  display: flex;
+  justify-content: space-between;
+  font-size: 0.85rem;
+  color: #ccc;
+}
+
+form#loginForm .links a {
+  color: #1e90ff;
+  text-decoration: none;
+  transition: 0.3s;
+}
+
+form#loginForm .links a:hover {
+  color: #1464b3;
+}
+
+/* ================== MODAL DE ERRO ================== */
+.modal-erro {
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.75);
+  display: none;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+}
+
+.modal-conteudo-erro {
+  background: #2a2a3e;
+  color: #fff;
+  padding: 25px 20px;
+  border-radius: 15px;
+  text-align: center;
+  max-width: 320px;
+  width: 90%;
+  box-shadow: 0 8px 25px rgba(0,0,0,0.5);
+}
+
+.modal-conteudo-erro p {
+  margin-bottom: 20px;
+  font-size: 1rem;
+}
+
+.modal-conteudo-erro button {
+  padding: 12px 25px;
+  border: none;
+  border-radius: 10px;
+  background: #1e90ff;
+  color: #fff;
+  font-weight: bold;
+  cursor: pointer;
+  transition: 0.3s;
+}
+
+.modal-conteudo-erro button:hover {
+  background: #1464b3;
+  transform: translateY(-2px);
+}
+
+/* ================== RESPONSIVO ================== */
+@media (max-width: 480px) {
+  form#loginForm {
+    width: 90%;
+    padding: 30px 20px;
+  }
+
+  form#loginForm h2 {
+    font-size: 1.6rem;
+  }
+
+  form#loginForm input,
+  form#loginForm button {
+    font-size: 0.95rem;
+    padding: 12px 10px;
+  }
+
+  .logo-sistema {
+    width: 60px;
+    height: 60px;
+  }
+
+  .logo-container {
+    padding: 4px;
+  }
+}
+
+
+/* ================== MENSAGEM DE BOAS-VINDAS ================== */
+.boas-vindas-usuario {
+  margin-top: 10px;
+  font-size: 1rem;
+  color: #ffffff;       /* azul para destaque */
+  text-align: center;
+  font-weight: bold;
+}
+/* ================== NOME DA EMPRESA ================== */
+form#loginForm .rodape-empresa {
+  margin-top: 15px;
+  font-size: 0.9rem;
+  color: #ccc; /* pode mudar a cor se quiser */
+  letter-spacing: 0.5px;
+}
