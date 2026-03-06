@@ -276,21 +276,22 @@
       <!-- Telefone / WhatsApp -->
       <div class="form-row lado-a-lado">
         <div class="form-group">
-          <label for="inputTelefoneNovo">Telefone:</label>
-          <input type="text" id="inputTelefoneNovo" placeholder="(00) 0000-0000">
+         <label for="inputTelefoneNovo">Telefone:</label>
+         <input type="tel" id="inputTelefoneNovo" placeholder="(00) 0000-0000" maxlength="14">
         </div>
         <div class="form-group">
-          <label for="inputWhatsAppNovo">WhatsApp:</label>
-          <input type="text" id="inputWhatsAppNovo" placeholder="(00) 00000-0000">
+        <label for="inputWhatsAppNovo">WhatsApp:</label>
+        <input type="tel" id="inputWhatsAppNovo"placeholder="(00) 0 0000-0000"maxlength="16">
         </div>
       </div>
 
       <!-- CNPJ / Criado em -->
       <div class="form-row lado-a-lado">
         <div class="form-group">
-          <label for="inputCNPJNovo">CNPJ:</label>
-          <input type="text" id="inputCNPJNovo" placeholder="00.000.000/0000-00">
+        <label for="inputCNPJNovo">CNPJ:</label>
+          <input type="tel"id="inputCNPJNovo"placeholder="00.000.000/0000-00"maxlength="18"inputmode="numeric"pattern="[0-9./-]*">
         </div>
+        
         <div class="form-group">
           <label for="inputCriadoEmNovo">Criado em:</label>
           <input type="text" id="inputCriadoEmNovo" readonly>

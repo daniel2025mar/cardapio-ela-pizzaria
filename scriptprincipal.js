@@ -44,7 +44,7 @@ window.addEventListener("click", (e) => {
   if (e.target === modalDesenvolvedor) modalDesenvolvedor.style.display = "none";
 });
 
-// =================== funçao abrir menu produtos =====
+// =================== funçao abrir menus =====
 // PEGAR MENUS
 const menuDashboard = document.getElementById("menuDashboard");
 const menuAdicionar = document.getElementById("menuAdicionar");
@@ -196,48 +196,163 @@ document.addEventListener("DOMContentLoaded", async () => {
     if (e.key === "Escape") modalEmpresaNovo.classList.remove("show");
   });
 
+  const inputWhatsApp = document.getElementById("inputWhatsAppNovo");
+  // =========== formataçao para tefefone ==========
+  // TELEFONE FIXO
+const inputTelefone = document.getElementById("inputTelefoneNovo");
+
+inputTelefone.addEventListener("input", function () {
+
+  let valor = this.value.replace(/\D/g, "");
+
+  if (valor.length > 10) {
+    valor = valor.slice(0, 10);
+  }
+
+  if (valor.length >= 10) {
+    valor = valor.replace(/(\d{2})(\d{4})(\d{4})/, "($1) $2-$3");
+  } 
+  else if (valor.length >= 6) {
+    valor = valor.replace(/(\d{2})(\d{4})/, "($1) $2");
+  } 
+  else if (valor.length >= 3) {
+    valor = valor.replace(/(\d{2})(\d+)/, "($1) $2");
+  }
+
+  this.value = valor;
+
+});
+
+  // =========== formataçao para cnpj + consulta ===
+  const inputCNPJ = document.getElementById("inputCNPJNovo");
+
+inputCNPJ.addEventListener("input", function () {
+
+  let valor = this.value.replace(/\D/g, "");
+
+  if (valor.length > 14) {
+    valor = valor.slice(0, 14);
+  }
+
+  valor = valor.replace(/^(\d{2})(\d)/, "$1.$2");
+  valor = valor.replace(/^(\d{2})\.(\d{3})(\d)/, "$1.$2.$3");
+  valor = valor.replace(/\.(\d{3})(\d)/, ".$1/$2");
+  valor = valor.replace(/(\d{4})(\d)/, "$1-$2");
+
+  this.value = valor;
+
+});
+
+
+  // ===========formataçao para whatsapp ===========
+inputWhatsApp.addEventListener("input", function () {
+
+  let valor = this.value.replace(/\D/g, "");
+
+  if (valor.length > 11) {
+    valor = valor.slice(0, 11);
+  }
+
+  if (valor.length >= 11) {
+    valor = valor.replace(/(\d{2})(\d{1})(\d{4})(\d{4})/, "($1) $2 $3-$4");
+  } 
+  else if (valor.length >= 7) {
+    valor = valor.replace(/(\d{2})(\d{1})(\d{4})/, "($1) $2 $3");
+  } 
+  else if (valor.length >= 3) {
+    valor = valor.replace(/(\d{2})(\d+)/, "($1) $2");
+  }
+
+  this.value = valor;
+
+});
   // Salvar/Atualizar empresa
   btnSalvarNovo.addEventListener("click", async () => {
-    const nome = document.getElementById("inputNomeNovo").value;
-    const endereco = document.getElementById("inputEnderecoNovo").value;
-    const telefone = document.getElementById("inputTelefoneNovo").value;
-    const whatsapp = document.getElementById("inputWhatsAppNovo").value;
-    const cnpj = document.getElementById("inputCNPJNovo").value;
-    const criadoEm = new Date().toISOString();
+  const nome = document.getElementById("inputNomeNovo").value;
+  const endereco = document.getElementById("inputEnderecoNovo").value;
+  const telefone = document.getElementById("inputTelefoneNovo").value;
+  const whatsapp = document.getElementById("inputWhatsAppNovo").value;
+  const cnpj = document.getElementById("inputCNPJNovo").value;
+  const criadoEm = new Date().toISOString();
 
-    const logoFile = inputLogo.files[0];
-    const fundoFile = inputFundo.files[0];
+  const logoFile = inputLogo.files[0];
+  const fundoFile = inputFundo.files[0];
 
-    const logoUrl = await uploadArquivo(logoFile, "logo");
-    const fundoUrl = await uploadArquivo(fundoFile, "fundo");
+  // ================= VALIDAÇÃO =================
+  if (!nome || !endereco || !telefone || !whatsapp || !cnpj) {
+    alert("Preencha todos os campos obrigatórios!");
+    return;
+  }
 
-    const { error } = await supabase
-      .from("empresa")
-      .upsert(
-        [
-          {
-            id: 1,
-            nome,
-            endereco,
-            telefone,
-            whatsapp,
-            cnpj,
-            criado_em: criadoEm,
-            logo_url: logoUrl,
-            fundo_url: fundoUrl,
-          },
-        ],
-        { onConflict: ["id"] }
-      );
+  // Validação de CNPJ
+  function validarCNPJ(cnpjInput) {
+    let c = cnpjInput.replace(/\D/g, "");
+    if (c.length !== 14) return false;
+    if (/^(\d)\1+$/.test(c)) return false;
 
-    if (error) {
-      alert("Erro ao salvar a empresa: " + error.message);
-    } else {
-      alert("Empresa cadastrada com sucesso!");
-      await carregarEmpresa();
-      await atualizarNomeEmpresa(); // Atualiza nome no header
+    let tamanho = c.length - 2;
+    let numeros = c.substring(0, tamanho);
+    let digitos = c.substring(tamanho);
+
+    let soma = 0;
+    let pos = tamanho - 7;
+    for (let i = tamanho; i >= 1; i--) {
+      soma += numeros.charAt(tamanho - i) * pos--;
+      if (pos < 2) pos = 9;
     }
-  });
+    let resultado = soma % 11 < 2 ? 0 : 11 - (soma % 11);
+    if (resultado != digitos.charAt(0)) return false;
+
+    tamanho = tamanho + 1;
+    numeros = c.substring(0, tamanho);
+    soma = 0;
+    pos = tamanho - 7;
+    for (let i = tamanho; i >= 1; i--) {
+      soma += numeros.charAt(tamanho - i) * pos--;
+      if (pos < 2) pos = 9;
+    }
+    resultado = soma % 11 < 2 ? 0 : 11 - (soma % 11);
+
+    return resultado == digitos.charAt(1);
+  }
+
+  if (!validarCNPJ(cnpj)) {
+    alert("CNPJ inválido!");
+    return;
+  }
+
+  // ================= UPLOAD =================
+  const logoUrl = await uploadArquivo(logoFile, "logo");
+  const fundoUrl = await uploadArquivo(fundoFile, "fundo");
+
+  // ================= SALVAR NO SUPABASE =================
+  const { error } = await supabase
+    .from("empresa")
+    .upsert(
+      [
+        {
+          id: 1,
+          nome,
+          endereco,
+          telefone: telefone.replace(/\D/g, ""), // salva só números
+          whatsapp: whatsapp.replace(/\D/g, ""), // salva só números
+          cnpj: cnpj.replace(/\D/g, ""), // salva só números
+          criado_em: criadoEm,
+          logo_url: logoUrl,
+          fundo_url: fundoUrl,
+        },
+      ],
+      { onConflict: ["id"] }
+    );
+
+  if (error) {
+    alert("Erro ao salvar a empresa: " + error.message);
+  } else {
+    alert("Empresa cadastrada com sucesso!");
+    await carregarEmpresa();
+    await atualizarNomeEmpresa(); // Atualiza nome no header
+  }
+});
 
   // =================== PREVIEW IMAGENS ===================
   inputLogo.addEventListener("change", () => {
