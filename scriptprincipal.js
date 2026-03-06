@@ -44,6 +44,40 @@ window.addEventListener("click", (e) => {
   if (e.target === modalDesenvolvedor) modalDesenvolvedor.style.display = "none";
 });
 
+// =================== funçao abrir menu produtos =====
+// PEGAR MENUS
+const menuDashboard = document.getElementById("menuDashboard");
+const menuAdicionar = document.getElementById("menuAdicionar");
+
+// PEGAR SEÇÕES
+const dashboard = document.getElementById("dashboard");
+const cadastroProdutos = document.getElementById("cadastroProdutos");
+
+// TODAS AS SEÇÕES
+const secoes = document.querySelectorAll(".secao");
+
+function abrirSecao(secaoAtiva) {
+
+  // esconder todas
+  secoes.forEach(secao => {
+    secao.style.display = "none";
+  });
+
+  // mostrar a selecionada
+  secaoAtiva.style.display = "block";
+}
+
+
+// CLICK DASHBOARD
+menuDashboard.addEventListener("click", () => {
+  abrirSecao(dashboard);
+});
+
+
+// CLICK ADICIONAR PRODUTO
+menuAdicionar.addEventListener("click", () => {
+  abrirSecao(cadastroProdutos);
+});
 // =================== MODAL LOGOUT ===================
 const modalLogout = document.getElementById("modalLogout");
 const logoutBtn = document.getElementById("logoutBtn");
