@@ -4,15 +4,29 @@ const SUPABASE_URL = "https://vixurbnyhalixuwyytjx.supabase.co";
 const SUPABASE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InZpeHVyYm55aGFsaXh1d3l5dGp4Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzI3MTc0ODksImV4cCI6MjA4ODI5MzQ4OX0._0kx5t0Yi6uAge5K9BFCh9PHs66YrW3sTY80yncTLeM";
 
 const supabase = createClient(SUPABASE_URL, SUPABASE_KEY);
+const ipElement = document.getElementById("userIP");
 
-fetch("https://api.ipify.org?format=json")
-  .then(response => response.json())
-  .then(data => {
-    document.getElementById("userIP").textContent = "Seu IP: " + data.ip;
-  })
-  .catch(() => {
-    document.getElementById("userIP").textContent = "Seu IP: não identificado";
-  });
+// Função que tenta buscar o IP
+function atualizarIP() {
+  // Mostra carregando enquanto tenta
+  ipElement.textContent = "Seu IP: carregando...";
+
+  fetch("https://api.ipify.org?format=json")
+    .then(response => response.json())
+    .then(data => {
+      ipElement.textContent = "Seu IP: " + data.ip;
+    })
+    .catch(() => {
+      // Mantém "carregando..." se não houver internet
+      ipElement.textContent = "Seu IP: carregando...";
+    });
+}
+
+// Chama a função imediatamente ao carregar a página
+atualizarIP();
+
+// Depois tenta atualizar a cada 10 segundos (10000ms)
+setInterval(atualizarIP, 10000);
 // =================== FUNÇÃO PARA ATUALIZAR NOME DA EMPRESA ===================
 
 async function atualizarNomeEmpresa() {
