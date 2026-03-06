@@ -5,6 +5,14 @@ const SUPABASE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZ
 
 const supabase = createClient(SUPABASE_URL, SUPABASE_KEY);
 
+fetch("https://api.ipify.org?format=json")
+  .then(response => response.json())
+  .then(data => {
+    document.getElementById("userIP").textContent = "Seu IP: " + data.ip;
+  })
+  .catch(() => {
+    document.getElementById("userIP").textContent = "Seu IP: não identificado";
+  });
 // =================== FUNÇÃO PARA ATUALIZAR NOME DA EMPRESA ===================
 
 async function atualizarNomeEmpresa() {
