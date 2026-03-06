@@ -5,6 +5,7 @@ const SUPABASE_URL = "https://vixurbnyhalixuwyytjx.supabase.co";
 const SUPABASE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InZpeHVyYm55aGFsaXh1d3l5dGp4Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzI3MTc0ODksImV4cCI6MjA4ODI5MzQ4OX0._0kx5t0Yi6uAge5K9BFCh9PHs66YrW3sTY80yncTLeM";
 const supabase = createClient(SUPABASE_URL, SUPABASE_KEY);
 
+
 const btnMenu = document.getElementById("btnMenu");
 const sidebar = document.getElementById("sidebar");
 const menuItens = document.querySelectorAll("#sidebar a"); // todos os links do menu
