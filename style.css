@@ -214,6 +214,42 @@ header .header-text p.empresaNome {
 
 }
 
+/* Esconde o submenu por padrão */
+.menu-com-submenu .submenu {
+  display: none;
+  list-style: none;
+  padding-left: 20px;
+  margin-top: 5px;
+}
+
+/* Links do submenu */
+.menu-com-submenu .submenu li a {
+  font-size: 14px;
+  color: #929292;
+  display: block;
+  padding: 6px 10px;
+  text-decoration: none;
+  border-radius: 4px;
+}
+
+.menu-com-submenu .submenu li a:hover {
+  background-color: #034588;
+}
+
+/* seta do submenu */
+.menu-com-submenu a .setinha {
+  float: right;
+  transition: transform 0.3s;
+}
+
+/* Quando submenu estiver ativo, gira a seta e mostra submenu */
+.menu-com-submenu.ativo > a .setinha {
+  transform: rotate(180deg);
+}
+
+.menu-com-submenu.ativo .submenu {
+  display: block;
+}
 /* ================= Modal Background ================= */
 #modalNovaCategoria {
   display: none; /* Inicialmente escondido */

@@ -5,24 +5,100 @@ const SUPABASE_URL = "https://vixurbnyhalixuwyytjx.supabase.co";
 const SUPABASE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InZpeHVyYm55aGFsaXh1d3l5dGp4Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzI3MTc0ODksImV4cCI6MjA4ODI5MzQ4OX0._0kx5t0Yi6uAge5K9BFCh9PHs66YrW3sTY80yncTLeM";
 const supabase = createClient(SUPABASE_URL, SUPABASE_KEY);
 
-// =================== SIDEBAR ===================
 const btnMenu = document.getElementById("btnMenu");
 const sidebar = document.getElementById("sidebar");
+const menuItens = document.querySelectorAll("#sidebar a"); // todos os links do menu
 
+// Função para configurar sidebar de acordo com a largura da tela
 function configurarSidebar() {
   if (window.innerWidth >= 768) {
     sidebar.classList.add("active");
+    removerEventosMobile(); // remove eventos de clique fora/click menu
   } else {
     sidebar.classList.remove("active");
+    adicionarEventosMobile(); // adiciona eventos para mobile
   }
 }
 
-configurarSidebar();
-window.addEventListener("resize", configurarSidebar);
+// Abre/fecha sidebar ao clicar no botão
 btnMenu.addEventListener("click", () => {
   sidebar.classList.toggle("active");
 });
 
+// Eventos para mobile
+function adicionarEventosMobile() {
+  // Fecha ao clicar fora do sidebar
+  document.addEventListener("click", cliqueForaSidebar);
+
+  // Fecha ao clicar em um item do menu
+  menuItens.forEach(item => {
+    item.addEventListener("click", fecharSidebarMobile);
+  });
+}
+
+function removerEventosMobile() {
+  document.removeEventListener("click", cliqueForaSidebar);
+  menuItens.forEach(item => {
+    item.removeEventListener("click", fecharSidebarMobile);
+  });
+}
+
+// Fecha sidebar se clicar fora (apenas mobile)
+function cliqueForaSidebar(e) {
+  if (!sidebar.contains(e.target) && !btnMenu.contains(e.target)) {
+    sidebar.classList.remove("active");
+  }
+}
+
+// Fecha sidebar ao clicar em item do menu (apenas mobile)
+function fecharSidebarMobile() {
+  sidebar.classList.remove("active");
+}
+
+// Configura inicialmente
+configurarSidebar();
+
+// Atualiza ao redimensionar
+window.addEventListener("resize", configurarSidebar);
+
+
+const menuClientes = document.getElementById("menuClientes");
+const itemMenuClientes = menuClientes.parentElement;
+
+
+// Função para fechar todos os submenus
+function fecharTodosSubmenus() {
+  document.querySelectorAll(".menu-com-submenu").forEach(item => {
+    item.classList.remove("ativo");
+  });
+}
+
+// Clique no menu Clientes (abre/fecha submenu)
+menuClientes.addEventListener("click", function(e) {
+  e.preventDefault();
+
+  // Fecha todos os outros submenus antes
+  fecharTodosSubmenus();
+
+  // Alterna o submenu de Clientes
+  itemMenuClientes.classList.toggle("ativo");
+});
+
+// Seleciona todos os links “normais” do menu (não submenu)
+const linksNormais = sidebar.querySelectorAll("li > a:not(.menu-com-submenu > a)");
+
+linksNormais.forEach(link => {
+  link.addEventListener("click", function() {
+    fecharTodosSubmenus();
+  });
+});
+
+// Fecha todos os submenus se clicar fora do sidebar
+document.addEventListener("click", function(e) {
+  if (!sidebar.contains(e.target)) {
+    fecharTodosSubmenus();
+  }
+});
 // =================== MODAL DESENVOLVEDOR ===================
 const modalDesenvolvedor = document.getElementById("modalDesenvolvedor");
 const closeBtn = modalDesenvolvedor?.querySelector(".close");
