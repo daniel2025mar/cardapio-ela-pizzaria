@@ -147,56 +147,82 @@
 
   <!-- Card do formulário -->
   <div class="card-form">
-  <form id="formProduto" class="form-produto">
+    <form id="formProduto" class="form-produto">
 
-    <div class="form-group">
-      <label for="nomeProduto">Nome do Produto</label>
-      <input type="text" id="nomeProduto" placeholder="Ex: Refrigerante 350ml" required>
-    </div>
-
-    <div class="form-group">
-      <label for="categoriaProduto">Categoria</label>
-      <input type="text" id="categoriaProduto" placeholder="Ex: Bebidas">
-    </div>
-
-    <div class="form-group">
-      <label for="precoProduto">Preço</label>
-      <input type="number" id="precoProduto" placeholder="R$ 0,00" step="0.01" required>
-    </div>
-
-    <div class="form-group">
-      <label for="estoqueProduto">Quantidade em Estoque</label>
-      <input type="number" id="estoqueProduto" placeholder="0" required>
-    </div>
-
-    <div class="form-group">
-      <label for="descricaoProduto">Descrição</label>
-      <textarea id="descricaoProduto" placeholder="Detalhes do produto"></textarea>
-    </div>
-
-    <div class="form-group">
-      <label>Foto do Produto</label>
-      <div class="foto-preview-container">
-        <img id="previewProduto" src="./Imagem/inventory.jpg" alt="Preview" class="foto-preview">
-        <input type="file" id="fotoProduto" accept="image/*">
+      <!-- Nome do Produto -->
+      <div class="form-group">
+        <label for="nomeProduto">Nome do Produto</label>
+        <input type="text" id="nomeProduto" placeholder="Ex: Refrigerante 350ml" required>
       </div>
-      <small class="descricao-foto">Clique no quadrado para escolher a imagem</small>
-    </div>
 
-    <!-- Botões Salvar e Cancelar -->
-    <div class="form-botoes">
-      <button type="submit" class="btn-salvar">
-        <i class="fas fa-save"></i> Salvar Produto
-      </button>
-      <button type="button" class="btn-cancelar">
-        <i class="fas fa-times"></i> Cancelar
-      </button>
-    </div>
+      <!-- Categoria com select dinâmico e botão -->
+      <div class="form-group-inline">
+        <div class="campo-pequeno">
+          <label for="categoriaProduto">Categoria</label>
+          <select id="categoriaProduto" required>
+            <option value="">Carregando...</option>
+          </select>
+        </div>
+        <div class="campo-pequeno">
+          <label>&nbsp;</label>
+          <button type="button" id="novaCategoria">Nova Categoria</button>
+        </div>
+      </div>
 
-  </form>
+      <!-- Preço, Promoção e Custo lado a lado -->
+      <div class="form-group-inline">
+        <div class="campo-pequeno">
+          <label for="precoProduto">Preço</label>
+          <input type="number" id="precoProduto" placeholder="R$ 0,00" step="0.01" required>
+        </div>
+
+        <div class="campo-pequeno">
+          <label for="promocao">Valor Promoção</label>
+          <input type="number" id="promocao" placeholder="R$ 0,00" step="0.01" required>
+        </div>
+
+        <div class="campo-pequeno">
+          <label for="custo">Valor de Custo</label>
+          <input type="number" id="custo" placeholder="R$ 0,00" step="0.01" required>
+        </div>
+      </div>
+
+      <!-- Estoque -->
+      <div class="form-group">
+        <label for="estoqueProduto">Quantidade em Estoque</label>
+        <input type="number" id="estoqueProduto" placeholder="0" required>
+      </div>
+
+      <!-- Descrição -->
+      <div class="form-group">
+        <label for="descricaoProduto">Descrição</label>
+        <textarea id="descricaoProduto" placeholder="Detalhes do produto"></textarea>
+      </div>
+
+      <!-- Foto do Produto -->
+      <div class="form-group">
+        <label>Foto do Produto</label>
+        <div class="foto-preview-container">
+          <img id="previewProduto" src="./Imagem/inventory.jpg" alt="Preview" class="foto-preview">
+          <input type="file" id="fotoProduto" accept="image/*">
+        </div>
+        <small class="descricao-foto">Clique no quadrado para escolher a imagem</small>
+      </div>
+
+      <!-- Botões Salvar e Cancelar -->
+      <div class="form-botoes">
+        <button type="submit" class="btn-salvar">
+          <i class="fas fa-save"></i> Salvar Produto
+        </button>
+        <button type="button" class="btn-cancelar">
+          <i class="fas fa-times"></i> Cancelar
+        </button>
+      </div>
+
+    </form>
+  </div>
+
 </div>
-
-      </div>
 
       <!-- ADICIONAR PRODUTO -->
       <div id="adicionarProduto" class="hidden">
@@ -345,6 +371,71 @@
       <button id="btnSimLogout">Sim</button>
       <button id="btnNaoLogout">Não</button>
     </div>
+  </div>
+</div>
+
+<!-- Modal de Cadastro de Nova Categoria -->
+<div id="modalNovaCategoria" class="modal">
+  <div class="modal-content">
+    <span class="btn-fechar-modal">&times;</span>
+    <h2>Nova Categoria</h2>
+    
+    <form id="formNovaCategoria">
+      <div class="form-group">
+        <label for="inputTituloCategoria">Título</label>
+        <input type="text" id="inputTituloCategoria" placeholder="Ex: Bebidas" required>
+      </div>
+
+      <div class="form-group">
+        <label for="inputDescricaoCategoria">Descrição da Categoria</label>
+        <textarea id="inputDescricaoCategoria" placeholder="Descrição da categoria"></textarea>
+      </div>
+
+      <div class="form-group">
+        <label>Selecione o Icone</label>
+        <div class="icone-container">
+          <!-- Bebidas -->
+          <i class="fas fa-coffee icone-selecionavel"></i>
+          <i class="fas fa-beer icone-selecionavel"></i>
+          <i class="fas fa-wine-glass icone-selecionavel"></i>
+          <i class="fas fa-wine-bottle icone-selecionavel"></i>
+          <i class="fas fa-cocktail icone-selecionavel"></i>
+          <i class="fas fa-glass-martini icone-selecionavel"></i>
+          
+          <!-- Comidas rápidas / lanches -->
+          <i class="fas fa-hamburger icone-selecionavel"></i>
+          <i class="fas fa-hotdog icone-selecionavel"></i>
+          <i class="fas fa-pizza-slice icone-selecionavel"></i>
+          <i class="fas fa-fish icone-selecionavel"></i>
+          <i class="fas fa-drumstick-bite icone-selecionavel"></i>
+          
+          <!-- Sobremesas -->
+          <i class="fas fa-ice-cream icone-selecionavel"></i>
+          <i class="fas fa-birthday-cake icone-selecionavel"></i>
+          <i class="fas fa-cookie icone-selecionavel"></i>
+          
+          <!-- Frutas e vegetais -->
+          <i class="fas fa-apple-alt icone-selecionavel"></i>
+          <i class="fas fa-carrot icone-selecionavel"></i>
+          <i class="fas fa-lemon icone-selecionavel"></i>
+          <i class="fas fa-egg icone-selecionavel"></i>
+          
+          <!-- Laticínios e pães -->
+          <i class="fas fa-cheese icone-selecionavel"></i>
+          <i class="fas fa-bread-slice icone-selecionavel"></i>
+          
+          <!-- Utensílios e restaurante -->
+          <i class="fas fa-utensils icone-selecionavel"></i>
+          <i class="fas fa-glass-whiskey icone-selecionavel"></i>
+          <i class="fas fa-wine-glass-alt icone-selecionavel"></i>
+        </div>
+      </div>
+
+      <div class="form-botoes">
+        <button type="submit" class="btn-salvar">Salvar</button>
+        <button type="button" class="btn-cancelar">Cancelar</button>
+      </div>
+    </form>
   </div>
 </div>
   <script type="module" src="scriptprincipal.js"></script>

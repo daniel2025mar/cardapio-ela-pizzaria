@@ -382,3 +382,40 @@ inputWhatsApp.addEventListener("input", function () {
   // =================== INICIAL ===================
   await atualizarNomeEmpresa(); // atualiza o header ao iniciar
 });
+
+// ================= funçao do modal Categorias ========
+
+// Seleciona elementos
+const btnNovaCategoria = document.getElementById('novaCategoria'); // botão que abre modal
+const modalNovaCategoria = document.getElementById('modalNovaCategoria');
+const btnFecharModal = modalNovaCategoria.querySelector('.btn-fechar-modal');
+const btnCancelarModal = modalNovaCategoria.querySelector('.btn-cancelar');
+
+// Garante que modal comece escondido
+modalNovaCategoria.style.display = 'none';
+
+// Função para abrir modal
+function abrirModal() {
+  modalNovaCategoria.style.display = 'flex';
+}
+
+// Função para fechar modal
+function fecharModal() {
+  modalNovaCategoria.style.display = 'none';
+}
+
+// Abrir modal somente ao clicar no botão
+btnNovaCategoria.addEventListener('click', abrirModal);
+
+// Fechar modal ao clicar no X
+btnFecharModal.addEventListener('click', fecharModal);
+
+// Fechar modal ao clicar em Cancelar
+btnCancelarModal.addEventListener('click', fecharModal);
+
+// Fechar modal ao clicar fora da área do conteúdo
+window.addEventListener('click', (e) => {
+  if(e.target === modalNovaCategoria) {
+    fecharModal();
+  }
+});

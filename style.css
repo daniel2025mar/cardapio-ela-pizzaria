@@ -210,11 +210,158 @@ header .header-text p.empresaNome {
 }
 
 .sidebar ul li a:hover {
-  background-color: #1900ff;
+  background-color: #034588;
+
 }
 
+/* ================= Modal Background ================= */
+#modalNovaCategoria {
+  display: none; /* Inicialmente escondido */
+  position: fixed; /* Fixa na tela */
+  z-index: 9999;   /* Sempre acima de todos os elementos */
+  left: 0;
+  top: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0,0,0,0.5); /* Fundo semitransparente */
+  
+  display: flex;           /* Flex para centralizar conteúdo */
+  justify-content: center; /* Centraliza horizontal */
+  align-items: center;     /* Centraliza vertical */
+}
+
+/* ================= Conteúdo do Modal ================= */
+#modalNovaCategoria .modal-content {
+  background-color: #161010; /* Cor de fundo escura */
+  padding: 25px 30px;
+  border-radius: 12px;
+  max-width: 500px;
+  width: 90%;           /* Responsivo */
+  box-shadow: 0 8px 20px rgba(0,0,0,0.2);
+  position: relative;
+  overflow: visible;     /* Sem scroll no modal principal */
+  color: #fff;
+}
+
+/* ================= Botão de Fechar ================= */
+#modalNovaCategoria .btn-fechar-modal {
+  position: absolute;
+  top: 12px;
+  right: 15px;
+  font-size: 24px;
+  font-weight: bold;
+  color: #fff;
+  cursor: pointer;
+}
+
+/* ================= Form interno ================= */
+#formNovaCategoria .form-group {
+  display: flex;
+  flex-direction: column;
+  margin-bottom: 15px;
+}
+
+#formNovaCategoria label {
+  margin-bottom: 5px;
+  font-weight: 500;
+  color: #fff;
+}
+
+#formNovaCategoria input,
+#formNovaCategoria textarea {
+  padding: 10px 12px;
+  border: 1px solid #ccc;
+  border-radius: 8px;
+  font-size: 14px;
+}
+
+#formNovaCategoria textarea {
+  resize: vertical;
+  min-height: 70px;
+}
+
+/* ================= Container de ícones ================= */
+#formNovaCategoria .icone-container {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  max-height: 200px; /* Altura máxima antes de aparecer scroll */
+  overflow-y: auto;   /* Scroll vertical interno */
+  padding: 5px;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  background-color: #000000;
+}
+
+/* ================= Ícones clicáveis ================= */
+#formNovaCategoria .icone-selecionavel {
+  font-size: 24px;
+  padding: 8px;
+  border: 1px solid #ccc;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: all 0.2s;
+  flex: 0 0 50px; /* largura fixa de cada ícone */
+  text-align: center;
+}
+
+#formNovaCategoria .icone-selecionavel:hover {
+  border-color: #1e90ff;
+  color: #1e90ff;
+}
+
+#formNovaCategoria .icone-selecionavel.selecionado {
+  border-color: #007bff;
+  color: #007bff;
+  background-color: rgba(0,123,255,0.1);
+}
+
+/* ================= Botões dentro do modal ================= */
+#formNovaCategoria .form-botoes {
+  display: flex;
+  justify-content: flex-end;
+  gap: 10px;
+  margin-top: 10px;
+}
+
+#formNovaCategoria .form-botoes button {
+  padding: 10px 18px;
+  font-size: 14px;
+  border-radius: 8px;
+  border: none;
+  cursor: pointer;
+}
+
+#formNovaCategoria .btn-salvar {
+  background-color: #1e90ff;
+  color: #fff;
+}
+
+#formNovaCategoria .btn-salvar:hover {
+  background-color: #1464b3;
+}
+
+#formNovaCategoria .btn-cancelar {
+  background-color: #ccc;
+  color: #333;
+}
+
+#formNovaCategoria .btn-cancelar:hover {
+  background-color: #999;
+}
+
+/* ================= Responsividade ================= */
+@media (max-width: 500px) {
+  #modalNovaCategoria .modal-content {
+    width: 95%;
+    padding: 20px;
+  }
+
+  #formNovaCategoria .icone-container {
+    justify-content: space-between;
+  }
+}
 /* ================== Container principal do formulário ================== */
-/* Container principal do formulário */
 #cadastroProdutos {
   max-width: 900px;
   margin: 10px auto 30px auto;
@@ -250,7 +397,7 @@ header .header-text p.empresaNome {
   box-shadow: 0 12px 25px rgba(0,0,0,0.15);
 }
 
-/* Grid do formulário */
+/* ================== Grid e Inputs ================== */
 .form-produto {
   display: grid;
   grid-template-columns: 1fr 1fr;
@@ -268,57 +415,22 @@ header .header-text p.empresaNome {
   color: #333;
 }
 
-/* Container do preview da imagem */
-.foto-preview-container {
-  position: relative;
-  width: 120px;  /* tamanho do quadrado */
-  height: 120px; /* tamanho do quadrado */
-  border: 2px dashed #ccc;
-  border-radius: 12px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  overflow: hidden;
-  cursor: pointer;
-  transition: border-color 0.3s, box-shadow 0.3s;
-  background-color: #f9f9f9; /* leve fundo cinza para destaque */
-}
-
-.foto-preview-container:hover {
-  border-color: #1e90ff;
-  box-shadow: 0 0 10px rgba(30,144,255,0.2);
-}
-
-/* Imagem de preview (mostra sempre, inclusive placeholder) */
-.foto-preview {
-  width: 100%;
-  height: 100%;
-  object-fit: cover; /* mantém proporção e corta se necessário */
-  display: block;    /* agora sempre visível */
-}
-
-/* Input de arquivo dentro do container */
-.foto-preview-container input[type="file"] {
-  position: absolute;
-  width: 100%;
-  height: 100%;
-  opacity: 0; /* invisível mas clicável */
-  cursor: pointer;
-}
-
-/* Descrição do campo */
-.descricao-foto {
-  font-size: 12px;
-  color: #666;
-  margin-top: 3px;
-}
 .form-produto input,
-.form-produto textarea {
+.form-produto textarea,
+.form-produto select {
   padding: 10px 12px;
   border: 1px solid #ccc;
   border-radius: 12px;
   font-size: 15px;
   transition: all 0.3s;
+}
+
+.form-produto input:focus,
+.form-produto textarea:focus,
+.form-produto select:focus {
+  outline: none;
+  border-color: #1e90ff;
+  box-shadow: 0 0 10px rgba(30,144,255,0.3);
 }
 
 .form-produto textarea {
@@ -327,14 +439,121 @@ header .header-text p.empresaNome {
   grid-column: 1 / -1;
 }
 
-.form-produto input:focus,
-.form-produto textarea:focus {
-  outline: none;
-  border-color: #1e90ff;
-  box-shadow: 0 0 10px rgba(30,144,255,0.3);
+/* ================== Inputs Lado a Lado ================== */
+.form-group-inline {
+  display: flex;
+  gap: 15px;
+  align-items: flex-end;
+  margin-bottom: 15px;
+  flex-wrap: wrap; /* permite quebrar no celular */
 }
 
-/* Container dos botões */
+.campo-pequeno {
+  flex: 1; /* ocupa proporcionalmente o espaço disponível */
+  min-width: 150px; /* garante tamanho mínimo */
+}
+
+.campo-pequeno label {
+  display: block;
+  margin-bottom: 5px;
+  font-weight: 500;
+}
+
+.campo-pequeno input,
+.campo-pequeno select {
+  width: 100%;
+  padding: 8px 10px;
+  border: 1px solid #ccc;
+  border-radius: 6px;
+  font-size: 14px;
+  box-sizing: border-box;
+  transition: all 0.3s;
+}
+
+/* =================== Select Categoria =================== */
+#categoriaProduto {
+  appearance: none;
+  cursor: pointer;
+  background-color: #fff;
+  transition: border-color 0.3s, box-shadow 0.3s;
+}
+
+#categoriaProduto:focus {
+  border-color: #007bff;
+  box-shadow: 0 0 5px rgba(0, 123, 255, 0.5);
+  outline: none;
+}
+
+#categoriaProduto::-ms-expand {
+  display: none;
+}
+
+/* =================== Botão Nova Categoria =================== */
+#novaCategoria {
+  padding: 8px 12px;
+  border: none;
+  border-radius: 6px;
+  font-size: 14px;
+  background-color: #007bff;
+  color: #fff;
+  cursor: pointer;
+  font-weight: 500;
+  transition: background-color 0.3s, transform 0.2s;
+}
+
+#novaCategoria:hover {
+  background-color: #0056b3;
+  transform: translateY(-1px);
+}
+
+#novaCategoria:active {
+  background-color: #00408a;
+  transform: translateY(1px);
+}
+
+/* ================== Foto do Produto ================== */
+.foto-preview-container {
+  position: relative;
+  width: 120px;
+  height: 120px;
+  border: 2px dashed #ccc;
+  border-radius: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+  cursor: pointer;
+  transition: border-color 0.3s, box-shadow 0.3s;
+  background-color: #f9f9f9;
+}
+
+.foto-preview-container:hover {
+  border-color: #1e90ff;
+  box-shadow: 0 0 10px rgba(30,144,255,0.2);
+}
+
+.foto-preview {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+.foto-preview-container input[type="file"] {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  opacity: 0;
+  cursor: pointer;
+}
+
+.descricao-foto {
+  font-size: 12px;
+  color: #666;
+  margin-top: 3px;
+}
+
+/* ================== Botões ================== */
 .form-botoes {
   grid-column: 1 / -1;
   display: flex;
@@ -343,7 +562,6 @@ header .header-text p.empresaNome {
   margin-top: 10px;
 }
 
-/* Botão Salvar estilo WhatsApp Web */
 .btn-salvar {
   padding: 12px 20px;
   font-size: 16px;
@@ -353,26 +571,11 @@ header .header-text p.empresaNome {
   background: #1e90ff;
   color: #fff;
   cursor: pointer;
-  position: relative;
-  overflow: hidden;
-  transition: transform 0.3s ease, box-shadow 0.3s ease;
   display: flex;
   align-items: center;
   justify-content: center;
   gap: 8px;
-}
-
-.btn-salvar::after {
-  content: "";
-  position: absolute;
-  top: 50%;
-  left: -75%;
-  width: 50%;
-  height: 200%;
-  background: rgba(255,255,255,0.25);
-  transform: rotate(25deg) translateX(0);
-  transition: all 0.5s ease;
-  pointer-events: none;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
 }
 
 .btn-salvar:hover {
@@ -381,16 +584,6 @@ header .header-text p.empresaNome {
   background: #1464b3;
 }
 
-.btn-salvar:hover::after {
-  left: 125%;
-  transition: all 0.7s ease;
-}
-
-.btn-salvar:hover i {
-  transform: scale(1.1) rotate(-5deg);
-}
-
-/* Botão Cancelar */
 .btn-cancelar {
   padding: 12px 20px;
   font-size: 16px;
@@ -400,11 +593,11 @@ header .header-text p.empresaNome {
   background: #ccc;
   color: #333;
   cursor: pointer;
-  transition: all 0.3s ease;
   display: flex;
   align-items: center;
   justify-content: center;
   gap: 8px;
+  transition: all 0.3s ease;
 }
 
 .btn-cancelar:hover {
@@ -412,22 +605,34 @@ header .header-text p.empresaNome {
   transform: translateY(-2px);
 }
 
-.btn-cancelar i {
-  font-size: 16px;
-  transition: transform 0.3s ease;
-}
-
-/* Responsividade */
+/* ================== Responsividade para Celular ================== */
 @media (max-width: 768px) {
+  /* Formulário passa para 1 coluna */
   .form-produto {
     grid-template-columns: 1fr;
   }
-  
+
+  /* Campos lado a lado ficam empilhados */
+  .form-group-inline {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  /* Inputs e botão ocupam 100% */
+  .campo-pequeno {
+    width: 100%;
+  }
+
+  /* Espaço entre select e botão */
+  #novaCategoria {
+    margin-top: 8px;
+  }
+
+  /* Botões de ação ocupam 100% e ficam empilhados */
   .form-botoes {
-    justify-content: flex-start;
     flex-direction: column;
   }
-  
+
   .form-botoes button {
     width: 100%;
   }
@@ -571,7 +776,7 @@ header .header-text p.empresaNome {
 .card i {
   font-size: 32px;
   margin-right: 15px;
-  color: #1900ff;
+  color: #034588;
 }
 
 .card-title {
