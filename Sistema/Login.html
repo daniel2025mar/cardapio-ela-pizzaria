@@ -3,12 +3,12 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<!-- Para tema claro -->
+<title>Login - Painel Administrativo</title>
+  <!-- Para tema claro -->
 <meta name="theme-color" content="#03305c" media="(prefers-color-scheme: light)">
 
 <!-- Para tema escuro -->
 <meta name="theme-color" content="#03305c" media="(prefers-color-scheme: dark)">
-<title>Login - Painel Administrativo</title>
 <link rel="icon" type="image/png" href="../Imagem/LogoTipo.png">
 
 <!-- Link externo para o CSS -->
@@ -25,7 +25,8 @@
   </div>
 
   <h2>Acessar Sistema</h2>
-  <p id="userIP" style="cursor:pointer;">Seu IP: carregando...</p>
+  <!-- Aqui será exibido o IP -->
+  <p id="userIP" style="font-weight:bold; cursor:pointer;">Seu IP: carregando...</p>
   <p class="boas-vindas">Faça login para gerenciar seu cardápio</p>
 
   <input type="text" id="nome" placeholder="Usuário" autocomplete="username">
@@ -39,6 +40,15 @@
 </form>
 
 <!--modais-->
+<!-- MODAL DE ERRO -->
+<div id="modalErro" class="modal-erro">
+  <div class="modal-conteudo-erro">
+    <p id="mensagemErro"></p>
+    <button id="btnFecharErro">OK</button>
+  </div>
+</div>
+
+<!-- Modal do IP -->
 <div id="modalIP" class="modal">
   <div class="modal-content">
     <div class="modal-header">
@@ -46,10 +56,10 @@
       <span class="close">&times;</span>
     </div>
     <div class="modal-body">
-      <p id="modalMessage">Mensagem aqui</p>
+      <p id="modalMessage"></p>
     </div>
     <div class="modal-footer">
-      <button id="btnClose">Fechar</button>
+      <button id="btnCloseModal">Fechar</button>
     </div>
   </div>
 </div>

@@ -226,23 +226,119 @@ form#loginForm .links a:hover {
   }
 }
 
-/* ===== IP DO USUÁRIO ===== */
-#userIP{
+#userIP {
+      position: fixed;
+      bottom: 15px;
+      left: 50%;
+      transform: translateX(-50%);
+      font-family: 'Roboto', sans-serif;
+      font-size: 12px;
+      color: #b1b1b1;
+      background: rgba(0,0,0,0.05);
+      padding: 6px 12px;
+      border-radius: 6px;
+      border: 1px solid rgba(0,0,0,0.08);
+      z-index: 9999;
+      cursor: pointer; /* indica que é clicável */
+      user-select: none; /* evita seleção ao clicar */
+    }
+
+    /* ================== MODAL ================== */
+.modal {
+  display: none; /* inicialmente escondido */
   position: fixed;
-  bottom: 15px;
-  left: 50%;
-  transform: translateX(-50%);
-
-  font-family: 'Roboto', sans-serif;
-  font-size: 12px;
-  color: #a7a7a7;
-
-  background: rgba(0,0,0,0.05);
-  padding: 6px 12px;
-  border-radius: 6px;
-
-  border: 1px solid rgba(0,0,0,0.08);
   z-index: 9999;
+  left: 0;
+  top: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.5); /* fundo semitransparente */
+  justify-content: center; /* centraliza horizontal */
+  align-items: center;     /* centraliza vertical */
+  padding: 20px;           /* evita que grude nas bordas */
+  box-sizing: border-box;
+}
+
+.modal-content {
+  background-color: #fff;
+  border-radius: 10px;
+  width: 100%;
+  max-width: 400px;
+  padding: 25px 20px;
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.3);
+  position: relative;
+  animation: modalFade 0.3s ease-out; /* animação suave */
+  box-sizing: border-box;
+}
+
+.modal-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border-bottom: 1px solid #ddd;
+  padding-bottom: 10px;
+}
+
+.modal-header h3 {
+  margin: 0;
+  font-size: 20px;
+  color: #03305c;
+}
+
+.close {
+  font-size: 22px;
+  font-weight: bold;
+  cursor: pointer;
+  color: #333;
+  transition: color 0.2s ease-in-out;
+}
+
+.close:hover {
+  color: #03305c;
+}
+
+/* ================== ANIMAÇÃO ================== */
+@keyframes modalFade {
+  0% {
+    opacity: 0;
+    transform: scale(0.9);
+  }
+  100% {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+.modal-body {
+  margin-top: 15px;
+  font-size: 16px;
+  color: #333;
+  line-height: 1.5;
+}
+
+.modal-footer {
+  text-align: right;
+  margin-top: 20px;
+}
+
+.modal-footer button {
+  padding: 8px 16px;
+  background-color: #03305c;
+  color: #fff;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  font-size: 14px;
+  transition: background-color 0.2s ease-in-out;
+}
+
+.modal-footer button:hover {
+  background-color: #021f3d;
+}
+
+/* Animação do modal */
+@keyframes modalFade {
+  from { opacity: 0; transform: translateY(-20px); }
+  to { opacity: 1; transform: translateY(0); }
 }
 /* ================== MENSAGEM DE BOAS-VINDAS ================== */
 .boas-vindas-usuario {
@@ -258,93 +354,4 @@ form#loginForm .rodape-empresa {
   font-size: 0.9rem;
   color: #ccc; /* pode mudar a cor se quiser */
   letter-spacing: 0.5px;
-}
-
-.modal {
-  display: none;
-  position: fixed;
-  z-index: 10000;
-  left: 0;
-  top: 0;
-  width: 100%;
-  height: 100%;
-  background-color: rgba(0, 0, 0, 0.5); /* fundo semi-transparente mais leve */
-  justify-content: center;
-  align-items: center;
-  animation: fadeIn 0.2s ease;
-}
-
-.modal-content {
-  background-color: #f9f9f9;
-  border-radius: 10px;
-  width: 280px;          /* menor que 350px */
-  max-width: 90%;
-  padding: 0;
-  overflow: hidden;
-  box-shadow: 0 5px 15px rgba(0,0,0,0.25); /* sombra mais suave */
-  font-family: 'Roboto', sans-serif;
-}
-
-/* Cabeçalho */
-.modal-header {
-  background-color: #03305c;
-  color: #fff;
-  padding: 10px 15px;    /* padding menor */
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  font-size: 14px;       /* fonte menor */
-}
-
-/* Corpo */
-.modal-body {
-  padding: 15px;
-  color: #333;
-  font-size: 13px;       /* fonte menor */
-  text-align: center;
-}
-
-/* Rodapé com botão */
-.modal-footer {
-  padding: 10px 15px;
-  text-align: center;
-  border-top: 1px solid #ddd;
-}
-
-.modal-footer button {
-  background-color: #03305c;
-  color: #fff;
-  border: none;
-  padding: 6px 14px;     /* botão menor */
-  border-radius: 6px;
-  cursor: pointer;
-  font-size: 13px;       /* fonte menor */
-  transition: background 0.2s;
-}
-
-.modal-footer button:hover {
-  background-color: #024069;
-}
-
-/* Botão fechar no header */
-.close {
-  cursor: pointer;
-  font-size: 18px;       /* menor */
-  font-weight: bold;
-  transition: color 0.2s;
-}
-
-.close:hover {
-  color: #ddd;
-}
-
-/* Animação fadeIn */
-@keyframes fadeIn {
-  from { opacity: 0; transform: scale(0.85); }
-  to { opacity: 1; transform: scale(1); }
-}
-@media (prefers-color-scheme: dark) {
-  meta[name="theme-color"] {
-    content: "#03305c";
-  }
 }

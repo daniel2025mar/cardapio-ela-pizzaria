@@ -5,93 +5,6 @@ const SUPABASE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZ
 
 const supabase = createClient(SUPABASE_URL, SUPABASE_KEY);
 
-const ipElement = document.getElementById("userIP");
-
-// =========================
-// Função original para atualizar o IP
-// =========================
-function atualizarIP() {
-  ipElement.textContent = "Seu IP: carregando...";
-
-  fetch("https://api.ipify.org?format=json")
-    .then(response => response.json())
-    .then(data => {
-      ipElement.textContent = "Seu IP: " + data.ip;
-    })
-    .catch(() => {
-      ipElement.textContent = "Seu IP: carregando...";
-    });
-}
-
-// Atualiza imediatamente
-atualizarIP();
-
-// Atualiza a cada 10 segundos
-setInterval(atualizarIP, 10000);
-
-// =========================
-// Configuração do modal
-// =========================
-const modal = document.getElementById("modalIP");
-const modalMessage = document.getElementById("modalMessage");
-const closeBtn = document.querySelector(".close");
-
-// Função para mostrar modal
-function mostrarModal(msg) {
-  modalMessage.textContent = msg;
-  modal.style.display = "flex";
-}
-
-// Fecha ao clicar no "x"
-closeBtn.addEventListener("click", () => {
-  modal.style.display = "none";
-});
-
-// Fecha ao clicar fora do conteúdo
-window.addEventListener("click", (e) => {
-  if (e.target === modal) {
-    modal.style.display = "none";
-  }
-});
-
-// =========================
-// Clique no IP para mostrar provedor usando ipinfo.io
-// =========================
-ipElement.style.cursor = "pointer";
-
-ipElement.addEventListener("click", () => {
-  fetch("https://ipinfo.io/json?token=1b9ce64ceec574")
-    .then(response => response.json())
-    .then(data => {
-      console.log("Resposta completa do ipinfo.io:", data);
-
-      // Pega o provedor original
-      let provedorOriginal = data.org || "Não identificado";
-
-      // Remove o AS do começo
-      let provedorNome = provedorOriginal.replace(/^AS\d+\s+/, "").trim();
-
-      // Mapeamento amigável apenas para operadoras conhecidas
-      const mapProvedor = {
-        "TELEFÔNICA BRASIL S.A": "Vivo",
-        "CLARO S.A.": "Claro",
-        "TIM BRASIL S.A.": "TIM",
-        "OI S.A.": "Oi",
-      };
-
-      // Se estiver no mapa, substitui pelo nome amigável
-      if (mapProvedor[provedorNome]) {
-        provedorNome = mapProvedor[provedorNome];
-      }
-
-      // Se não estiver no mapa, mantém o nome completo
-      mostrarModal("Provedor de Internet: " + provedorNome);
-    })
-    .catch((erro) => {
-      console.error("Erro ao buscar provedor:", erro);
-      mostrarModal("Provedor não identificado, verifique a internet");
-    });
-});
 // =================== FUNÇÃO PARA ATUALIZAR NOME DA EMPRESA ===================
 
 async function atualizarNomeEmpresa() {
@@ -218,4 +131,70 @@ async function verificarLogin() {
       usernameInputEl.focus();
   }
 }
-// fim
+
+const ipElement = document.getElementById("userIP");
+const modal = document.getElementById("modalIP");
+const modalMessage = document.getElementById("modalMessage");
+const closeBtn = document.querySelector(".close");
+
+// -----------------------------
+// Função para atualizar o IP
+// -----------------------------
+function atualizarIP() {
+  ipElement.textContent = "Seu IP: carregando...";
+
+  fetch("https://api.ipify.org?format=json")
+    .then(response => response.json())
+    .then(data => {
+      ipElement.textContent = "Seu IP: " + data.ip;
+    })
+    .catch(() => {
+      ipElement.textContent = "Seu IP: carregando...";
+    });
+}
+
+// Atualiza imediatamente e depois a cada 10 segundos
+atualizarIP();
+setInterval(atualizarIP, 10000);
+
+// -----------------------------
+// Função para mostrar modal
+// -----------------------------
+function mostrarModal(msg) {
+  modalMessage.textContent = msg;
+  modal.style.display = "flex";
+}
+
+// Fecha ao clicar no "x"
+closeBtn.addEventListener("click", () => {
+  modal.style.display = "none";
+});
+
+// Fecha ao clicar fora do conteúdo
+window.addEventListener("click", (e) => {
+  if (e.target === modal) modal.style.display = "none";
+});
+
+// -----------------------------
+// Clique no IP para mostrar provedor
+// -----------------------------
+ipElement.addEventListener("click", () => {
+  fetch("https://ipinfo.io/json?token=1b9ce64ceec574")
+    .then(response => response.json())
+    .then(data => {
+      let provedor = (data.org || "Não identificado").replace(/^AS\d+\s+/, "").trim();
+
+      const mapProvedor = {
+        "TELEFÔNICA BRASIL S.A": "Vivo",
+        "CLARO S.A.": "Claro",
+        "TIM BRASIL S.A": "TIM",
+        "OI S.A": "Oi",
+      };
+
+      if (mapProvedor[provedor]) provedor = mapProvedor[provedor];
+
+      // Mostra apenas o provedor no modal
+      mostrarModal("Provedor de Internet: " + provedor);
+    })
+    .catch(() => mostrarModal("Provedor não identificado, verifique a internet"));
+});
