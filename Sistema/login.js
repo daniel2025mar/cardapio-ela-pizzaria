@@ -60,17 +60,32 @@ window.addEventListener("click", (e) => {
 ipElement.style.cursor = "pointer";
 
 ipElement.addEventListener("click", () => {
-  fetch("https://ipinfo.io/json?token=1b9ce64ceec574") // seu token aqui
+  fetch("https://ipinfo.io/json?token=1b9ce64ceec574")
     .then(response => response.json())
     .then(data => {
       console.log("Resposta completa do ipinfo.io:", data);
-      console.log("Provedor retornado:", data.org);
 
-      if (data.org && data.org.trim() !== "") {
-        mostrarModal("Provedor de Internet: " + data.org);
-      } else {
-        mostrarModal("Provedor não identificado ou VPN/Firewall bloqueando");
+      // Pega o provedor original
+      let provedorOriginal = data.org || "Não identificado";
+
+      // Remove o AS do começo
+      let provedorNome = provedorOriginal.replace(/^AS\d+\s+/, "").trim();
+
+      // Mapeamento amigável apenas para operadoras conhecidas
+      const mapProvedor = {
+        "TELEFÔNICA BRASIL S.A": "Vivo",
+        "CLARO S.A.": "Claro",
+        "TIM BRASIL S.A.": "TIM",
+        "OI S.A.": "Oi",
+      };
+
+      // Se estiver no mapa, substitui pelo nome amigável
+      if (mapProvedor[provedorNome]) {
+        provedorNome = mapProvedor[provedorNome];
       }
+
+      // Se não estiver no mapa, mantém o nome completo
+      mostrarModal("Provedor de Internet: " + provedorNome);
     })
     .catch((erro) => {
       console.error("Erro ao buscar provedor:", erro);
