@@ -243,102 +243,91 @@ form#loginForm .links a:hover {
       user-select: none; /* evita seleção ao clicar */
     }
 
-    /* ================== MODAL ================== */
+  /* ================== MODAL ELEGANTE ================== */
 .modal {
-  display: none; /* inicialmente escondido */
+  display: none;
   position: fixed;
   z-index: 9999;
   left: 0;
   top: 0;
   width: 100%;
   height: 100%;
-  background-color: rgba(0, 0, 0, 0.5); /* fundo semitransparente */
-  justify-content: center; /* centraliza horizontal */
-  align-items: center;     /* centraliza vertical */
-  padding: 20px;           /* evita que grude nas bordas */
+  background-color: rgba(0, 0, 0, 0.35);
+  justify-content: center;
+  align-items: center;
+  padding: 10px;
   box-sizing: border-box;
+  backdrop-filter: blur(5px);
 }
 
 .modal-content {
-  background-color: #fff;
-  border-radius: 10px;
+  background: linear-gradient(145deg, #ffffff, #f1f5f9);
+  border-radius: 14px;
   width: 100%;
-  max-width: 400px;
-  padding: 25px 20px;
-  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.3);
+  max-width: 280px;
+  padding: 0;
+  box-shadow: 0 10px 24px rgba(0,0,0,0.25);
   position: relative;
-  animation: modalFade 0.3s ease-out; /* animação suave */
-  box-sizing: border-box;
+  animation: modalPop 0.25s ease-out;
+  font-family: 'Roboto', sans-serif;
+  overflow: hidden;
 }
 
+/* HEADER AZUL */
 .modal-header {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  border-bottom: 1px solid #ddd;
-  padding-bottom: 10px;
+  background: linear-gradient(135deg, #021f3d, #03305c);
+  padding: 10px 14px;
 }
 
 .modal-header h3 {
   margin: 0;
-  font-size: 20px;
-  color: #03305c;
+  font-size: 16px;
+  font-weight: 600;
+  color: #ffffff;
 }
 
+/* BOTÃO FECHAR */
 .close {
-  font-size: 22px;
+  font-size: 18px;
   font-weight: bold;
   cursor: pointer;
-  color: #333;
-  transition: color 0.2s ease-in-out;
+  color: #ffffff;
+  transition: all 0.2s ease-in-out;
 }
 
 .close:hover {
-  color: #03305c;
+  transform: rotate(90deg);
+  opacity: 0.8;
+}
+
+/* CORPO */
+.modal-body {
+  padding: 14px 16px;
+  font-size: 14px;
+  color: #333;
+  line-height: 1.4;
+  text-align: center;
+}
+
+/* FOOTER */
+.modal-footer {
+  padding: 10px 16px 16px 16px;
+  text-align: center;
 }
 
 /* ================== ANIMAÇÃO ================== */
-@keyframes modalFade {
+@keyframes modalPop {
   0% {
     opacity: 0;
-    transform: scale(0.9);
+    transform: scale(0.9) translateY(-10px);
   }
   100% {
     opacity: 1;
-    transform: scale(1);
+    transform: scale(1) translateY(0);
   }
-}
-.modal-body {
-  margin-top: 15px;
-  font-size: 16px;
-  color: #333;
-  line-height: 1.5;
-}
-
-.modal-footer {
-  text-align: right;
-  margin-top: 20px;
-}
-
-.modal-footer button {
-  padding: 8px 16px;
-  background-color: #03305c;
-  color: #fff;
-  border: none;
-  border-radius: 5px;
-  cursor: pointer;
-  font-size: 14px;
-  transition: background-color 0.2s ease-in-out;
-}
-
-.modal-footer button:hover {
-  background-color: #021f3d;
-}
-
-/* Animação do modal */
-@keyframes modalFade {
-  from { opacity: 0; transform: translateY(-20px); }
-  to { opacity: 1; transform: translateY(0); }
 }
 /* ================== MENSAGEM DE BOAS-VINDAS ================== */
 .boas-vindas-usuario {
