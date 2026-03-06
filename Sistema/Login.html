@@ -3,7 +3,11 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<meta name="theme-color" content="#03305c">
+<!-- Para tema claro -->
+<meta name="theme-color" content="#03305c" media="(prefers-color-scheme: light)">
+
+<!-- Para tema escuro -->
+<meta name="theme-color" content="#03305c" media="(prefers-color-scheme: dark)">
 <title>Login - Painel Administrativo</title>
 <link rel="icon" type="image/png" href="../Imagem/LogoTipo.png">
 
@@ -21,7 +25,7 @@
   </div>
 
   <h2>Acessar Sistema</h2>
-  <p id="userIP">Seu IP: carregando...</p>
+  <p id="userIP" style="cursor:pointer;">Seu IP: carregando...</p>
   <p class="boas-vindas">Faça login para gerenciar seu cardápio</p>
 
   <input type="text" id="nome" placeholder="Usuário" autocomplete="username">
@@ -35,11 +39,11 @@
 </form>
 
 <!--modais-->
-<!-- MODAL DE ERRO -->
-<div id="modalErro" class="modal-erro">
-  <div class="modal-conteudo-erro">
-    <p id="mensagemErro"></p>
-    <button id="btnFecharErro">OK</button>
+<!-- Modal elegante -->
+<div id="modalIP" class="modal">
+  <div class="modal-content">
+    <span class="close">&times;</span>
+    <p id="modalMessage">Mensagem aqui</p>
   </div>
 </div>
 <script type="module" src="login.js"></script>

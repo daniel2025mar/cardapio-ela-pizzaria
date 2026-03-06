@@ -1307,3 +1307,9 @@ header .header-text p.empresaNome {
     opacity: 1;
   }
 }
+
+@media (prefers-color-scheme: dark) {
+  meta[name="theme-color"] {
+    content: "#03305c";
+  }
+}
