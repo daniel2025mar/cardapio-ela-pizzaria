@@ -1314,16 +1314,117 @@ header .header-text p.empresaNome {
   }
 }
 
+/* ================= SPLASH SCREEN ================= */
 
-/* ===== SPLASH SCREEN ===== */
-#splash {
-    position: fixed;
-    width: 100%;
-    height: 100vh;
-    background: #dbdbdb;
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    align-items: center;
-    z-index: 9999;
+#splashScreen{
+  position: fixed;
+  top:0;
+  left:0;
+  width:100%;
+  height:100vh;
+  background:#ffffff;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  z-index:99999;
+}
+
+.splash-container{
+  text-align:center;
+  max-width:420px;
+  padding:20px;
+  color:#333;
+}
+
+/* Logo */
+
+.splash-logo{
+  width:260px;
+  margin-bottom:10px;
+}
+
+/* Progress circular */
+
+.progress-circle{
+  position:relative;
+  width:80px;
+  height:80px;
+  margin:5px auto;
+  box-sizing: content-box; /* evita corte do stroke */
+}
+
+.progress-circle svg{
+  width:100%;
+  height:100%;
+  display:block;
+  overflow:visible; /* evita cortar o círculo */
+  transform: rotate(-90deg);
+}
+
+.circle-bg{
+  fill:none;
+  stroke:#e0e0e0;
+  stroke-width:8;
+}
+
+.circle-progress{
+  fill:none;
+  stroke:#03305c;
+  stroke-width:8;
+  stroke-linecap:round;
+  stroke-dasharray:282.6; /* circunferência do círculo (2 * π * 45) */
+  stroke-dashoffset:282.6;
+  transition: stroke-dashoffset 0.2s linear; /* animação suave */
+}
+
+/* Porcentagem */
+
+#progressText{
+  position:absolute;
+  top:50%;
+  left:50%;
+  transform:translate(-50%,-50%);
+  font-size:14px;
+  font-weight:bold;
+  color:#03305c;
+}
+
+/* Texto */
+
+.splash-text{
+  margin-top:15px;
+  font-size:14px;
+  color:#555;
+}
+
+/* ================= RESPONSIVO CELULAR ================= */
+
+@media (max-width: 600px){
+
+  .splash-logo{
+    width:180px;
+  }
+
+  .progress-circle{
+    width:70px;
+    height:70px;
+  }
+
+  .progress-circle svg{
+    width:100%;
+    height:100%;
+  }
+
+  .circle-bg, .circle-progress{
+    stroke-width:6; /* menor stroke no celular */
+  }
+
+  #progressText{
+    font-size:12px;
+  }
+
+  .splash-text{
+    font-size:13px;
+    padding:0 10px;
+  }
 }

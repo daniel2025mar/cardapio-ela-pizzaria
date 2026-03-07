@@ -4,7 +4,110 @@ import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
 const SUPABASE_URL = "https://vixurbnyhalixuwyytjx.supabase.co";
 const SUPABASE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InZpeHVyYm55aGFsaXh1d3l5dGp4Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzI3MTc0ODksImV4cCI6MjA4ODI5MzQ4OX0._0kx5t0Yi6uAge5K9BFCh9PHs66YrW3sTY80yncTLeM";
 const supabase = createClient(SUPABASE_URL, SUPABASE_KEY);
+/* ================= SPLASH SCREEN JS ================= */
 
+const progressCircle = document.querySelector(".circle-progress");
+const progressText = document.getElementById("progressText");
+const splash = document.getElementById("splashScreen");
+const splashMessage = document.querySelector(".splash-text");
+
+let progress = 0;
+const circumference = 283; // 2πr, r=45
+let interval;
+let carregando = true;
+let internetTimeout;
+
+// -----------------------------
+// Função para checar internet real
+// -----------------------------
+async function checarInternet() {
+  try {
+    const response = await fetch("https://api.ipify.org?format=json", { cache: "no-cache" });
+    if (!response.ok) throw new Error("Sem internet real");
+    return true;
+  } catch {
+    return false;
+  }
+}
+
+// -----------------------------
+// Atualiza a barra
+// -----------------------------
+async function atualizarBarra() {
+  if (!carregando || progress >= 100) return;
+
+  const conectado = await checarInternet();
+
+  if (!conectado) {
+    // Se sem internet, inicia timer de 2 segundos para mensagem
+    if (!internetTimeout) {
+      internetTimeout = setTimeout(() => {
+        splashMessage.textContent = "Sem conexão com a internet. Verifique e tente novamente.";
+        clearInterval(interval);
+        carregando = false;
+      }, 2000);
+    }
+    return; // não incrementa
+  } else {
+    // Se voltou a conexão, limpa timer
+    if (internetTimeout) {
+      clearTimeout(internetTimeout);
+      internetTimeout = null;
+      if (carregando && progress < 100) {
+        splashMessage.textContent = "Aguarde, estamos carregando informações do banco de dados";
+      }
+    }
+  }
+
+  // Incrementa barra 1% a cada 50ms (~5s total)
+  progress = Math.min(progress + 1, 100);
+  progressText.textContent = progress + "%";
+
+  const offset = circumference - (circumference * progress / 100);
+  progressCircle.style.strokeDashoffset = offset;
+
+  // Efeito leve de cor nos pontos de travamento
+  if (progress === 20 || progress === 45 || progress === 70) {
+    progressCircle.style.stroke = "#00aaff";
+    setTimeout(() => (progressCircle.style.stroke = "#03305c"), 100);
+  }
+
+  // Finaliza splash
+  if (progress >= 100) {
+    clearInterval(interval);
+    setTimeout(() => {
+      splash.style.opacity = "0";
+      splash.style.transition = "opacity 0.5s";
+      setTimeout(() => (splash.style.display = "none"), 500);
+    }, 500);
+  }
+}
+
+// -----------------------------
+// Inicia o carregamento
+// -----------------------------
+interval = setInterval(atualizarBarra, 50);
+
+// -----------------------------
+// Detecta mudança de conexão
+// -----------------------------
+window.addEventListener("online", () => {
+  if (!carregando && progress < 100) {
+    carregando = true;
+    splashMessage.textContent = "Aguarde, estamos carregando informações do banco de dados";
+    interval = setInterval(atualizarBarra, 50);
+  }
+});
+
+window.addEventListener("offline", () => {
+  if (!internetTimeout && progress < 100) {
+    internetTimeout = setTimeout(() => {
+      splashMessage.textContent = "Sem conexão com a internet. Verifique e tente novamente.";
+      clearInterval(interval);
+      carregando = false;
+    }, 2000);
+  }
+});
 
 const btnMenu = document.getElementById("btnMenu");
 const sidebar = document.getElementById("sidebar");
