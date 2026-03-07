@@ -4,7 +4,6 @@ import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
 const SUPABASE_URL = "https://vixurbnyhalixuwyytjx.supabase.co";
 const SUPABASE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InZpeHVyYm55aGFsaXh1d3l5dGp4Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzI3MTc0ODksImV4cCI6MjA4ODI5MzQ4OX0._0kx5t0Yi6uAge5K9BFCh9PHs66YrW3sTY80yncTLeM";
 const supabase = createClient(SUPABASE_URL, SUPABASE_KEY);
-/* ================= SPLASH SCREEN JS ================= */
 
 const progressCircle = document.querySelector(".circle-progress");
 const progressText = document.getElementById("progressText");
@@ -116,6 +115,8 @@ window.addEventListener("offline", () => {
     autoplay: true,
     path: 'https://assets6.lottiefiles.com/packages/lf20_usmfx6bp.json' // Exemplo de animação
   });
+
+  
 const btnMenu = document.getElementById("btnMenu");
 const sidebar = document.getElementById("sidebar");
 const menuItens = document.querySelectorAll("#sidebar a"); // todos os links do menu
@@ -143,8 +144,8 @@ function adicionarEventosMobile() {
 
   // Fecha ao clicar em um item do menu
   menuItens.forEach(item => {
-    item.addEventListener("click", fecharSidebarMobile);
-  });
+  item.addEventListener("click", (e) => fecharSidebarMobile(e));
+});
 }
 
 function removerEventosMobile() {
@@ -162,8 +163,21 @@ function cliqueForaSidebar(e) {
 }
 
 // Fecha sidebar ao clicar em item do menu (apenas mobile)
-function fecharSidebarMobile() {
-  sidebar.classList.remove("active");
+function fecharSidebarMobile(e) {
+
+  const id = e.target.id;
+
+  // NÃO fechar se for o menu que abre o submenu
+  if (id === "menuClientes") return;
+
+  // Fechar apenas quando abrir páginas reais
+  if (
+    id === "menuCadastroClientes" ||
+    id === "menuDashboard" ||
+    id === "menuAdicionar"
+  ) {
+    sidebar.classList.remove("active");
+  }
 }
 
 // Configura inicialmente
@@ -230,41 +244,36 @@ if (closeBtn) {
 window.addEventListener("click", (e) => {
   if (e.target === modalDesenvolvedor) modalDesenvolvedor.style.display = "none";
 });
+// =================== FUNÇÃO ABRIR MENUS ===================
 
-// =================== funçao abrir menus =====
 // PEGAR MENUS
 const menuDashboard = document.getElementById("menuDashboard");
 const menuAdicionar = document.getElementById("menuAdicionar");
+const menuCadastroClientes = document.getElementById("menuCadastroClientes"); // NOVO MENU
 
 // PEGAR SEÇÕES
 const dashboard = document.getElementById("dashboard");
 const cadastroProdutos = document.getElementById("cadastroProdutos");
+const cadastroClientes = document.getElementById("cadastroClientes"); // NOVA SEÇÃO
 
 // TODAS AS SEÇÕES
 const secoes = document.querySelectorAll(".secao");
 
+// FUNÇÃO PARA ABRIR QUALQUER SEÇÃO
 function abrirSecao(secaoAtiva) {
-
-  // esconder todas
+  // Esconder todas
   secoes.forEach(secao => {
     secao.style.display = "none";
   });
 
-  // mostrar a selecionada
+  // Mostrar a selecionada
   secaoAtiva.style.display = "block";
 }
 
-
-// CLICK DASHBOARD
-menuDashboard.addEventListener("click", () => {
-  abrirSecao(dashboard);
-});
-
-
-// CLICK ADICIONAR PRODUTO
-menuAdicionar.addEventListener("click", () => {
-  abrirSecao(cadastroProdutos);
-});
+// CLICK NOS MENUS
+menuDashboard.addEventListener("click", () => abrirSecao(dashboard));
+menuAdicionar.addEventListener("click", () => abrirSecao(cadastroProdutos));
+menuCadastroClientes.addEventListener("click", () => abrirSecao(cadastroClientes)); // NOVO CLICK
 // =================== MODAL LOGOUT ===================
 const modalLogout = document.getElementById("modalLogout");
 const logoutBtn = document.getElementById("logoutBtn");

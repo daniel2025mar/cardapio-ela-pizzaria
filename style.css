@@ -1461,3 +1461,177 @@ header .header-text p.empresaNome {
   75%  { transform: scale(1.2) translateX(5px); }
   100% { transform: scale(1) translateX(0); }
 }
+
+/* ===================== CADASTRO DE CLIENTES ===================== */
+
+#cadastroClientes {
+  padding-top: 35px;
+}
+
+/* Texto de instrução fora do formulário */
+#cadastroClientes .cadastro-instrucao {
+  font-size: 16px;
+  color: #000000;
+  margin-bottom: 20px;
+  text-align: left;
+}
+
+/* Card do formulário */
+#cadastroClientes .cadastro-text {
+  max-width: 1000px;
+  background-color: #ffffff;
+  padding: 40px 30px;
+  border-radius: 15px;
+  box-shadow: 0 8px 25px rgba(0,0,0,0.1);
+  transition: transform 0.2s ease;
+  margin: 0 auto;
+}
+
+#cadastroClientes .cadastro-text:hover {
+  transform: translateY(-3px);
+}
+
+/* Título */
+#cadastroClientes .cadastro-text h2 {
+  font-size: 28px;
+  color: #1e90ff;
+  margin-bottom: 15px;
+  text-align: center;
+}
+
+/* Formulário */
+#cadastroClientes form {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  width: 100%;
+}
+
+/* Código + CPF lado a lado */
+#form-row-codigo-cpf {
+  display: flex;
+  gap: 20px;
+}
+
+#form-row-codigo-cpf #codigoCliente {
+  flex: 0 0 120px;
+}
+
+#form-row-codigo-cpf #cpfCliente {
+  flex: 1;
+}
+
+/* Inputs */
+#cadastroClientes input[type="text"],
+#cadastroClientes input[type="email"],
+#cadastroClientes input[type="tel"],
+#cadastroClientes input[type="date"],
+#cadastroClientes input[type="number"],
+#cadastroClientes input[type="file"] {
+  padding: 14px;
+  border: 1px solid #ccc;
+  border-radius: 10px;
+  font-size: 15px;
+  width: 100%;
+  background-color: #fafafa;
+  color: #333;
+  transition: all 0.3s ease;
+}
+
+#cadastroClientes input:focus {
+  border-color: #1e90ff;
+  box-shadow: 0 0 10px rgba(30,144,255,0.2);
+  outline: none;
+}
+
+#cadastroClientes input[readonly] {
+  background-color: #e0e0e0;
+  cursor: not-allowed;
+}
+
+/* Botão */
+#cadastroClientes button#btnCadastrarCliente {
+  padding: 14px 0;
+  background: #1e90ff;
+  color: #fff;
+  font-size: 16px;
+  font-weight: 600;
+  border: none;
+  border-radius: 12px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  margin-top: 15px;
+}
+
+#cadastroClientes button#btnCadastrarCliente:hover {
+  background: #1464b3;
+  transform: translateY(-2px);
+}
+
+/* ===================== RESPONSIVO ===================== */
+
+@media screen and (max-width: 1024px) {
+
+  #cadastroClientes .cadastro-text {
+    max-width: 800px;
+  }
+
+}
+
+@media screen and (max-width: 768px) {
+
+  #cadastroClientes {
+    padding: 30px 15px;
+  }
+
+  #cadastroClientes .cadastro-text {
+    padding: 30px 20px;
+    max-width: 100%;
+    border-radius: 10px;
+  }
+
+  #cadastroClientes form {
+    gap: 15px;
+  }
+
+  /* Código pequeno e CPF maior */
+  #form-row-codigo-cpf {
+    display: flex;
+    gap: 10px;
+  }
+
+  #form-row-codigo-cpf #codigoCliente {
+    flex: 0 0 90px;
+  }
+
+  #form-row-codigo-cpf #cpfCliente {
+    flex: 1;
+  }
+
+  #cadastroClientes input {
+    height: 44px;
+  }
+
+}
+
+@media screen and (max-width: 480px) {
+
+  #cadastroClientes .cadastro-text h2 {
+    font-size: 24px;
+  }
+
+  #cadastroClientes .cadastro-instrucao {
+    font-size: 14px;
+  }
+
+  #cadastroClientes input {
+    font-size: 14px;
+    padding: 12px;
+  }
+
+  #cadastroClientes button#btnCadastrarCliente {
+    font-size: 15px;
+    padding: 12px 0;
+  }
+
+}

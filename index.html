@@ -58,7 +58,7 @@
   </a>
   <ul class="submenu">
     <li><a href="#">Lista de Clientes</a></li>
-    <li><a href="#">Cadastro de Clientes</a></li>
+    <li><a href="#" id="menuCadastroClientes">Cadastro de Clientes</a></li>
   </ul>
 </li>
   <li><a href="#" id="menuCaixa"><i class="fas fa-cash-register"></i> Caixa</a></li>
@@ -87,6 +87,7 @@
     </div>
   </div>
 
+  
   <!-- CARDS PRINCIPAIS -->
   <div class="info-cards">
 
@@ -162,6 +163,66 @@
   <div id="cardapioContainer"></div>
 
       </div>
+       
+     <!-- ===================== CADASTRO DE CLIENTES ===================== -->
+<div id="cadastroClientes" class="secao">
+
+  <!-- Título fora do card, alinhado à esquerda -->
+  <h2 class="cadastro-titulo">Cadastro de Cliente</h2>
+
+  <!-- Texto de instrução fora do card, alinhado à esquerda -->
+  <div class="cadastro-instrucao">
+    Preencha os dados do cliente para cadastrá-lo no sistema.
+  </div>
+
+  <!-- Card do formulário -->
+  <div class="cadastro-text">
+    <form id="formCadastroCliente">
+
+      <!-- Agrupamento Código + CPF lado a lado -->
+<div id="form-row-codigo-cpf">
+  <!-- Código do cliente (gerado automaticamente, readonly) -->
+  <div class="form-group-codigo-cpf">
+    <label for="codigoCliente">Código do Cliente</label>
+    <input type="text" id="codigoCliente" placeholder="Gerado automaticamente" readonly>
+  </div>
+
+  <!-- CPF -->
+  <div class="form-group-codigo-cpf">
+    <label for="cpfCliente">CPF</label>
+    <input type="text" id="cpfCliente" placeholder="Digite o CPF">
+  </div>
+</div>
+      <!-- Nome -->
+      <label for="nomeCliente">Nome</label>
+      <input type="text" id="nomeCliente" placeholder="Digite o nome completo">
+
+  
+      <!-- Telefone -->
+      <label for="telefoneCliente">Telefone</label>
+      <input type="tel" id="telefoneCliente" placeholder="Digite o telefone">
+
+      <!-- E-mail -->
+      <label for="emailCliente">E-mail</label>
+      <input type="email" id="emailCliente" placeholder="Digite o e-mail">
+
+      <!-- Data de nascimento -->
+      <label for="dataNascimento">Data de Nascimento</label>
+      <input type="date" id="dataNascimento">
+
+      <!-- Limite de crédito -->
+      <label for="limiteCredito">Limite de Crédito</label>
+      <input type="number" id="limiteCredito" placeholder="Digite o limite de crédito">
+
+      <!-- Foto do cliente -->
+      <label for="fotoCliente">Foto do Cliente</label>
+      <input type="file" id="fotoCliente" accept="image/*">
+
+      <!-- Botão de cadastro -->
+      <button type="submit" id="btnCadastrarCliente">Cadastrar Cliente</button>
+    </form>
+  </div>
+</div>
 
       <!--Cadastro de Produtos-->
       <div id="cadastroProdutos" class="secao">
