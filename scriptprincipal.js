@@ -306,6 +306,119 @@ btnNaoLogout?.addEventListener("click", () => {
   modalLogout.style.display = "none";
 });
 
+// Seleciona elementos do novo modal
+const modalAlerta = document.getElementById('modalAlerta');
+const modalTextoAlerta = document.getElementById('modalTextoAlerta');
+const modalOkAlerta = document.getElementById('modalOkAlerta');
+const modalCloseAlerta = document.getElementById('modalCloseAlerta');
+
+// Função para mostrar o novo modal
+function mostrarModalAlerta(msg) {
+  modalTextoAlerta.textContent = msg;
+  modalAlerta.style.display = 'flex';
+}
+
+// Fechar ao clicar no X ou OK
+modalOkAlerta.addEventListener('click', () => { modalAlerta.style.display = 'none'; });
+modalCloseAlerta.addEventListener('click', () => { modalAlerta.style.display = 'none'; });
+
+// Fechar clicando fora da caixa
+window.addEventListener('click', (e) => {
+  if (e.target === modalAlerta) modalAlerta.style.display = 'none';
+});
+const form = document.getElementById('formCadastroCliente');
+
+form.addEventListener('submit', async (e) => {
+  e.preventDefault();
+
+  const codigoCliente = document.getElementById('codigoCliente').value;
+  const cpf = document.getElementById('cpfCliente').value;
+  const nome = document.getElementById('nomeCliente').value.trim(); // trim para remover espaços
+  const telefone = document.getElementById('telefoneCliente').value;
+  const email = document.getElementById('emailCliente').value;
+  const dataNascimento = document.getElementById('dataNascimento').value;
+  const limiteCredito = document.getElementById('limiteCredito').value;
+  const foto = document.getElementById('fotoCliente').files[0];
+
+  // 0️⃣ Validar se o nome está vazio
+  if (!nome) {
+    mostrarModalAlerta('O campo "Nome" é obrigatório!');
+    return; // não permite continuar
+  }
+
+  // 1️⃣ Verificar se o CPF já existe
+  const { data: cpfExistente, error: cpfError } = await supabase
+    .from('clientes')
+    .select('id')
+    .eq('cpf', cpf)
+    .limit(1);
+
+  if (cpfError) {
+    console.error('Erro ao verificar CPF:', cpfError);
+    return;
+  }
+
+  if (cpfExistente.length > 0) {
+    mostrarModalAlerta('Este CPF já está cadastrado no sistema!');
+    return; // não permite continuar o cadastro
+  }
+
+  // 2️⃣ Upload da foto (se houver)
+  let fotoUrl = null;
+  if (foto) {
+    const { data, error } = await supabase.storage
+      .from('fotos-clientes')
+      .upload(`fotos/${codigoCliente}_${foto.name}`, foto);
+
+    if (error) {
+      console.error('Erro ao enviar foto:', error);
+    } else {
+      fotoUrl = data.path;
+    }
+  }
+
+  // 3️⃣ Inserir cliente
+  const { data, error } = await supabase
+    .from('clientes')
+    .insert([
+      {
+        codigo_cliente: codigoCliente,
+        cpf,
+        nome,
+        telefone,
+        email,
+        data_nascimento: dataNascimento,
+        limite_credito: limiteCredito,
+        foto_url: fotoUrl
+      }
+    ]);
+
+  if (error) {
+    console.error('Erro ao cadastrar cliente:', error);
+  } else {
+    alert('Cliente cadastrado com sucesso!');
+    form.reset();
+  }
+});
+
+
+// ============ mostra o total de clientes =============
+async function atualizarTotalClientes() {
+  const { count, error } = await supabase
+    .from('clientes')
+    .select('*', { count: 'exact' })  // Faz a contagem exata
+  if (error) {
+    console.error('Erro ao buscar total de clientes:', error)
+    return
+  }
+
+  const totalElement = document.getElementById('totalClientes')
+  totalElement.textContent = count || 0
+}
+
+// Chama a função quando a página carregar
+window.addEventListener('DOMContentLoaded', atualizarTotalClientes)
+
 // =================== MODAL EMPRESA ===================
 document.addEventListener("DOMContentLoaded", async () => {
   const modalEmpresaNovo = document.getElementById("modalEmpresaNovo");
