@@ -1,121 +1,134 @@
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
 
+// ===================impede o zoom ===============================
+// Bloquear zoom no celular (pinça)
+window.addEventListener('touchstart', function (e) {
+  if (e.touches.length > 1) {
+    e.preventDefault(); // evita zoom por multi-touch
+  }
+}, { passive: false });
+
+window.addEventListener('gesturestart', function (e) {
+  e.preventDefault(); // iOS Safari
+});
+
+// Bloquear zoom no desktop (Ctrl + scroll ou Ctrl + +/-)
+window.addEventListener('keydown', function (e) {
+  // 17 = Ctrl, 187 = +, 189 = -, 61 = + (alguns navegadores), 173 = -
+  if (e.ctrlKey && (
+      e.key === '+' || 
+      e.key === '-' || 
+      e.key === '=' || 
+      e.key === '_'
+    )) {
+    e.preventDefault();
+  }
+});
+
+window.addEventListener('wheel', function (e) {
+  if (e.ctrlKey) e.preventDefault(); // impede zoom com Ctrl + scroll
+}, { passive: false });
 // =================== SUPABASE ===================
 const SUPABASE_URL = "https://vixurbnyhalixuwyytjx.supabase.co";
 const SUPABASE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InZpeHVyYm55aGFsaXh1d3l5dGp4Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzI3MTc0ODksImV4cCI6MjA4ODI5MzQ4OX0._0kx5t0Yi6uAge5K9BFCh9PHs66YrW3sTY80yncTLeM";
 const supabase = createClient(SUPABASE_URL, SUPABASE_KEY);
 
+// ===================== SELEÇÃO DE ELEMENTOS =====================
 const progressCircle = document.querySelector(".circle-progress");
 const progressText = document.getElementById("progressText");
 const splash = document.getElementById("splashScreen");
 const splashMessage = document.querySelector(".splash-text");
+const circumference = 283; // 2πr, r=45
 
 let progress = 0;
-const circumference = 283; // 2πr, r=45
 let interval;
 let carregando = true;
-let internetTimeout;
+let travado = false;
 
-// -----------------------------
-// Função para checar internet real
-// -----------------------------
-async function checarInternet() {
-  try {
-    const response = await fetch("https://api.ipify.org?format=json", { cache: "no-cache" });
-    if (!response.ok) throw new Error("Sem internet real");
-    return true;
-  } catch {
-    return false;
-  }
+// ===================== INICIALIZAÇÃO DO CÍRCULO =====================
+progressCircle.style.strokeDasharray = circumference;
+progressCircle.style.strokeDashoffset = circumference;
+progressCircle.style.transition = "stroke-dashoffset 0.05s linear";
+
+// ===================== CHECAGEM DE INTERNET =====================
+function temInternet() {
+    return navigator.onLine;
 }
 
-// -----------------------------
-// Atualiza a barra
-// -----------------------------
-async function atualizarBarra() {
-  if (!carregando || progress >= 100) return;
-
-  const conectado = await checarInternet();
-
-  if (!conectado) {
-    // Se sem internet, inicia timer de 2 segundos para mensagem
-    if (!internetTimeout) {
-      internetTimeout = setTimeout(() => {
-        splashMessage.textContent = "Sem conexão com a internet. Verifique e tente novamente.";
-        clearInterval(interval);
+// ===================== ATUALIZAÇÃO DA BARRA =====================
+function atualizarBarra() {
+    // Sem internet: pausa
+    if (!temInternet()) {
         carregando = false;
-      }, 2000);
+        splashMessage.textContent = "❌ Sem conexão com a internet!";
+        progressCircle.style.stroke = "#ff0000";
+        return;
     }
-    return; // não incrementa
-  } else {
-    // Se voltou a conexão, limpa timer
-    if (internetTimeout) {
-      clearTimeout(internetTimeout);
-      internetTimeout = null;
-      if (carregando && progress < 100) {
-        splashMessage.textContent = "Aguarde, estamos carregando informações do banco de dados";
-      }
+
+    // Internet voltou
+    if (!carregando) {
+        carregando = true;
+        splashMessage.textContent = "Preparando tudo para você… ⏳";
+        progressCircle.style.stroke = "#00aaff";
     }
-  }
 
-  // Incrementa barra 1% a cada 50ms (~5s total)
-  progress = Math.min(progress + 1, 100);
-  progressText.textContent = progress + "%";
+    // Travamentos em pontos específicos
+    const travamentos = [30, 55, 80];
+    if (travamentos.includes(progress) && !travado) {
+        travado = true;
+        setTimeout(() => { travado = false; }, 800); // pausa 0.8s
+        return;
+    }
 
-  const offset = circumference - (circumference * progress / 100);
-  progressCircle.style.strokeDashoffset = offset;
+    // Incrementa progresso
+    progress = Math.min(progress + 1, 100);
+    progressText.textContent = progress + "%";
 
-  // Efeito leve de cor nos pontos de travamento
-  if (progress === 20 || progress === 45 || progress === 70) {
-    progressCircle.style.stroke = "#00aaff";
-    setTimeout(() => (progressCircle.style.stroke = "#03305c"), 100);
-  }
+    // Atualiza círculo
+    const offset = circumference - (circumference * progress / 100);
+    progressCircle.style.strokeDashoffset = offset;
 
-  // Finaliza splash
-  if (progress >= 100) {
-    clearInterval(interval);
-    setTimeout(() => {
-      splash.style.opacity = "0";
-      splash.style.transition = "opacity 0.5s";
-      setTimeout(() => (splash.style.display = "none"), 500);
-    }, 500);
-  }
+    // Efeito de cor
+    if ([20, 45, 70].includes(progress)) {
+        progressCircle.style.stroke = "#0004ff";
+        setTimeout(() => (progressCircle.style.stroke = "#03305c"), 150);
+    }
+
+    // Concluído
+    if (progress >= 100) {
+        clearInterval(interval);
+        splash.style.transition = "opacity 0.5s";
+        splash.style.opacity = 0;
+        setTimeout(() => (splash.style.display = "none"), 500);
+    }
 }
 
-// -----------------------------
-// Inicia o carregamento
-// -----------------------------
+// ===================== INICIA CARREGAMENTO =====================
 interval = setInterval(atualizarBarra, 50);
 
-// -----------------------------
-// Detecta mudança de conexão
-// -----------------------------
+// ===================== EVENTOS ONLINE/OFFLINE =====================
 window.addEventListener("online", () => {
-  if (!carregando && progress < 100) {
-    carregando = true;
-    splashMessage.textContent = "Preparando tudo para você… ⏳";
-    interval = setInterval(atualizarBarra, 50);
-  }
+    if (!carregando && progress < 100) {
+        carregando = true;
+        splashMessage.textContent = "Preparando tudo para você… ⏳";
+        progressCircle.style.stroke = "#0011ff";
+    }
 });
 
 window.addEventListener("offline", () => {
-  if (!internetTimeout && progress < 100) {
-    internetTimeout = setTimeout(() => {
-      splashMessage.textContent = "Não conseguimos conectar 😕 Verifique sua internet e tente novamente.";
-      clearInterval(interval);
-      carregando = false;
-    }, 2000);
-  }
+    carregando = false;
+    splashMessage.textContent = "❌ Sem conexão com a internet!";
+    progressCircle.style.stroke = "#ff0000";
 });
 
- lottie.loadAnimation({
+// ===================== LOTTIE =====================
+lottie.loadAnimation({
     container: document.getElementById('lottieSplash'),
     renderer: 'svg',
     loop: true,
     autoplay: true,
-    path: 'https://assets6.lottiefiles.com/packages/lf20_usmfx6bp.json' // Exemplo de animação
-  });
-
+    path: 'https://assets6.lottiefiles.com/packages/lf20_usmfx6bp.json'
+});
   
 const btnMenu = document.getElementById("btnMenu");
 const sidebar = document.getElementById("sidebar");

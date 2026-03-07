@@ -5,6 +5,34 @@ const SUPABASE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZ
 
 const supabase = createClient(SUPABASE_URL, SUPABASE_KEY);
 
+//==================== impede o zoom ===========================================
+// Bloquear zoom no celular (pinça)
+window.addEventListener('touchstart', function (e) {
+  if (e.touches.length > 1) {
+    e.preventDefault(); // evita zoom por multi-touch
+  }
+}, { passive: false });
+
+window.addEventListener('gesturestart', function (e) {
+  e.preventDefault(); // iOS Safari
+});
+
+// Bloquear zoom no desktop (Ctrl + scroll ou Ctrl + +/-)
+window.addEventListener('keydown', function (e) {
+  // 17 = Ctrl, 187 = +, 189 = -, 61 = + (alguns navegadores), 173 = -
+  if (e.ctrlKey && (
+      e.key === '+' || 
+      e.key === '-' || 
+      e.key === '=' || 
+      e.key === '_'
+    )) {
+    e.preventDefault();
+  }
+});
+
+window.addEventListener('wheel', function (e) {
+  if (e.ctrlKey) e.preventDefault(); // impede zoom com Ctrl + scroll
+}, { passive: false });
 // =================== FUNÇÃO PARA ATUALIZAR NOME DA EMPRESA ===================
 
 async function atualizarNomeEmpresa() {
