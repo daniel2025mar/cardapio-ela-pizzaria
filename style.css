@@ -1415,6 +1415,7 @@ header .header-text p.empresaNome {
     height:100%;
   }
 
+  
   .circle-bg, .circle-progress{
     stroke-width:6; /* menor stroke no celular */
   }
@@ -1427,4 +1428,36 @@ header .header-text p.empresaNome {
     font-size:13px;
     padding:0 10px;
   }
+}
+
+.bouncing-loader {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 6px;
+  margin-top: 10px;
+}
+
+.bouncing-loader div {
+  width: 14px;
+  height: 14px;
+  background-color: #1dd1a1;
+  border-radius: 50%;
+  animation: bounce 0.6s infinite alternate;
+}
+
+.bouncing-loader div:nth-child(2) {
+  animation-delay: 0.15s;
+}
+
+.bouncing-loader div:nth-child(3) {
+  animation-delay: 0.3s;
+}
+
+@keyframes bounce {
+  0%   { transform: scale(1) translateX(0); }
+  25%  { transform: scale(1.2) translateX(5px); }
+  50%  { transform: scale(1) translateX(10px); }
+  75%  { transform: scale(1.2) translateX(5px); }
+  100% { transform: scale(1) translateX(0); }
 }

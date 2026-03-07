@@ -94,7 +94,7 @@ interval = setInterval(atualizarBarra, 50);
 window.addEventListener("online", () => {
   if (!carregando && progress < 100) {
     carregando = true;
-    splashMessage.textContent = "Aguarde, estamos carregando informações do banco de dados";
+    splashMessage.textContent = "Preparando tudo para você… ⏳";
     interval = setInterval(atualizarBarra, 50);
   }
 });
@@ -102,13 +102,20 @@ window.addEventListener("online", () => {
 window.addEventListener("offline", () => {
   if (!internetTimeout && progress < 100) {
     internetTimeout = setTimeout(() => {
-      splashMessage.textContent = "Sem conexão com a internet. Verifique e tente novamente.";
+      splashMessage.textContent = "Não conseguimos conectar 😕 Verifique sua internet e tente novamente.";
       clearInterval(interval);
       carregando = false;
     }, 2000);
   }
 });
 
+ lottie.loadAnimation({
+    container: document.getElementById('lottieSplash'),
+    renderer: 'svg',
+    loop: true,
+    autoplay: true,
+    path: 'https://assets6.lottiefiles.com/packages/lf20_usmfx6bp.json' // Exemplo de animação
+  });
 const btnMenu = document.getElementById("btnMenu");
 const sidebar = document.getElementById("sidebar");
 const menuItens = document.querySelectorAll("#sidebar a"); // todos os links do menu
