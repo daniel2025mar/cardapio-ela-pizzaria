@@ -376,24 +376,200 @@ document.addEventListener("DOMContentLoaded", () => {
   gerarCodigoCliente();
 });
 
-// ================= MÁSCARA CPF =================
-const cpfInput = document.getElementById("cpfCliente");
 
-if (cpfInput) {
-  cpfInput.addEventListener("input", function () {
-    let valor = this.value.replace(/\D/g, ""); // remove tudo que não é número
-    valor = valor.substring(0, 11); // limita a 11 dígitos
-    valor = valor.replace(/(\d{3})(\d)/, "$1.$2");
-    valor = valor.replace(/(\d{3})(\d)/, "$1.$2");
-    valor = valor.replace(/(\d{3})(\d{1,2})$/, "$1-$2");
-    this.value = valor;
-  });
+document.addEventListener("DOMContentLoaded", async () => {
+  const userNameSpan = document.querySelector(".sidebar-footer .user-name");
+  const userRoleSpan = document.querySelector(".sidebar-footer .user-role");
 
-  // opcional: impedir colar caracteres inválidos
-  cpfInput.addEventListener("paste", function (e) {
-    e.preventDefault();
-  });
+  const usuarioNome = localStorage.getItem("usuarioNome"); // pega o nome do usuário logado
+
+  if(userNameSpan && usuarioNome){
+    userNameSpan.textContent = usuarioNome; // atualiza o span com o usuário logado
+  }
+
+  if(userRoleSpan && usuarioNome){
+    try {
+      const { data, error } = await supabase
+        .from("usuarios")
+        .select("cargo")
+        .eq("username", usuarioNome)
+        .single();
+
+      if(error){
+        console.error("Erro ao buscar cargo:", error);
+        userRoleSpan.textContent = "Usuário"; // fallback
+      } else if(data && data.cargo){
+        userRoleSpan.textContent = data.cargo; // atualiza o cargo no sidebar
+      } else {
+        userRoleSpan.textContent = "Usuário"; // fallback
+      }
+
+    } catch(err){
+      console.error("Erro inesperado ao buscar cargo:", err);
+      userRoleSpan.textContent = "Usuário"; // fallback
+    }
+  }
+});
+
+// -----------------------------
+// Seletores do modal
+// -----------------------------
+const modalAlterarSenha = document.getElementById("modalAlterarSenha");
+const closeModalAlterarSenha = modalAlterarSenha.querySelector(".close");
+const formAlterarSenhaUnique = document.getElementById("formAlterarSenha_unique");
+const mensagemSenhaUnique = document.getElementById("mensagemSenha_unique");
+const senhaAtualInputUnique = document.getElementById("senhaAtual_unique");
+const novaSenhaInput = document.getElementById("novaSenha_unique");
+const confirmarSenhaInput = document.getElementById("confirmarSenha_unique");
+const sidebarFooter = document.querySelector(".sidebar-footer");
+
+// -----------------------------
+// Função para alternar visibilidade da senha
+// -----------------------------
+function toggleSenha(input, icon) {
+  if (input.type === "password") {
+    input.type = "text";
+    icon.classList.remove("fa-eye");
+    icon.classList.add("fa-eye-slash");
+  } else {
+    input.type = "password";
+    icon.classList.remove("fa-eye-slash");
+    icon.classList.add("fa-eye");
+  }
 }
+
+// -----------------------------
+// Adicionar ícones dentro do input (direita)
+// -----------------------------
+[novaSenhaInput, confirmarSenhaInput].forEach(input => {
+  const wrapper = document.createElement("div");
+  wrapper.classList.add("input-eye-wrapper");
+  input.parentNode.insertBefore(wrapper, input);
+  wrapper.appendChild(input);
+
+  const icon = document.createElement("i");
+  icon.classList.add("fa", "fa-eye", "eye-icon"); // Font Awesome
+  icon.style.position = "absolute";
+  icon.style.right = "12px";
+  icon.style.top = "50%";
+  icon.style.transform = "translateY(-50%)";
+  icon.style.cursor = "pointer";
+  wrapper.style.position = "relative";
+  wrapper.appendChild(icon);
+
+  icon.addEventListener("click", () => toggleSenha(input, icon));
+});
+
+// -----------------------------
+// Abrir modal (somente ao clicar no footer)
+// -----------------------------
+async function abrirModalAlterarSenha() {
+  modalAlterarSenha.style.display = "flex"; // centralizado
+  formAlterarSenhaUnique.reset();
+  mensagemSenhaUnique.style.color = "red";
+  mensagemSenhaUnique.textContent = "";
+
+  const usuarioNome = localStorage.getItem("usuarioNome");
+  if (!usuarioNome || !senhaAtualInputUnique) return;
+
+  try {
+    const { data, error } = await supabase
+      .from("usuarios")
+      .select("password")
+      .eq("username", usuarioNome)
+      .single();
+
+    senhaAtualInputUnique.value = (!error && data && data.password) ? data.password : "";
+  } catch (err) {
+    console.error("Erro ao buscar senha atual:", err);
+    senhaAtualInputUnique.value = "";
+  }
+}
+
+// -----------------------------
+// Evento para abrir modal apenas ao clicar no sidebar-footer
+// -----------------------------
+if (sidebarFooter) {
+  sidebarFooter.style.cursor = "pointer";
+  sidebarFooter.addEventListener("click", abrirModalAlterarSenha);
+}
+
+// -----------------------------
+// Fecha modal
+// -----------------------------
+closeModalAlterarSenha.addEventListener("click", () => {
+  modalAlterarSenha.style.display = "none";
+  formAlterarSenhaUnique.reset();
+  mensagemSenhaUnique.textContent = "";
+});
+
+window.addEventListener("click", (e) => {
+  if (e.target === modalAlterarSenha) {
+    modalAlterarSenha.style.display = "none";
+    formAlterarSenhaUnique.reset();
+    mensagemSenhaUnique.textContent = "";
+  }
+});
+
+// -----------------------------
+// Enviar formulário para alterar senha
+// -----------------------------
+formAlterarSenhaUnique.addEventListener("submit", async (e) => {
+  e.preventDefault();
+
+  const usuarioNome = localStorage.getItem("usuarioNome");
+  const novaSenha = novaSenhaInput.value.trim();
+  const confirmarSenha = confirmarSenhaInput.value.trim();
+
+  if (novaSenha !== confirmarSenha) {
+    mensagemSenhaUnique.textContent = "A nova senha e a confirmação não coincidem!";
+    return;
+  }
+
+  try {
+    const { data, error } = await supabase
+      .from("usuarios")
+      .select("password")
+      .eq("username", usuarioNome)
+      .single();
+
+    if (error || !data || !data.password) {
+      mensagemSenhaUnique.textContent = "Erro ao buscar dados do usuário!";
+      return;
+    }
+
+    const senhaAtual = data.password;
+
+    if (novaSenha === senhaAtual) {
+      mensagemSenhaUnique.textContent = "Não é possível salvar a mesma senha atual!";
+      return;
+    }
+
+    const { error: erroAtualizar } = await supabase
+      .from("usuarios")
+      .update({ password: novaSenha })
+      .eq("username", usuarioNome);
+
+    if (erroAtualizar) {
+      mensagemSenhaUnique.textContent = "Erro ao atualizar a senha!";
+      return;
+    }
+
+    mensagemSenhaUnique.style.color = "lightgreen";
+    mensagemSenhaUnique.textContent = "Senha alterada com sucesso!";
+    formAlterarSenhaUnique.reset();
+
+    setTimeout(() => {
+      modalAlterarSenha.style.display = "none";
+      mensagemSenhaUnique.textContent = "";
+      mensagemSenhaUnique.style.color = "red";
+    }, 2000);
+
+  } catch (err) {
+    console.error("Erro inesperado:", err);
+    mensagemSenhaUnique.textContent = "Ocorreu um erro inesperado!";
+  }
+});
 
 // ================= CADASTRO DE CLIENTES =================
 const form = document.getElementById("formCadastroCliente");

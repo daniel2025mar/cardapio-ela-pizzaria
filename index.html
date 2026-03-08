@@ -48,24 +48,34 @@
 
     <!-- SIDEBAR MENUS -->
     <aside class="sidebar" id="sidebar">
-      <ul>
-  <li><a href="#" id="menuDashboard"><i class="fas fa-tachometer-alt"></i> Dashboard</a></li>
-  <li><a href="#" id="menuAdicionar"><i class="fas fa-plus-circle"></i> Cadastrar Produto</a></li>
-  <li class="menu-com-submenu">
-  <a href="#" id="menuClientes">
-    <i class="fas fa-users"></i> Clientes
-    <i class="fas fa-chevron-down setinha"></i>
-  </a>
-  <ul class="submenu">
-    <li><a href="#">Lista de Clientes</a></li>
-    <li><a href="#" id="menuCadastroClientes">Cadastro de Clientes</a></li>
+  <ul>
+    <li><a href="#" id="menuDashboard"><i class="fas fa-tachometer-alt"></i> Dashboard</a></li>
+    <li><a href="#" id="menuAdicionar"><i class="fas fa-plus-circle"></i> Cadastrar Produto</a></li>
+    <li class="menu-com-submenu">
+      <a href="#" id="menuClientes">
+        <i class="fas fa-users"></i> Clientes
+        <i class="fas fa-chevron-down setinha"></i>
+      </a>
+      <ul class="submenu">
+        <li><a href="#">Lista de Clientes</a></li>
+        <li><a href="#" id="menuCadastroClientes">Cadastro de Clientes</a></li>
+      </ul>
+    </li>
+    <li><a href="#" id="menuCaixa"><i class="fas fa-cash-register"></i> Caixa</a></li>
+    <li><a href="#" id="confBtn"><i class="fas fa-cog"></i> Configuração</a></li>
+    <li><a href="#" id="logoutBtn"><i class="fas fa-sign-out-alt"></i> Logout</a></li>
   </ul>
-</li>
-  <li><a href="#" id="menuCaixa"><i class="fas fa-cash-register"></i> Caixa</a></li>
-  <li><a href="#" id="confBtn"><i class="fas fa-cog"></i> Configuração</a></li>
-  <li><a href="#" id="logoutBtn"><i class="fas fa-sign-out-alt"></i> Logout</a></li>
-</ul>
-    </aside>
+
+  <!-- Rodapé com usuário -->
+  <div class="sidebar-footer-line"></div>
+<div class="sidebar-footer">
+  <i class="fas fa-user-circle user-icon"></i>
+  <div class="user-info">
+    <span class="user-name">Nome User</span>
+    <span class="user-role">Administrador</span>
+  </div>
+</div>
+</aside>
 
     <!-- CONTEÚDO PRINCIPAL -->
     <main class="main-content">
@@ -527,7 +537,26 @@
   </div>
 </div>
 
+<!-- Modal de Alteração de Senha -->
+<div id="modalAlterarSenha" class="modalAlterarSenha">
+  <div class="modal-content-alterar-senha">
+    <span class="close">&times;</span>
+    <h2>Alterar Senha</h2>
+    <form id="formAlterarSenha_unique">
+      <label for="senhaAtual_unique">Senha Atual:</label>
+      <input type="password" id="senhaAtual_unique" disabled>
 
+      <label for="novaSenha_unique">Nova Senha:</label>
+      <input type="password" id="novaSenha_unique" required>
+
+      <label for="confirmarSenha_unique">Confirmar Nova Senha:</label>
+      <input type="password" id="confirmarSenha_unique" required>
+
+      <button type="submit">Salvar</button>
+    </form>
+    <p id="mensagemSenha_unique" style="color:rgb(230, 54, 54); margin-top:10px;"></p>
+  </div>
+</div>
 <!-- Novo Modal de alerta -->
 <div id="modalAlerta" class="modal">
   <div class="modal-content">

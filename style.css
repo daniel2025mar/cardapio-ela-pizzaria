@@ -168,6 +168,7 @@ header .header-text p.empresaNome {
   padding: 8px 0;
   border-bottom: 1px solid #eee;
 }
+
 /* SIDEBAR fixed mas limitado */
 .sidebar {
   width: 200px;
@@ -185,6 +186,64 @@ header .header-text p.empresaNome {
   z-index: 10;
 }
 
+
+/* Footer do sidebar (usuário) */
+/* ================= Linha separadora acima do footer ================= */
+.sidebar-footer-line {
+  width: 100%;
+  height: 2px;
+  background-color: #1e8fff00;
+  margin-bottom: 5px; /* espaço entre linha e footer */
+  margin-top: 60px;   /* mantém no desktop */
+  cursor: pointer;
+}
+
+/* ================= Footer do sidebar (usuário) ================= */
+.sidebar-footer {
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 20px 15px;
+  margin-top: auto;   /* mantém o footer empurrado para baixo */
+  position: relative;
+}
+
+.sidebar-footer .user-icon {
+  font-size: 32px;
+  color: #1e90ff;
+}
+
+.sidebar-footer .user-info {
+  display: flex;
+  flex-direction: column;
+}
+
+.sidebar-footer .user-name {
+  font-weight: bold;
+  color: #fff;
+}
+
+.sidebar-footer .user-role {
+  font-size: 12px;
+  color: #aaa;
+}
+
+/* ================= RESPONSIVO: Celular e tablets ================= */
+@media (max-width: 1024px) {
+  .sidebar {
+    display: flex;
+    flex-direction: column;
+    height: 87vh;  /* ocupa toda a altura da tela */
+  }
+
+ 
+
+
+  .sidebar-footer {
+    margin-top: auto; /* força o footer para o rodapé */
+  }
+}
 .sidebar.active {
   transform: translateX(0);
 }
@@ -1713,4 +1772,207 @@ header .header-text p.empresaNome {
 @keyframes slideUp {
   from { transform: translateY(-30px); opacity: 0; }
   to { transform: translateY(0); opacity: 1; }
+}
+
+/* ----------------------------- */
+/* Fundo do modal */
+/* ----------------------------- */
+.modalAlterarSenha {
+  display: none; /* escondido por padrão */
+  position: fixed;
+  z-index: 9999; /* acima de todos */
+  left: 0;
+  top: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.7); /* fundo escuro */
+  backdrop-filter: blur(5px); /* efeito blur atrás do modal */
+  justify-content: center;
+  align-items: center; /* centraliza vertical e horizontal */
+  animation: fadeIn 0.3s ease;
+  padding: 10px; /* para não encostar nas bordas do celular */
+  box-sizing: border-box;
+  overflow: hidden; /* impede scroll do modal */
+}
+
+/* ----------------------------- */
+/* Conteúdo do modal */
+/* ----------------------------- */
+.modal-content-alterar-senha {
+  background-color: #0a1a33;
+  padding: 25px 30px;
+  border-radius: 15px;
+  width: 100%;
+  max-width: 360px; /* tamanho máximo em desktops */
+  color: white;
+  position: relative;
+  box-shadow: 0 8px 25px rgba(0,0,0,0.6);
+  transform: translateY(-20px);
+  animation: slideIn 0.3s forwards;
+}
+
+/* ----------------------------- */
+/* Título */
+/* ----------------------------- */
+.modal-content-alterar-senha h2 {
+  margin-top: 0;
+  margin-bottom: 15px;
+  color: #1e90ff;
+  font-family: 'Segoe UI', sans-serif;
+  text-align: center;
+  letter-spacing: 0.5px;
+}
+
+/* ----------------------------- */
+/* Labels */
+/* ----------------------------- */
+.modal-content-alterar-senha label {
+  display: block;
+  margin-top: 12px;
+  font-size: 14px;
+  color: #ddd;
+}
+
+/* ----------------------------- */
+/* Inputs */
+/* ----------------------------- */
+.modal-content-alterar-senha input {
+  width: 100%;
+  padding: 10px 40px 10px 10px; /* espaço para ícone à direita */
+  margin-top: 5px;
+  border-radius: 8px;
+  border: none;
+  background-color: #1a2a4d;
+  color: #fff;
+  font-size: 14px;
+  transition: background-color 0.2s, box-shadow 0.2s;
+  box-sizing: border-box;
+  position: relative;
+}
+
+.modal-content-alterar-senha input:focus {
+  outline: none;
+  background-color: #20335a;
+  box-shadow: 0 0 5px #1e90ff;
+}
+
+/* ----------------------------- */
+/* Ícones dentro dos inputs */
+/* ----------------------------- */
+.input-eye-wrapper {
+  position: relative;
+  display: block;
+}
+
+.input-eye-wrapper .eye-icon {
+  position: absolute;
+  right: 12px;
+  top: 50%;
+  transform: translateY(-50%);
+  cursor: pointer;
+  color: #aaa;
+  font-size: 16px;
+  transition: color 0.2s;
+}
+
+.input-eye-wrapper .eye-icon:hover {
+  color: #1e90ff;
+}
+
+/* ----------------------------- */
+/* Botão */
+/* ----------------------------- */
+.modal-content-alterar-senha button {
+  margin-top: 20px;
+  width: 100%;
+  padding: 12px;
+  background: linear-gradient(90deg, #1e90ff, #3478d4);
+  border: none;
+  border-radius: 10px;
+  color: white;
+  font-weight: bold;
+  cursor: pointer;
+  transition: transform 0.2s, box-shadow 0.2s;
+}
+
+.modal-content-alterar-senha button:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(30,144,255,0.5);
+  background: linear-gradient(90deg, #3478d4, #1e90ff);
+}
+
+/* ----------------------------- */
+/* Botão fechar */
+/* ----------------------------- */
+.modalAlterarSenha .close {
+  position: absolute;
+  top: 12px;
+  right: 18px;
+  font-size: 22px;
+  font-weight: bold;
+  color: #aaa;
+  cursor: pointer;
+  transition: color 0.2s;
+}
+
+.modalAlterarSenha .close:hover {
+  color: #fff;
+}
+
+/* ----------------------------- */
+/* Mensagem de erro/sucesso */
+/* ----------------------------- */
+#mensagemSenha_unique {
+  margin-top: 10px;
+  font-size: 13px;
+  text-align: center;
+}
+
+/* ----------------------------- */
+/* Animações */
+/* ----------------------------- */
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@keyframes slideIn {
+  from { transform: translateY(-20px); opacity: 0; }
+  to { transform: translateY(0); opacity: 1; }
+}
+
+/* ----------------------------- */
+/* Responsividade para celular */
+/* ----------------------------- */
+@media (max-width: 480px) {
+  .modal-content-alterar-senha {
+    padding: 20px;
+    width: 100%;
+    margin: 0 10px;
+  }
+}
+
+/* wrapper para input + ícone */
+.input-eye-wrapper {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+.input-eye-wrapper input {
+  width: 100%;
+  padding-right: 35px; /* espaço para o ícone */
+}
+
+.eye-icon {
+  position: absolute;
+  right: 10px;
+  cursor: pointer;
+  color: #aaa;
+  font-size: 16px;
+  transition: color 0.2s;
+}
+
+.eye-icon:hover {
+  color: #1e90ff;
 }
