@@ -326,81 +326,179 @@ modalCloseAlerta.addEventListener('click', () => { modalAlerta.style.display = '
 window.addEventListener('click', (e) => {
   if (e.target === modalAlerta) modalAlerta.style.display = 'none';
 });
-const form = document.getElementById('formCadastroCliente');
 
-form.addEventListener('submit', async (e) => {
-  e.preventDefault();
+// ================= GERAR CÓDIGO AUTOMÁTICO =================
 
-  const codigoCliente = document.getElementById('codigoCliente').value;
-  const cpf = document.getElementById('cpfCliente').value;
-  const nome = document.getElementById('nomeCliente').value.trim(); // trim para remover espaços
-  const telefone = document.getElementById('telefoneCliente').value;
-  const email = document.getElementById('emailCliente').value;
-  const dataNascimento = document.getElementById('dataNascimento').value;
-  const limiteCredito = document.getElementById('limiteCredito').value;
-  const foto = document.getElementById('fotoCliente').files[0];
+async function gerarCodigoCliente() {
 
-  // 0️⃣ Validar se o nome está vazio
-  if (!nome) {
-    mostrarModalAlerta('O campo "Nome" é obrigatório!');
-    return; // não permite continuar
-  }
+  try {
 
-  // 1️⃣ Verificar se o CPF já existe
-  const { data: cpfExistente, error: cpfError } = await supabase
-    .from('clientes')
-    .select('id')
-    .eq('cpf', cpf)
-    .limit(1);
-
-  if (cpfError) {
-    console.error('Erro ao verificar CPF:', cpfError);
-    return;
-  }
-
-  if (cpfExistente.length > 0) {
-    mostrarModalAlerta('Este CPF já está cadastrado no sistema!');
-    return; // não permite continuar o cadastro
-  }
-
-  // 2️⃣ Upload da foto (se houver)
-  let fotoUrl = null;
-  if (foto) {
-    const { data, error } = await supabase.storage
-      .from('fotos-clientes')
-      .upload(`fotos/${codigoCliente}_${foto.name}`, foto);
+    const { data, error } = await supabase
+      .from("clientes")
+      .select("codigo_cliente")
+      .order("codigo_cliente", { ascending: false })
+      .limit(1)
+      .maybeSingle();
 
     if (error) {
-      console.error('Erro ao enviar foto:', error);
-    } else {
-      fotoUrl = data.path;
+      console.error("Erro ao buscar código:", error);
+      return;
     }
+
+    let novoCodigo = "0001";
+
+    if (data && data.codigo_cliente) {
+
+      const ultimoCodigo = parseInt(data.codigo_cliente, 10) || 0;
+
+      const proximoCodigo = ultimoCodigo + 1;
+
+      novoCodigo = String(proximoCodigo).padStart(4, "0");
+
+    }
+
+    const campoCodigo = document.getElementById("codigoCliente");
+
+    if (campoCodigo) {
+      campoCodigo.value = novoCodigo;
+    }
+
+  } catch (erro) {
+
+    console.error("Erro ao gerar código:", erro);
+
   }
 
-  // 3️⃣ Inserir cliente
-  const { data, error } = await supabase
-    .from('clientes')
-    .insert([
-      {
-        codigo_cliente: codigoCliente,
-        cpf,
-        nome,
-        telefone,
-        email,
-        data_nascimento: dataNascimento,
-        limite_credito: limiteCredito,
-        foto_url: fotoUrl
-      }
-    ]);
+}
 
-  if (error) {
-    console.error('Erro ao cadastrar cliente:', error);
-  } else {
-    alert('Cliente cadastrado com sucesso!');
-    form.reset();
-  }
+// executa quando carregar a página
+document.addEventListener("DOMContentLoaded", () => {
+  gerarCodigoCliente();
 });
 
+// ================= MÁSCARA CPF =================
+const cpfInput = document.getElementById("cpfCliente");
+
+if (cpfInput) {
+  cpfInput.addEventListener("input", function () {
+    let valor = this.value.replace(/\D/g, ""); // remove tudo que não é número
+    valor = valor.substring(0, 11); // limita a 11 dígitos
+    valor = valor.replace(/(\d{3})(\d)/, "$1.$2");
+    valor = valor.replace(/(\d{3})(\d)/, "$1.$2");
+    valor = valor.replace(/(\d{3})(\d{1,2})$/, "$1-$2");
+    this.value = valor;
+  });
+
+  // opcional: impedir colar caracteres inválidos
+  cpfInput.addEventListener("paste", function (e) {
+    e.preventDefault();
+  });
+}
+
+// ================= CADASTRO DE CLIENTES =================
+const form = document.getElementById("formCadastroCliente");
+
+if (form) {
+  form.addEventListener("submit", async (e) => {
+    e.preventDefault();
+    console.log("Iniciando cadastro...");
+
+    try {
+      const codigoCliente = document.getElementById("codigoCliente")?.value;
+      const cpf = document.getElementById("cpfCliente")?.value.trim() || null;
+      const nome = document.getElementById("nomeCliente")?.value?.trim();
+      const telefone = document.getElementById("telefoneCliente")?.value || null;
+      const email = document.getElementById("emailCliente")?.value || null;
+      const dataNascimento = document.getElementById("dataNascimento")?.value || null;
+      const limiteCredito = document.getElementById("limiteCredito")?.value;
+      const fotoInput = document.getElementById("fotoCliente");
+      const foto = fotoInput?.files?.[0];
+
+      // ================= VALIDAÇÃO =================
+      if (!codigoCliente) {
+        mostrarModalAlerta("Código do cliente é obrigatório!");
+        return;
+      }
+
+      if (!nome) {
+        mostrarModalAlerta("Nome é obrigatório!");
+        return;
+      }
+
+      // ================= VERIFICAR CPF =================
+      if (cpf) {
+        const { data: cpfExistente, error: cpfError } = await supabase
+          .from("clientes")
+          .select("id")
+          .eq("cpf", cpf)
+          .limit(1);
+
+        if (cpfError) {
+          console.error("Erro ao verificar CPF:", cpfError);
+          return;
+        }
+
+        if (cpfExistente && cpfExistente.length > 0) {
+          mostrarModalAlerta("Este CPF já está cadastrado!");
+          return;
+        }
+      }
+
+      // ================= UPLOAD FOTO =================
+      let fotoUrl = null;
+      if (foto) {
+        const nomeArquivo = `${codigoCliente}_${Date.now()}_${foto.name}`;
+        const { data: uploadData, error: uploadError } = await supabase.storage
+          .from("fotos-clientes")
+          .upload(`fotos/${nomeArquivo}`, foto);
+
+        if (uploadError) {
+          console.error("Erro upload foto:", uploadError);
+        } else {
+          const { data: publicUrl } = supabase.storage
+            .from("fotos-clientes")
+            .getPublicUrl(uploadData.path);
+          fotoUrl = publicUrl.publicUrl;
+        }
+      }
+
+      // ================= INSERT =================
+      const { data, error } = await supabase
+        .from("clientes")
+        .insert([
+          {
+            codigo_cliente: codigoCliente,
+            cpf: cpf,
+            nome: nome,
+            telefone: telefone,
+            email: email,
+            data_nascimento: dataNascimento,
+            limite_credito: limiteCredito ? Number(limiteCredito) : null,
+            foto_url: fotoUrl || null
+          }
+        ]);
+
+      if (error) {
+        console.error("Erro detalhado:", error);
+        mostrarModalAlerta("Erro ao cadastrar cliente.");
+        return;
+      }
+
+      console.log("Cliente cadastrado:", data);
+      alert("Cliente cadastrado com sucesso!");
+
+      // limpa o formulário exceto o código
+      form.reset();
+
+      // gera próximo código automático
+      await gerarCodigoCliente();
+
+    } catch (erro) {
+      console.error("Erro inesperado:", erro);
+      mostrarModalAlerta("Erro inesperado no sistema.");
+    }
+  });
+}
 
 // ============ mostra o total de clientes =============
 async function atualizarTotalClientes() {

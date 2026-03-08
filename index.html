@@ -183,14 +183,14 @@
 <div id="form-row-codigo-cpf">
   <!-- Código do cliente (gerado automaticamente, readonly) -->
   <div class="form-group-codigo-cpf">
-    <label for="codigoCliente">Código do Cliente</label>
-    <input type="text" id="codigoCliente" placeholder="Gerado automaticamente" readonly>
+    <label for="codigoCliente">Cód</label>
+    <input type="text" id="codigoCliente" placeholder="0000" readonly>
   </div>
 
   <!-- CPF -->
   <div class="form-group-codigo-cpf">
     <label for="cpfCliente">CPF</label>
-    <input type="text" id="cpfCliente" placeholder="Digite o CPF">
+    <input type="text"id="cpfCliente"placeholder="000.000.000-00"maxlength="14"inputmode="numeric"pattern="[0-9.-]*"autocomplete="off">
   </div>
 </div>
       <!-- Nome -->
