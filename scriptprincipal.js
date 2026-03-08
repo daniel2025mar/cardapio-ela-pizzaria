@@ -1,6 +1,15 @@
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
 
-// ===================impede o zoom ===============================
+
+
+window.addEventListener('wheel', function (e) {
+  if (e.ctrlKey) e.preventDefault(); // impede zoom com Ctrl + scroll
+}, { passive: false });
+// =================== SUPABASE ===================
+const SUPABASE_URL = "https://vixurbnyhalixuwyytjx.supabase.co";
+const SUPABASE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InZpeHVyYm55aGFsaXh1d3l5dGp4Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzI3MTc0ODksImV4cCI6MjA4ODI5MzQ4OX0._0kx5t0Yi6uAge5K9BFCh9PHs66YrW3sTY80yncTLeM";
+const supabase = createClient(SUPABASE_URL, SUPABASE_KEY);
+
 // Bloquear zoom no celular (pinça)
 window.addEventListener('touchstart', function (e) {
   if (e.touches.length > 1) {
@@ -25,14 +34,30 @@ window.addEventListener('keydown', function (e) {
   }
 });
 
-window.addEventListener('wheel', function (e) {
-  if (e.ctrlKey) e.preventDefault(); // impede zoom com Ctrl + scroll
-}, { passive: false });
-// =================== SUPABASE ===================
-const SUPABASE_URL = "https://vixurbnyhalixuwyytjx.supabase.co";
-const SUPABASE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InZpeHVyYm55aGFsaXh1d3l5dGp4Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzI3MTc0ODksImV4cCI6MjA4ODI5MzQ4OX0._0kx5t0Yi6uAge5K9BFCh9PHs66YrW3sTY80yncTLeM";
-const supabase = createClient(SUPABASE_URL, SUPABASE_KEY);
+// Bloqueio total do botão voltar / swipe
+(function() {
+    function bloquearVoltar() {
+        // Adiciona vários estados extras ao histórico
+        history.pushState(null, null, location.href);
+        history.pushState(null, null, location.href);
+        history.pushState(null, null, location.href);
+    }
 
+    // Inicializa
+    bloquearVoltar();
+
+    // Captura tentativa de voltar
+    window.addEventListener('popstate', function(event) {
+        // Reinsere estados imediatamente
+        bloquearVoltar();
+        console.log("Voltar bloqueado!");
+    });
+
+    // Reforço contínuo caso algum estado escape
+    setInterval(() => {
+        bloquearVoltar();
+    }, 1000);
+})();
 // ===================== SELEÇÃO DE ELEMENTOS =====================
 const progressCircle = document.querySelector(".circle-progress");
 const progressText = document.getElementById("progressText");
