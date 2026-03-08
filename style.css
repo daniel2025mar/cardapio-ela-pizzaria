@@ -232,9 +232,10 @@ header .header-text p.empresaNome {
 /* ================= RESPONSIVO: Celular e tablets ================= */
 @media (max-width: 1024px) {
   .sidebar {
+    width: 290px;
     display: flex;
     flex-direction: column;
-    height: 87vh;  /* ocupa toda a altura da tela */
+    height: 86.9vh;  /* ocupa toda a altura da tela */
   }
 
  
