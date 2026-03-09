@@ -59,6 +59,7 @@ window.addEventListener('keydown', function (e) {
         bloquearVoltar();
     }, 1000);
 })();
+
 // ===================== SELEÇÃO DE ELEMENTOS =====================
 const progressCircle = document.querySelector(".circle-progress");
 const progressText = document.getElementById("progressText");
@@ -482,36 +483,64 @@ document.addEventListener("DOMContentLoaded", async () => {
   }
 });
 
+const somNotificacao = new Audio("https://notificationsounds.com/storage/sounds/file-sounds-1150-pristine.mp3");
+somNotificacao.preload = "auto";
+somNotificacao.volume = 0.6;
 // =============================
 // FUNÇÃO PARA NOTIFICAR USUÁRIOS ONLINE
 // =============================
+
 async function notificarUsuariosOnline() {
+
+  // ⏳ espera a splash terminar
+  const splash = document.getElementById("splashScreen");
+  if (splash) {
+    while (splash.style.display !== "none") {
+      await new Promise(resolve => setTimeout(resolve, 200));
+    }
+  }
+
   try {
-    // busca todos os usuários, exceto o admin logado, que tenham last_seen
     const { data: usuarios, error } = await supabase
       .from("usuarios")
       .select("username, last_seen")
       .neq("username", localStorage.getItem("usuarioNome"))
       .not("last_seen", "is", null);
 
-    if(error){
+    if (error) {
       console.error("Erro ao buscar usuários online:", error);
       return;
     }
 
     const lista = document.getElementById("listaUsuariosOnline");
-    lista.innerHTML = ""; // limpa lista
+    const modal = document.getElementById("modalUsuariosOnline");
 
-    if(usuarios && usuarios.length > 0){
+    if (!lista || !modal) return;
+
+    lista.innerHTML = "";
+
+    if (usuarios && usuarios.length > 0) {
+
       usuarios.forEach(u => {
         const li = document.createElement("li");
         li.textContent = u.username;
         lista.appendChild(li);
       });
 
-      const modal = document.getElementById("modalUsuariosOnline");
-      modal.style.display = "block"; // mostra o modal
+      // 🔔 abre o modal
+      modal.style.display = "block";
 
+      // 🔊 toca som SEMPRE que o modal abrir (cria um novo objeto Audio)
+      try {
+        const somNotificacaoAtual = new Audio("https://notificationsounds.com/storage/sounds/file-sounds-1150-pristine.mp3");
+        somNotificacaoAtual.preload = "auto";
+        somNotificacaoAtual.volume = 0.6;
+        await somNotificacaoAtual.play();
+      } catch (e) {
+        console.log("Som bloqueado pelo navegador:", e);
+      }
+
+      // ⏱ fecha após 10s
       setTimeout(() => {
         modal.style.display = "none";
       }, 10000);
@@ -520,7 +549,7 @@ async function notificarUsuariosOnline() {
       console.log("Nenhum usuário online encontrado.");
     }
 
-  } catch(err){
+  } catch (err) {
     console.error("Erro inesperado na notificação de usuários online:", err);
   }
 }
