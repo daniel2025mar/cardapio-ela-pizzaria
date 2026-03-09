@@ -10,111 +10,64 @@ const SUPABASE_URL = "https://vixurbnyhalixuwyytjx.supabase.co";
 const SUPABASE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InZpeHVyYm55aGFsaXh1d3l5dGp4Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzI3MTc0ODksImV4cCI6MjA4ODI5MzQ4OX0._0kx5t0Yi6uAge5K9BFCh9PHs66YrW3sTY80yncTLeM";
 const supabase = createClient(SUPABASE_URL, SUPABASE_KEY);
 
-
-// =============================
-// ATUALIZAR USUÁRIO ONLINE
-// =============================
-async function atualizarOnline(userId) {
-
+async function notificarUsuariosOnline() {
   try {
+    const usuarioLogado = localStorage.getItem("usuarioNome");
+    if (!usuarioLogado) return;
 
-    const { error } = await supabase
+    // Verifica se o usuário logado é admin
+    const { data: adminData, error: adminError } = await supabase
       .from("usuarios")
-      .update({
-        last_seen: new Date().toISOString()
-      })
-      .eq("id", userId);
+      .select("cargo")
+      .eq("username", usuarioLogado)
+      .single();
 
-    if (error) {
-      console.error("Erro ao atualizar last_seen:", error);
+    if (adminError || !adminData || adminData.cargo !== "admin") {
+      console.log("Usuário não é admin. Não pode ver usuários online.");
+      return;
     }
 
+    // Busca todos os usuários com last_seen preenchido
+    const { data: usuarios, error } = await supabase
+      .from("usuarios")
+      .select("username, last_seen")
+      .not("username", "eq", usuarioLogado) // opcional: ignora o admin logado
+      .not("last_seen", "is", null);
+
+    if (error) {
+      console.error("Erro ao buscar usuários online:", error);
+      return;
+    }
+
+    // Cria o conteúdo da notificação
+    let mensagem = "";
+    if (usuarios && usuarios.length > 0) {
+      mensagem = "Usuários online: " + usuarios.map(u => u.username).join(", ");
+    } else {
+      mensagem = "Nenhum usuário online no momento";
+    }
+
+    // Cria elemento da notificação
+    const toast = document.createElement("div");
+    toast.className = "toast-notificacao";
+    toast.textContent = mensagem;
+    document.body.appendChild(toast);
+
+    // Animação para aparecer
+    setTimeout(() => {
+      toast.style.opacity = 1;
+    }, 50);
+
+    // Remove após 10 segundos
+    setTimeout(() => {
+      toast.style.opacity = 0;
+      setTimeout(() => toast.remove(), 500);
+    }, 10000);
+
   } catch (err) {
-    console.error("Erro inesperado:", err);
+    console.error("Erro ao mostrar notificação:", err);
   }
-
 }
-
-
-// =============================
-// ESCUTAR USUÁRIOS ONLINE
-// =============================
-function escutarUsuariosOnline(usuarioLogado) {
-
-  supabase
-    .channel("usuarios-online")
-    .on(
-      "postgres_changes",
-      {
-        event: "UPDATE",
-        schema: "public",
-        table: "usuarios"
-      },
-      (payload) => {
-
-        const usuario = payload.new;
-
-        // NÃO mostrar notificação do próprio usuário
-        if (usuario.id === usuarioLogado.id) return;
-
-        // Apenas admin recebe notificações
-        if (usuarioLogado.cargo === "admin") {
-
-          mostrarNotificacao(usuario.username + " está Online");
-
-        }
-
-      }
-    )
-    .subscribe();
-
-}
-
-
-// =============================
-// MOSTRAR NOTIFICAÇÃO NA TELA
-// =============================
-function mostrarNotificacao(mensagem) {
-
-  const div = document.createElement("div");
-
-  div.innerText = "🔔 " + mensagem;
-
-  div.style.position = "fixed";
-  div.style.bottom = "20px";
-  div.style.right = "20px";
-  div.style.background = "#03305c";
-  div.style.color = "#fff";
-  div.style.padding = "12px 18px";
-  div.style.borderRadius = "6px";
-  div.style.boxShadow = "0 5px 10px rgba(0,0,0,0.2)";
-  div.style.zIndex = "9999";
-  div.style.fontSize = "14px";
-
-  document.body.appendChild(div);
-
-  setTimeout(() => {
-    div.remove();
-  }, 4000);
-
-}
-
-
-// =============================
-// USUÁRIO LOGADO (EXEMPLO)
-// =============================
-const usuarioLogado = {
-  id: "ec3dbca1-568c-4e92-a7ac-0402da4770bb",
-  cargo: "admin",
-  username: "admin"
-};
-
-
-// =============================
-// INICIAR SISTEMA
-// =============================
-atualizarOnline(usuarioLogado.id);
-escutarUsuariosOnline(usuarioLogado);
 // Bloquear zoom no celular (pinça)
 window.addEventListener('touchstart', function (e) {
   if (e.touches.length > 1) {
@@ -427,9 +380,35 @@ logoutBtn?.addEventListener("click", () => {
   modalLogout.style.display = "flex";
 });
 
-btnSimLogout?.addEventListener("click", () => {
+btnSimLogout?.addEventListener("click", async () => {
   modalLogout.style.display = "none";
-  window.location.href = "./Sistema/Login.html";
+
+  try {
+    // Pega o usuário logado do localStorage
+    const usuarioNome = localStorage.getItem("usuarioNome");
+    if (usuarioNome) {
+      // Atualiza last_seen para null no Supabase
+      const { error } = await supabase
+        .from("usuarios")
+        .update({ last_seen: null })
+        .eq("username", usuarioNome);
+
+      if (error) {
+        console.error("Erro ao limpar last_seen:", error.message);
+      }
+
+      // Remove o usuário do localStorage
+      localStorage.removeItem("usuarioNome");
+    }
+
+    // Redireciona para a tela de login
+    window.location.href = "./Sistema/Login.html";
+
+  } catch (err) {
+    console.error("Erro no logout:", err);
+    // Redireciona mesmo se ocorrer erro
+    window.location.href = "./Sistema/Login.html";
+  }
 });
 
 btnNaoLogout?.addEventListener("click", () => {

@@ -138,6 +138,38 @@ header .header-text p.empresaNome {
   margin-top: 70px; /* espaço para header */
 }
 
+#modalUsuariosOnline {
+  position: fixed;
+  top: 20px;
+  right: 20px;
+  width: 250px;
+  max-height: 400px;
+  overflow-y: auto;
+  background-color: #03305c;
+  color: #fff;
+  padding: 12px;
+  border-radius: 8px;
+  box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+  font-family: Arial, sans-serif;
+  display: none; /* começa escondido */
+  z-index: 9999;
+}
+
+#modalUsuariosOnline h4 {
+  margin: 0 0 10px 0;
+  font-size: 16px;
+}
+
+#modalUsuariosOnline ul {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+#modalUsuariosOnline ul li {
+  padding: 4px 0;
+  border-bottom: 1px solid rgba(255,255,255,0.2);
+}
 .dashboard-section {
   margin-top: 30px;
   background: white;

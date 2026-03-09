@@ -83,92 +83,100 @@ const btnEntrar = document.getElementById("btnEntrar");
 
 btnEntrar.addEventListener("click", verificarLogin);
 
+
 async function verificarLogin() {
+    const usernameInputEl = document.getElementById("nome");
+    const passwordInputEl = document.getElementById("senha");
+    const mensagemBoasVindasEl = document.getElementById("mensagemBoasVindas");
+    const btnEntrar = document.getElementById("btnEntrar");
 
-  const usernameInputEl = document.getElementById("nome");
-  const passwordInputEl = document.getElementById("senha");
-  const mensagemBoasVindasEl = document.getElementById("mensagemBoasVindas");
+    const usernameInput = usernameInputEl.value.trim();
+    const passwordInput = passwordInputEl.value.trim();
 
-  const usernameInput = usernameInputEl.value.trim();
-  const passwordInput = passwordInputEl.value.trim();
+    if (!usernameInput || !passwordInput) {
+        mostrarModalErro("Preencha usuário e senha");
+        return;
+    }
 
-  if (!usernameInput || !passwordInput) {
-      mostrarModalErro("Preencha usuário e senha");
-      return;
-  }
+    try {
+        // Consulta no Supabase (case-insensitive)
+        const { data, error } = await supabase
+            .from("usuarios")
+            .select("id, username, password, ativo, permissoes")
+            .ilike("username", usernameInput);
 
-  try {
-      // Consulta no Supabase (case-insensitive)
-      const { data, error } = await supabase
-          .from("usuarios")
-          .select("id, username, password, ativo, permissoes")
-          .ilike("username", usernameInput);
+        if (error) {
+            mostrarModalErro("Erro ao consultar Banco");
+            return;
+        }
 
-      if (error) {
-          mostrarModalErro("Erro ao consultar Banco");
-          return;
-      }
+        if (!data || data.length === 0) {
+            mostrarModalErro(`Usuário "${usernameInput}" não encontrado na base de dados.`);
+            usernameInputEl.value = "";
+            passwordInputEl.value = "";
+            usernameInputEl.focus();
+            return;
+        }
 
-      if (!data || data.length === 0) {
-          mostrarModalErro(`Usuário "${usernameInput}" não encontrado na base de dados.`);
-          usernameInputEl.value = "";
-          passwordInputEl.value = "";
-          usernameInputEl.focus();
-          return;
-      }
+        const usuario = data[0];
 
-      const usuario = data[0];
+        if (!usuario.ativo) {
+            mostrarModalErro(`O usuário "${usuario.username}" está desativado.`);
+            usernameInputEl.value = "";
+            passwordInputEl.value = "";
+            usernameInputEl.focus();
+            return;
+        }
 
-      if (!usuario.ativo) {
-          mostrarModalErro(`O usuário "${usuario.username}" está desativado.`);
-          usernameInputEl.value = "";
-          passwordInputEl.value = "";
-          usernameInputEl.focus();
-          return;
-      }
+        if (usuario.password === passwordInput) {
 
-      if (usuario.password === passwordInput) {
+            // ================== SALVA LOGIN ==================
+            localStorage.setItem('usuarioLogado', 'true');
+            localStorage.setItem('usuarioNome', usuario.username);
+            localStorage.setItem('usuarioId', usuario.id); // salva id para listener
 
-          // ================== SALVA LOGIN ==================
-          localStorage.setItem('usuarioLogado', 'true');
-          localStorage.setItem('usuarioNome', usuario.username);
-          localStorage.setItem('usuarioId', usuario.id); // salva id para listener
+            // ================== ATUALIZA LAST_SEEN (horário de Brasília) ==================
+            try {
+                const agora = new Date();
+                const offsetBrasil = -3 * 60; // GMT-3 em minutos
+                const localTime = new Date(agora.getTime() + offsetBrasil * 60 * 1000);
+                const lastSeen = localTime.toISOString().replace("T", " ").replace("Z", "");
 
-          // ================== ATUALIZA LAST_SEEN ==================
-          try {
-              await supabase
-                  .from('usuarios')
-                  .update({ last_seen: new Date().toISOString() })
-                  .eq('id', usuario.id);
-          } catch (err) {
-              console.error("Erro ao atualizar last_seen:", err);
-          }
+                await supabase
+                    .from('usuarios')
+                    .update({ last_seen: lastSeen })
+                    .eq('id', usuario.id);
 
-          // ================== LOGIN CORRETO ==================
-          mensagemBoasVindasEl.textContent = `Bem-vindo, ${usuario.username}!`;
-          mensagemBoasVindasEl.style.color = "#ffffff";
-          passwordInputEl.value = "";
-          btnEntrar.disabled = true;
+                console.log("[LOG] last_seen atualizado com sucesso para:", usuario.username, lastSeen);
+            } catch (err) {
+                console.error("[ERRO] ao atualizar last_seen:", err);
+            }
 
-          // Redireciona após 2 segundos
-          setTimeout(() => {
-              window.location.href = "../index.html";
-          }, 2000);
+            // ================== LOGIN CORRETO ==================
+            mensagemBoasVindasEl.textContent = `Bem-vindo, ${usuario.username}!`;
+            mensagemBoasVindasEl.style.color = "#ffffff";
+            passwordInputEl.value = "";
+            btnEntrar.disabled = true;
 
-      } else {
-          mostrarModalErro(`Senha incorreta para o usuário "${usuario.username}".`);
-          usernameInputEl.value = "";
-          passwordInputEl.value = "";
-          usernameInputEl.focus();
-      }
+            // Redireciona após 2 segundos
+            setTimeout(() => {
+                window.location.href = "../index.html";
+            }, 2000);
 
-  } catch (err) {
-      console.error("Erro inesperado:", err);
-      mostrarModalErro("Ocorreu um erro inesperado. Tente novamente.");
-      usernameInputEl.value = "";
-      passwordInputEl.value = "";
-      usernameInputEl.focus();
-  }
+        } else {
+            mostrarModalErro(`Senha incorreta para o usuário "${usuario.username}".`);
+            usernameInputEl.value = "";
+            passwordInputEl.value = "";
+            usernameInputEl.focus();
+        }
+
+    } catch (err) {
+        console.error("Erro inesperado:", err);
+        mostrarModalErro("Ocorreu um erro inesperado. Tente novamente.");
+        usernameInputEl.value = "";
+        passwordInputEl.value = "";
+        usernameInputEl.focus();
+    }
 }
 
 const ipElement = document.getElementById("userIP");
