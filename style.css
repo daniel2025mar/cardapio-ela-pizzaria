@@ -138,6 +138,36 @@ header .header-text p.empresaNome {
   margin-top: 70px; /* espaço para header */
 }
 
+.toast-notificacao {
+  display: none; /* Oculto por padrão */
+  position: fixed;
+  top: 20px;
+  right: 20px;
+  background-color: #001f3f;
+  color: #fff;
+  padding: 15px 20px;
+  border-radius: 8px;
+  box-shadow: 0 0 15px rgba(0,0,0,0.5);
+  z-index: 9999;
+  max-width: 250px;
+  font-family: sans-serif;
+}
+
+.toast-notificacao h4 {
+  margin: 0 0 8px 0;
+  font-size: 16px;
+}
+
+.toast-notificacao ul {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.toast-notificacao li {
+  margin-bottom: 5px;
+  font-size: 14px;
+}
 #modalUsuariosOnline {
   position: fixed;
   top: 20px;
@@ -145,8 +175,8 @@ header .header-text p.empresaNome {
   width: 250px;
   max-height: 400px;
   overflow-y: auto;
-  background-color: #03305c;
-  color: #fff;
+  background-color: #044b92;
+  color: #ffffff;
   padding: 12px;
   border-radius: 8px;
   box-shadow: 0 5px 15px rgba(0,0,0,0.3);

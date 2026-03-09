@@ -10,64 +10,7 @@ const SUPABASE_URL = "https://vixurbnyhalixuwyytjx.supabase.co";
 const SUPABASE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InZpeHVyYm55aGFsaXh1d3l5dGp4Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzI3MTc0ODksImV4cCI6MjA4ODI5MzQ4OX0._0kx5t0Yi6uAge5K9BFCh9PHs66YrW3sTY80yncTLeM";
 const supabase = createClient(SUPABASE_URL, SUPABASE_KEY);
 
-async function notificarUsuariosOnline() {
-  try {
-    const usuarioLogado = localStorage.getItem("usuarioNome");
-    if (!usuarioLogado) return;
 
-    // Verifica se o usuário logado é admin
-    const { data: adminData, error: adminError } = await supabase
-      .from("usuarios")
-      .select("cargo")
-      .eq("username", usuarioLogado)
-      .single();
-
-    if (adminError || !adminData || adminData.cargo !== "admin") {
-      console.log("Usuário não é admin. Não pode ver usuários online.");
-      return;
-    }
-
-    // Busca todos os usuários com last_seen preenchido
-    const { data: usuarios, error } = await supabase
-      .from("usuarios")
-      .select("username, last_seen")
-      .not("username", "eq", usuarioLogado) // opcional: ignora o admin logado
-      .not("last_seen", "is", null);
-
-    if (error) {
-      console.error("Erro ao buscar usuários online:", error);
-      return;
-    }
-
-    // Cria o conteúdo da notificação
-    let mensagem = "";
-    if (usuarios && usuarios.length > 0) {
-      mensagem = "Usuários online: " + usuarios.map(u => u.username).join(", ");
-    } else {
-      mensagem = "Nenhum usuário online no momento";
-    }
-
-    // Cria elemento da notificação
-    const toast = document.createElement("div");
-    toast.className = "toast-notificacao";
-    toast.textContent = mensagem;
-    document.body.appendChild(toast);
-
-    // Animação para aparecer
-    setTimeout(() => {
-      toast.style.opacity = 1;
-    }, 50);
-
-    // Remove após 10 segundos
-    setTimeout(() => {
-      toast.style.opacity = 0;
-      setTimeout(() => toast.remove(), 500);
-    }, 10000);
-
-  } catch (err) {
-    console.error("Erro ao mostrar notificação:", err);
-  }
-}
 // Bloquear zoom no celular (pinça)
 window.addEventListener('touchstart', function (e) {
   if (e.touches.length > 1) {
@@ -485,17 +428,18 @@ document.addEventListener("DOMContentLoaded", () => {
   gerarCodigoCliente();
 });
 
-
 document.addEventListener("DOMContentLoaded", async () => {
   const userNameSpan = document.querySelector(".sidebar-footer .user-name");
   const userRoleSpan = document.querySelector(".sidebar-footer .user-role");
 
   const usuarioNome = localStorage.getItem("usuarioNome"); // pega o nome do usuário logado
 
+  // ✅ Atualiza apenas o nome do usuário
   if(userNameSpan && usuarioNome){
-    userNameSpan.textContent = usuarioNome; // atualiza o span com o usuário logado
+    userNameSpan.textContent = usuarioNome;
   }
 
+  // ✅ Mantém toda a função do cargo intacta
   if(userRoleSpan && usuarioNome){
     try {
       const { data, error } = await supabase
@@ -506,20 +450,80 @@ document.addEventListener("DOMContentLoaded", async () => {
 
       if(error){
         console.error("Erro ao buscar cargo:", error);
-        userRoleSpan.textContent = "Usuário"; // fallback
+        // Não sobrescreve se já tem algo no span
+        if(!userRoleSpan.textContent) userRoleSpan.textContent = "Usuário"; 
       } else if(data && data.cargo){
         userRoleSpan.textContent = data.cargo; // atualiza o cargo no sidebar
+
+        // 🔔 Notificação online só para admin
+        if(data.cargo === "admin") {
+          notificarUsuariosOnline();
+
+          // 🔄 Escuta alterações em tempo real na coluna last_seen
+          supabase
+            .from("usuarios")
+            .on("UPDATE", payload => {
+              if(payload.new.last_seen !== payload.old.last_seen){
+                notificarUsuariosOnline();
+              }
+            })
+            .subscribe();
+        }
+
       } else {
-        userRoleSpan.textContent = "Usuário"; // fallback
+        // fallback caso cargo venha vazio
+        if(!userRoleSpan.textContent) userRoleSpan.textContent = "Usuário"; 
       }
 
     } catch(err){
       console.error("Erro inesperado ao buscar cargo:", err);
-      userRoleSpan.textContent = "Usuário"; // fallback
+      if(!userRoleSpan.textContent) userRoleSpan.textContent = "Usuário"; 
     }
   }
 });
 
+// =============================
+// FUNÇÃO PARA NOTIFICAR USUÁRIOS ONLINE
+// =============================
+async function notificarUsuariosOnline() {
+  try {
+    // busca todos os usuários, exceto o admin logado, que tenham last_seen
+    const { data: usuarios, error } = await supabase
+      .from("usuarios")
+      .select("username, last_seen")
+      .neq("username", localStorage.getItem("usuarioNome"))
+      .not("last_seen", "is", null);
+
+    if(error){
+      console.error("Erro ao buscar usuários online:", error);
+      return;
+    }
+
+    const lista = document.getElementById("listaUsuariosOnline");
+    lista.innerHTML = ""; // limpa lista
+
+    if(usuarios && usuarios.length > 0){
+      usuarios.forEach(u => {
+        const li = document.createElement("li");
+        li.textContent = u.username;
+        lista.appendChild(li);
+      });
+
+      const modal = document.getElementById("modalUsuariosOnline");
+      modal.style.display = "block"; // mostra o modal
+
+      setTimeout(() => {
+        modal.style.display = "none";
+      }, 10000);
+
+    } else {
+      console.log("Nenhum usuário online encontrado.");
+    }
+
+  } catch(err){
+    console.error("Erro inesperado na notificação de usuários online:", err);
+  }
+}
 // -----------------------------
 // Seletores do modal
 // -----------------------------
