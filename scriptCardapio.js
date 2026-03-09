@@ -1,6 +1,97 @@
+import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
+
+const SUPABASE_URL = "https://vixurbnyhalixuwyytjx.supabase.co";
+const SUPABASE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InZpeHVyYm55aGFsaXh1d3l5dGp4Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzI3MTc0ODksImV4cCI6MjA4ODI5MzQ4OX0._0kx5t0Yi6uAge5K9BFCh9PHs66YrW3sTY80yncTLeM";
+
+const supabase = createClient(SUPABASE_URL, SUPABASE_KEY);
 
 
+  async function carregarNomeEmpresa() {
+    // Busca o primeiro registro da tabela 'empresa'
+    const { data, error } = await supabase
+      .from('empresa')
+      .select('nome')
+      .limit(1)
+      .single();
 
+    if (error) {
+      console.error('Erro ao buscar empresa:', error);
+      return;
+    }
+
+    // Atualiza o <h1> com o nome do banco
+    const h1 = document.querySelector('.nome-restaurante');
+    if (h1 && data?.nome) {
+      h1.textContent = data.nome;
+    }
+  }
+
+  // Chama a função ao carregar a página
+  window.addEventListener('DOMContentLoaded', carregarNomeEmpresa);
+
+  
+  async function carregarLocalizacao() {
+    // Busca o primeiro registro da tabela 'empresa'
+    const { data, error } = await supabase
+      .from('empresa')
+      .select('endereco')
+      .limit(1)
+      .single();
+
+    if (error) {
+      console.error('Erro ao buscar endereço:', error);
+      return;
+    }
+
+    if (data?.endereco) {
+      // Pega apenas a parte após o último " - " do endereço
+      const partes = data.endereco.split(" - ");
+      // A última parte é o estado (UF), a penúltima é a cidade
+      const cidadeUF = partes.slice(-2).join(" - ").trim();
+
+      // Atualiza o span
+      const span = document.querySelector('.localizacao');
+      if (span) {
+        span.innerHTML = `<i class="fas fa-map-marker-alt"></i> ${cidadeUF}`;
+      }
+    }
+  }
+
+  window.addEventListener('DOMContentLoaded', carregarLocalizacao);
+
+  
+// Função para formatar CNPJ
+function formatarCNPJ(cnpj) {
+  cnpj = cnpj.replace(/\D/g, ""); // remove qualquer não número
+  return cnpj.replace(/^(\d{2})(\d{3})(\d{3})(\d{4})(\d{2})$/, "$1.$2.$3/$4-$5");
+}
+
+// Função para carregar empresa
+async function carregarEmpresa() {
+  try {
+    const { data, error } = await supabase
+      .from("empresa")
+      .select("nome, cnpj")
+      .limit(1)
+      .single();
+
+    if (error) {
+      console.error("Erro ao buscar empresa:", error.message);
+      return;
+    }
+
+    const pEmpresa = document.getElementById("empresaCNPJ");
+    if (pEmpresa) {
+      pEmpresa.textContent = `${data.nome} — CNPJ: ${formatarCNPJ(data.cnpj)}`;
+    }
+
+  } catch (err) {
+    console.error("Erro inesperado:", err);
+  }
+}
+
+// Executa quando a página carregar
+window.addEventListener("DOMContentLoaded", carregarEmpresa);
 // ===================== Lista de produtos exemplo =====================
 const produtos = [
   {
@@ -75,6 +166,7 @@ function montarCards() {
 
 // ===================== Chamar a função =====================
 montarCards();
+
 
 // ===================== Abrir e fechar modal do carrinho =====================
 const btnCarrinho = document.getElementById("card-btn");

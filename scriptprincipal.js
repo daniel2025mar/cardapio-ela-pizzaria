@@ -10,6 +10,72 @@ const SUPABASE_URL = "https://vixurbnyhalixuwyytjx.supabase.co";
 const SUPABASE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InZpeHVyYm55aGFsaXh1d3l5dGp4Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzI3MTc0ODksImV4cCI6MjA4ODI5MzQ4OX0._0kx5t0Yi6uAge5K9BFCh9PHs66YrW3sTY80yncTLeM";
 const supabase = createClient(SUPABASE_URL, SUPABASE_KEY);
 
+// ID da empresa monitorada
+const empresaIdAtual = 1;
+
+// Cria o som de alerta
+const somErro = new Audio("https://notificationsounds.com/storage/sounds/file-sounds-1128-failure.mp3");
+somErro.volume = 0.6; // volume ajustável de 0 a 1
+somErro.preload = "auto";
+
+// Bloquear sistema
+function bloquearSistema() {
+  const overlay = document.getElementById("bloqueioOverlay");
+  if (!overlay) return;
+
+  if (overlay.style.display !== "flex") { // só toca som se overlay não estiver visível
+    somErro.play().catch(err => console.log("Erro ao tocar som:", err));
+  }
+
+  overlay.style.display = "flex"; // mostra overlay
+
+  // Bloqueia todas as interações
+  document.querySelectorAll("button, input, select, textarea, a").forEach(el => {
+    el.disabled = true;
+    el.style.pointerEvents = 'none';
+  });
+}
+
+// Desbloquear sistema
+function desbloquearSistema() {
+  const overlay = document.getElementById("bloqueioOverlay");
+  if (!overlay) return;
+  overlay.style.display = "none"; // esconde overlay
+
+  document.querySelectorAll("button, input, select, textarea, a").forEach(el => {
+    el.disabled = false;
+    el.style.pointerEvents = 'auto';
+  });
+}
+
+// Função para verificar o status atual da empresa
+async function verificarBloqueio() {
+  try {
+    const { data, error } = await supabase
+      .from("empresa")
+      .select("bloqueado")
+      .eq("id", empresaIdAtual)
+      .single();
+
+    if (error) throw error;
+
+    if (data?.bloqueado) {
+      bloquearSistema();
+    } else {
+      desbloquearSistema();
+    }
+  } catch (err) {
+    console.error("Erro ao verificar bloqueio:", err.message);
+  }
+}
+
+// Checagem em tempo real a cada 1 segundo
+setInterval(verificarBloqueio, 1000);
+
+// Inicialização
+window.addEventListener("load", () => {
+  verificarBloqueio(); // checa imediatamente ao entrar
+});
 
 // Bloquear zoom no celular (pinça)
 window.addEventListener('touchstart', function (e) {
@@ -483,6 +549,7 @@ document.addEventListener("DOMContentLoaded", async () => {
   }
 });
 
+// som de notigicaçao de usuarios
 const somNotificacao = new Audio("https://notificationsounds.com/storage/sounds/file-sounds-1150-pristine.mp3");
 somNotificacao.preload = "auto";
 somNotificacao.volume = 0.6;

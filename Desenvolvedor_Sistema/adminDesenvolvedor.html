@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Painel de Bloqueio de Empresas</title>
+  <link rel="stylesheet" href="styleAdmin.css">
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/supabase.min.js" defer></script>
+  <script src="admin.js" defer></script>
+</head>
+<body>
+
+  <h1>Painel de Bloqueio de Empresas</h1>
+
+  <table>
+    <thead>
+      <tr>
+        <th>Empresa</th>
+        <th>CNPJ</th>
+        <th>Status</th>
+        <th>Ação</th>
+      </tr>
+    </thead>
+    <tbody id="listaEmpresas">
+      <!-- Lista de empresas será preenchida pelo JS -->
+    </tbody>
+  </table>
+
+  <script type="module" src="scriptADMIN.js"></script>
+</body>
+</html>

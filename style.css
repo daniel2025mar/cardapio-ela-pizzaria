@@ -168,7 +168,109 @@ header .header-text p.empresaNome {
   margin-bottom: 5px;
   font-size: 14px;
 }
-#modalUsuariosOnline {
+
+/* ===================== */
+/* Overlay de bloqueio */
+.overlay-bloqueio {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(255, 255, 255, 0.95); /* fundo branco */
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 9999;
+  backdrop-filter: blur(5px); /* leve blur no fundo */
+  padding: 10px; /* evita encostar nas bordas em telas pequenas */
+}
+
+/* Card central */
+.card-bloqueio {
+  background: #ffffff;
+  color: #000000; /* texto preto */
+  padding: 35px 25px;
+  border-radius: 16px; /* bordas arredondadas */
+  text-align: center;
+  max-width: 450px;
+  width: 100%; /* ocupa toda largura disponível em telas pequenas */
+  box-shadow: 0 15px 30px rgba(0,0,0,0.25); /* sombra elegante */
+  animation: fadeInUp 0.5s ease-in-out;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  position: relative;
+  border-top: 5px solid #333333; /* destaque no topo do card */
+  box-sizing: border-box;
+}
+
+/* Ícone de bloqueio */
+.icon-bloqueio {
+  width: 70px;
+  margin-bottom: 20px;
+  animation: pulse 1.5s infinite; /* animação sutil de pulso */
+}
+
+/* Botão contato */
+.btn-contato {
+  display: inline-block;
+  margin-top: 20px;
+  padding: 12px 25px;
+  background-color: #333333; /* botão escuro */
+  color: white;
+  border-radius: 10px;
+  text-decoration: none;
+  font-weight: 600;
+  transition: all 0.3s ease;
+  box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+}
+
+.btn-contato:hover {
+  background-color: #555555;
+  transform: translateY(-2px);
+  box-shadow: 0 8px 20px rgba(0,0,0,0.3);
+}
+
+/* ===================== */
+/* Animação do card */
+@keyframes fadeInUp {
+  from { opacity: 0; transform: translateY(30px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+/* Animação sutil do ícone */
+@keyframes pulse {
+  0% { transform: scale(1); opacity: 0.9; }
+  50% { transform: scale(1.05); opacity: 1; }
+  100% { transform: scale(1); opacity: 0.9; }
+}
+
+/* ===================== */
+/* Ajustes para telas pequenas */
+@media screen and (max-width: 480px) {
+  .card-bloqueio {
+    padding: 25px 15px;
+    max-width: 90%;
+  }
+
+  .icon-bloqueio {
+    width: 50px;
+    margin-bottom: 15px;
+  }
+
+  .card-bloqueio h2 {
+    font-size: 1.4rem;
+  }
+
+  .card-bloqueio p {
+    font-size: 1rem;
+  }
+
+  .btn-contato {
+    padding: 10px 20px;
+    font-size: 0.9rem;
+  }
+}
+.alUsuariosOnline {
   position: fixed;
   top: 20px;
   right: 20px;
