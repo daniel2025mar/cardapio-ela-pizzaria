@@ -10,6 +10,111 @@ const SUPABASE_URL = "https://vixurbnyhalixuwyytjx.supabase.co";
 const SUPABASE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InZpeHVyYm55aGFsaXh1d3l5dGp4Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzI3MTc0ODksImV4cCI6MjA4ODI5MzQ4OX0._0kx5t0Yi6uAge5K9BFCh9PHs66YrW3sTY80yncTLeM";
 const supabase = createClient(SUPABASE_URL, SUPABASE_KEY);
 
+
+// =============================
+// ATUALIZAR USUÁRIO ONLINE
+// =============================
+async function atualizarOnline(userId) {
+
+  try {
+
+    const { error } = await supabase
+      .from("usuarios")
+      .update({
+        last_seen: new Date().toISOString()
+      })
+      .eq("id", userId);
+
+    if (error) {
+      console.error("Erro ao atualizar last_seen:", error);
+    }
+
+  } catch (err) {
+    console.error("Erro inesperado:", err);
+  }
+
+}
+
+
+// =============================
+// ESCUTAR USUÁRIOS ONLINE
+// =============================
+function escutarUsuariosOnline(usuarioLogado) {
+
+  supabase
+    .channel("usuarios-online")
+    .on(
+      "postgres_changes",
+      {
+        event: "UPDATE",
+        schema: "public",
+        table: "usuarios"
+      },
+      (payload) => {
+
+        const usuario = payload.new;
+
+        // NÃO mostrar notificação do próprio usuário
+        if (usuario.id === usuarioLogado.id) return;
+
+        // Apenas admin recebe notificações
+        if (usuarioLogado.cargo === "admin") {
+
+          mostrarNotificacao(usuario.username + " está Online");
+
+        }
+
+      }
+    )
+    .subscribe();
+
+}
+
+
+// =============================
+// MOSTRAR NOTIFICAÇÃO NA TELA
+// =============================
+function mostrarNotificacao(mensagem) {
+
+  const div = document.createElement("div");
+
+  div.innerText = "🔔 " + mensagem;
+
+  div.style.position = "fixed";
+  div.style.bottom = "20px";
+  div.style.right = "20px";
+  div.style.background = "#03305c";
+  div.style.color = "#fff";
+  div.style.padding = "12px 18px";
+  div.style.borderRadius = "6px";
+  div.style.boxShadow = "0 5px 10px rgba(0,0,0,0.2)";
+  div.style.zIndex = "9999";
+  div.style.fontSize = "14px";
+
+  document.body.appendChild(div);
+
+  setTimeout(() => {
+    div.remove();
+  }, 4000);
+
+}
+
+
+// =============================
+// USUÁRIO LOGADO (EXEMPLO)
+// =============================
+const usuarioLogado = {
+  id: "ec3dbca1-568c-4e92-a7ac-0402da4770bb",
+  cargo: "admin",
+  username: "admin"
+};
+
+
+// =============================
+// INICIAR SISTEMA
+// =============================
+atualizarOnline(usuarioLogado.id);
+escutarUsuariosOnline(usuarioLogado);
 // Bloquear zoom no celular (pinça)
 window.addEventListener('touchstart', function (e) {
   if (e.touches.length > 1) {

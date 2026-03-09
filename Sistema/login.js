@@ -101,7 +101,7 @@ async function verificarLogin() {
       // Consulta no Supabase (case-insensitive)
       const { data, error } = await supabase
           .from("usuarios")
-          .select("username, password, ativo, permissoes")
+          .select("id, username, password, ativo, permissoes")
           .ilike("username", usernameInput);
 
       if (error) {
@@ -129,15 +129,26 @@ async function verificarLogin() {
 
       if (usuario.password === passwordInput) {
 
-          // Salva que o usuário está logado
+          // ================== SALVA LOGIN ==================
           localStorage.setItem('usuarioLogado', 'true');
           localStorage.setItem('usuarioNome', usuario.username);
+          localStorage.setItem('usuarioId', usuario.id); // salva id para listener
+
+          // ================== ATUALIZA LAST_SEEN ==================
+          try {
+              await supabase
+                  .from('usuarios')
+                  .update({ last_seen: new Date().toISOString() })
+                  .eq('id', usuario.id);
+          } catch (err) {
+              console.error("Erro ao atualizar last_seen:", err);
+          }
 
           // ================== LOGIN CORRETO ==================
           mensagemBoasVindasEl.textContent = `Bem-vindo, ${usuario.username}!`;
-          mensagemBoasVindasEl.style.color = "#ffffff"; // azul
-          passwordInputEl.value = ""; // limpa apenas senha
-          btnEntrar.disabled = true; // desativa botão para evitar cliques múltiplos
+          mensagemBoasVindasEl.style.color = "#ffffff";
+          passwordInputEl.value = "";
+          btnEntrar.disabled = true;
 
           // Redireciona após 2 segundos
           setTimeout(() => {
