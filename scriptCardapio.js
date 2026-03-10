@@ -6,6 +6,42 @@ const SUPABASE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZ
 const supabase = createClient(SUPABASE_URL, SUPABASE_KEY);
 
 
+async function carregarImagensEmpresa() {
+  try {
+    const { data: empresa, error } = await supabase
+      .from("empresa")
+      .select("logo_url, fundo_url")
+      .eq("id", 1)
+      .single();
+
+    if (error) {
+      console.error("[IMAGENS EMPRESA] Erro ao carregar imagens:", error.message);
+      return;
+    }
+
+    // Logo do sistema
+    const logoSistema = document.getElementById("logoSistema");
+    if (empresa.logo_url && logoSistema) {
+      logoSistema.src = empresa.logo_url; // Base64 direto do banco
+      console.log("[IMAGENS EMPRESA] Logo carregada do banco");
+    }
+
+    // Fundo do topo
+    const fundoTopo = document.querySelector(".fundo-topo");
+    if (empresa.fundo_url && fundoTopo) {
+      fundoTopo.src = empresa.fundo_url; // Base64 direto do banco
+      console.log("[IMAGENS EMPRESA] Fundo do topo carregado do banco");
+    }
+
+  } catch (err) {
+    console.error("[IMAGENS EMPRESA] Exceção:", err);
+  }
+}
+
+// Chamar a função após carregar o DOM
+document.addEventListener("DOMContentLoaded", () => {
+  carregarImagensEmpresa();
+});
   async function carregarNomeEmpresa() {
     // Busca o primeiro registro da tabela 'empresa'
     const { data, error } = await supabase

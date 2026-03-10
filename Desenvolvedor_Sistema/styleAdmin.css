@@ -1,53 +1,368 @@
-body {
-  font-family: Arial, sans-serif;
-  background: #f5f5f5;
-  padding: 20px;
+/* RESET */
+
+*{
+margin:0;
+padding:0;
+box-sizing:border-box;
 }
 
-h1 {
-  text-align: center;
-  margin-bottom: 20px;
+/* BODY */
+
+body{
+font-family: Arial, sans-serif;
+background:#f5f5f5;
+line-height:1.4;
 }
 
-table {
+/* TOOLBAR */
+
+.toolbar{
+display:flex;
+justify-content:space-between;
+align-items:center;
+background:#1f2937;
+color:white;
+padding:12px 20px;
+position:sticky;
+top:0;
+z-index:1000;
+box-shadow:0 2px 6px rgba(0,0,0,0.2);
+flex-wrap:wrap;
+}
+
+.toolbar-left h2{
+font-size:20px;
+}
+
+/* BUSCA */
+
+.toolbar-center{
+display:flex;
+align-items:center;
+}
+
+.toolbar-center input{
+padding:8px 12px;
+border-radius:6px;
+border:none;
+outline:none;
+width:260px;
+}
+
+/* AREA DIREITA */
+
+.toolbar-right{
+display:flex;
+align-items:center;
+gap:12px;
+}
+
+/* BOTÃO TOOLBAR */
+
+.btn-toolbar{
+background:#2563eb;
+color:white;
+border:none;
+padding:8px 14px;
+border-radius:6px;
+cursor:pointer;
+transition:0.2s;
+}
+
+.btn-toolbar:hover{
+background:#1d4ed8;
+}
+
+/* USUÁRIO */
+
+.admin-user{
+background:#374151;
+padding:6px 12px;
+border-radius:6px;
+font-size:14px;
+}
+
+/* CONTAINER */
+
+.container{
+padding:20px;
+}
+
+/* TITULO */
+
+h1{
+text-align:center;
+margin-bottom:20px;
+font-size:24px;
+}
+
+/* TABELA */
+
+table{
+width:100%;
+border-collapse:collapse;
+background:#fff;
+box-shadow:0 0 10px rgba(0,0,0,0.1);
+border-radius:6px;
+overflow:hidden;
+}
+
+/* CABEÇALHO */
+
+th{
+background:#007BFF;
+color:white;
+padding:12px;
+text-align:left;
+font-size:14px;
+}
+
+/* CELULAS */
+
+td{
+padding:12px;
+border-bottom:1px solid #ddd;
+font-size:14px;
+}
+
+/* HOVER */
+
+tr:hover{
+background-color:#f1f1f1;
+}
+
+/* BOTÕES */
+
+button{
+padding:8px 12px;
+border:none;
+border-radius:4px;
+cursor:pointer;
+font-size:14px;
+transition:0.2s;
+}
+
+/* STATUS */
+
+.bloqueado{
+background:#dc3545;
+color:white;
+}
+
+.liberado{
+background:#28a745;
+color:white;
+}
+
+.toggle{
+cursor:pointer;
+}
+
+/* ===================== */
+/* TABLET */
+/* ===================== */
+
+@media (max-width: 900px){
+
+.toolbar{
+flex-wrap:wrap;
+gap:10px;
+}
+
+.toolbar-center input{
+width:200px;
+}
+
+}
+
+/* ===================== */
+/* CELULAR */
+/* ===================== */
+
+@media (max-width: 600px){
+
+.toolbar{
+flex-direction:column;
+align-items:stretch;
+gap:10px;
+}
+
+.toolbar-left{
+text-align:center;
+}
+
+.toolbar-center{
+width:100%;
+}
+
+.toolbar-center input{
+width:100%;
+}
+
+.toolbar-right{
+justify-content:space-between;
+width:100%;
+}
+
+.container{
+padding:10px;
+}
+
+h1{
+font-size:20px;
+}
+
+/* TABELA RESPONSIVA */
+
+table{
+display:block;
+overflow-x:auto;
+white-space:nowrap;
+}
+
+/* BOTÕES MAIORES PARA TOQUE */
+
+button{
+padding:10px 14px;
+font-size:15px;
+}
+
+}
+
+/* ===================== */
+/* CELULAR PEQUENO */
+/* ===================== */
+
+@media (max-width: 400px){
+
+h1{
+font-size:18px;
+}
+
+.toolbar-left h2{
+font-size:18px;
+}
+
+button{
+font-size:14px;
+padding:9px 12px;
+}
+
+}
+
+/* ============================= */
+/* MODAL EMPRESA */
+/* ============================= */
+
+.modal {
+  display: none; /* inicia fechado */
+  position: fixed;
+  z-index: 1000;
+  left: 0;
+  top: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0,0,0,0.6);
+  backdrop-filter: blur(3px);
+  justify-content: center;
+  align-items: center;
+}
+
+/* Conteúdo do modal */
+.modal-content {
+  background: #ffffff;
+  width: 90%;
+  max-width: 600px;
+  border-radius: 10px;
+  padding: 25px;
+  position: relative;
+  animation: abrirModal 0.25s ease;
+  box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+}
+
+/* Botão fechar */
+.close {
+  position: absolute;
+  top: 12px;
+  right: 15px;
+  font-size: 26px;
+  font-weight: bold;
+  color: #555;
+  cursor: pointer;
+}
+
+.close:hover {
+  color: red;
+}
+
+/* Título */
+.modal-content h2 {
+  margin-bottom: 10px;
+  font-size: 22px;
+}
+
+/* Informações */
+.modal-content p {
+  margin: 6px 0;
+  font-size: 15px;
+}
+
+/* ============================= */
+/* TABELA PAGAMENTOS */
+/* ============================= */
+
+.modal-table {
   width: 100%;
   border-collapse: collapse;
-  background: #fff;
-  box-shadow: 0 0 10px rgba(0,0,0,0.1);
+  margin-top: 10px;
 }
 
-th, td {
-  padding: 12px;
-  border-bottom: 1px solid #ddd;
-  text-align: left;
+.modal-table th,
+.modal-table td {
+  padding: 10px;
+  border: 1px solid #ddd;
+  text-align: center;
 }
 
-th {
-  background: #007BFF;
-  color: white;
+.modal-table th {
+  background: #f4f4f4;
+  font-weight: 600;
 }
 
-tr:hover {
-  background-color: #f1f1f1;
+.modal-table tr:nth-child(even) {
+  background: #fafafa;
 }
 
-button {
-  padding: 8px 12px;
-  border: none;
-  border-radius: 4px;
-  cursor: pointer;
+/* ============================= */
+/* ANIMAÇÃO */
+/* ============================= */
+
+@keyframes abrirModal {
+  from {
+    transform: scale(0.9);
+    opacity: 0;
+  }
+  to {
+    transform: scale(1);
+    opacity: 1;
+  }
 }
 
-.bloqueado {
-  background: #dc3545;
-  color: white;
-}
+/* ============================= */
+/* RESPONSIVO */
+/* ============================= */
 
-.liberado {
-  background: #28a745;
-  color: white;
-}
+@media (max-width: 600px) {
 
-.toggle {
-  cursor: pointer;
+  .modal-content {
+    width: 95%;
+    padding: 20px;
+  }
+
+  .modal-table th,
+  .modal-table td {
+    font-size: 13px;
+    padding: 8px;
+  }
+
 }

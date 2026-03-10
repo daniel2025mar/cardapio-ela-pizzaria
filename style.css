@@ -1277,34 +1277,35 @@ header .header-text p.empresaNome {
   font-weight: 600;
   color: #ccc;
 }
+
 .upload-box {
+  width: 100%;
+  height: 150px;          /* altura do retângulo de preview */
+  border: 2px dashed #999;
+  border-radius: 8px;
   position: relative;
-  height: 120px;
-  border: 2px dashed #555;
-  border-radius: 12px;
-  background: #2a2a3e;
+  cursor: pointer;
+  overflow: hidden;       /* garante que a imagem não ultrapasse o box */
   display: flex;
   align-items: center;
   justify-content: center;
-  cursor: pointer;
-  overflow: hidden;
-  transition: border 0.3s, box-shadow 0.3s, background 0.3s;
+  background-color: #222; /* opcional: cor de fundo */
 }
+
 .upload-box:hover {
   border-color: #1e90ff;
   box-shadow: 0 0 10px rgba(30,144,255,0.3);
 }
 .preview-img {
-  width: 100%;
-  height: 100%;
-  object-fit: contain;
-  display: none;
+  width: 100%;       /* ocupa toda a largura do container */
+  height: 100%;      /* ocupa toda a altura do container */
+  object-fit: cover; /* mantém proporção e corta partes que ultrapassarem */
+  display: block;    /* remove espaços extras */
 }
 .placeholder-text {
-  color: #888;
-  font-size: 12px;
-  text-align: center;
   position: absolute;
+  color: #aaa;
+  font-size: 14px;
   pointer-events: none;
 }
 

@@ -1,31 +1,100 @@
 <!DOCTYPE html>
 <html lang="pt-br">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Painel de Bloqueio de Empresas</title>
-  <link rel="stylesheet" href="styleAdmin.css">
-  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/supabase.min.js" defer></script>
-  <script src="admin.js" defer></script>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>Painel de Bloqueio de Empresas</title>
+
+<link rel="stylesheet" href="styleAdmin.css">
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/supabase.min.js" defer></script>
+<script src="admin.js" defer></script>
+
 </head>
+
 <body>
 
-  <h1>Painel de Bloqueio de Empresas</h1>
+<!-- TOOLBAR -->
+<header class="toolbar">
 
-  <table>
-    <thead>
-      <tr>
-        <th>Empresa</th>
-        <th>CNPJ</th>
-        <th>Status</th>
-        <th>Ação</th>
-      </tr>
-    </thead>
-    <tbody id="listaEmpresas">
-      <!-- Lista de empresas será preenchida pelo JS -->
-    </tbody>
-  </table>
+<div class="toolbar-left">
+<h2>Admin Empresas</h2>
+</div>
 
-  <script type="module" src="scriptADMIN.js"></script>
+<div class="toolbar-center">
+<input 
+type="text"
+id="buscarEmpresa"
+placeholder="Buscar empresa ou CNPJ..."
+onkeyup="filtrarEmpresas()"
+>
+</div>
+
+<div class="toolbar-right">
+
+<button onclick="carregarEmpresas()" class="btn-toolbar">
+🔄 Atualizar
+</button>
+
+<div class="admin-user">
+👤 Admin
+</div>
+
+</div>
+
+</header>
+
+
+<!-- CONTEÚDO -->
+<div class="container">
+
+<h1>Painel de Bloqueio de Empresas</h1>
+
+<table>
+
+<thead>
+<tr>
+<th>Empresa</th>
+<th>CNPJ</th>
+<th>Status</th>
+<th>Ação</th>
+</tr>
+</thead>
+
+<tbody id="listaEmpresas">
+<!-- Lista preenchida pelo JS -->
+</tbody>
+
+</table>
+
+</div>
+
+<!-- Modal de detalhes da empresa -->
+<div id="modalEmpresa" class="modal">
+  <div class="modal-content">
+    <span class="close">&times;</span>
+    <h2 id="modalNomeEmpresa">Nome da Empresa</h2>
+    <p><strong>CNPJ:</strong> <span id="modalCNPJ">00.000.000/0000-00</span></p>
+    <p><strong>Status:</strong> <span id="modalStatus">Ativo</span></p>
+    <p><strong>Endereço:</strong> <span id="modalEndereco">Rua Exemplo, 123</span></p>
+
+    <h3>Pagamentos Mensais</h3>
+    <table id="tabelaPagamentos" class="modal-table">
+      <thead>
+        <tr>
+          <th>Mês</th>
+          <th>Data de Vencimento</th>
+          <th>Pago?</th>
+        </tr>
+      </thead>
+      <tbody>
+        <!-- Linhas serão adicionadas pelo JS -->
+      </tbody>
+    </table>
+  </div>
+</div>
+<script type="module" src="scriptADMIN.js"></script>
+
 </body>
 </html>

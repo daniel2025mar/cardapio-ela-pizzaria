@@ -1,15 +1,14 @@
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
 
 
-
-window.addEventListener('wheel', function (e) {
-  if (e.ctrlKey) e.preventDefault(); // impede zoom com Ctrl + scroll
-}, { passive: false });
 // =================== SUPABASE ===================
 const SUPABASE_URL = "https://vixurbnyhalixuwyytjx.supabase.co";
 const SUPABASE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InZpeHVyYm55aGFsaXh1d3l5dGp4Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzI3MTc0ODksImV4cCI6MjA4ODI5MzQ4OX0._0kx5t0Yi6uAge5K9BFCh9PHs66YrW3sTY80yncTLeM";
 const supabase = createClient(SUPABASE_URL, SUPABASE_KEY);
 
+window.addEventListener('wheel', function (e) {
+  if (e.ctrlKey) e.preventDefault(); // impede zoom com Ctrl + scroll
+}, { passive: false });
 // ID da empresa monitorada
 const empresaIdAtual = 1;
 
@@ -913,8 +912,47 @@ document.addEventListener("DOMContentLoaded", async () => {
 
   if (!modalEmpresaNovo || !empresaNome) return;
 
-  // =================== FUNÇÕES ===================
+  let logoFile = null;
+  let fundoFile = null;
 
+  // =================== FUNÇÃO DE UPLOAD ===================
+  async function uploadArquivo(file, pasta) {
+    if (!file) return null;
+    console.log(`[UPLOAD] Iniciando upload para pasta: ${pasta}`);
+    const fileExt = "jpeg"; // forçar jpeg
+    const fileName = `${Date.now()}.${fileExt}`;
+    try {
+      const { data, error } = await supabase.storage
+        .from("empresa")
+        .upload(`${pasta}/${fileName}`, file, { upsert: true });
+      if (error) {
+        if (error.message.includes("Bucket not found")) {
+          console.error("[UPLOAD] Bucket 'empresa' não encontrado. Crie no Supabase Storage!");
+        } else {
+          console.error("[UPLOAD] Erro no upload:", error.message);
+        }
+        return null;
+      }
+      const { publicUrl } = supabase.storage.from("empresa").getPublicUrl(`${pasta}/${fileName}`);
+      console.log("[UPLOAD] Upload concluído. URL pública:", publicUrl);
+      return publicUrl;
+    } catch (err) {
+      console.error("[UPLOAD] Exceção:", err);
+      return null;
+    }
+  }
+
+  // =================== BASE64 PARA FILE ===================
+  function base64ToFile(base64, filename) {
+    const [header, data] = base64.split(",");
+    const byteString = atob(data);
+    const ab = new ArrayBuffer(byteString.length);
+    const ia = new Uint8Array(ab);
+    for (let i = 0; i < byteString.length; i++) ia[i] = byteString.charCodeAt(i);
+    return new File([ab], filename, { type: "image/jpeg" });
+  }
+
+  // =================== CARREGAR EMPRESA ===================
   async function carregarEmpresa() {
     const { data, error } = await supabase
       .from("empresa")
@@ -922,12 +960,10 @@ document.addEventListener("DOMContentLoaded", async () => {
       .eq("id", 1)
       .single();
 
-    if (error) {
-      console.error("Erro ao carregar empresa:", error.message);
-      return;
-    }
+    if (error) { console.error("[CARREGAR] Erro ao carregar empresa:", error.message); return; }
 
     if (data) {
+      console.log("[CARREGAR] Empresa carregada:", data);
       document.getElementById("inputNomeNovo").value = data.nome || "";
       document.getElementById("inputEnderecoNovo").value = data.endereco || "";
       document.getElementById("inputTelefoneNovo").value = data.telefone || "";
@@ -937,142 +973,88 @@ document.addEventListener("DOMContentLoaded", async () => {
         ? new Date(data.criado_em).toLocaleDateString()
         : "";
 
-      if (data.logo_url) {
-        document.getElementById("previewLogoNovo").src = data.logo_url;
-        document.querySelector("#previewLogoNovo + .placeholder-text").style.display = "none";
-      }
+      // Preview Logo
+      const previewLogo = document.getElementById("previewLogoNovo");
+      const placeholderLogo = previewLogo.nextElementSibling;
+      previewLogo.src = data.logo_url || "";
+      placeholderLogo.style.display = data.logo_url ? "none" : "inline";
 
-      if (data.fundo_url) {
-        document.getElementById("previewFundoNovo").src = data.fundo_url;
-        document.querySelector("#previewFundoNovo + .placeholder-text").style.display = "none";
-      }
+      // Preview Fundo
+      const previewFundo = document.getElementById("previewFundoNovo");
+      const placeholderFundo = previewFundo.nextElementSibling;
+      previewFundo.src = data.fundo_url || "";
+      placeholderFundo.style.display = data.fundo_url ? "none" : "inline";
+
+      logoFile = null;
+      fundoFile = null;
     }
   }
 
   async function atualizarNomeEmpresa() {
-    const { data, error } = await supabase
-      .from("empresa")
-      .select("nome")
-      .eq("id", 1)
-      .single();
-
-    if (error) {
-      console.error("Erro ao carregar nome da empresa:", error.message);
-      return;
-    }
-
-    if (data && data.nome) {
-      empresaNome.textContent = data.nome;
-    } else {
-      empresaNome.textContent = "Empresa não cadastrada";
-    }
-  }
-
-  async function uploadArquivo(file, pasta) {
-    if (!file) return null;
-    const fileExt = file.name.split(".").pop();
-    const fileName = `${Date.now()}.${fileExt}`;
-    const { data, error } = await supabase.storage
-      .from("empresa")
-      .upload(`${pasta}/${fileName}`, file, { upsert: true });
-    if (error) return null;
-    const { publicUrl } = supabase.storage.from("empresa").getPublicUrl(`${pasta}/${fileName}`);
-    return publicUrl;
+    const { data } = await supabase.from("empresa").select("nome").eq("id", 1).single();
+    empresaNome.textContent = (data && data.nome) ? data.nome : "Empresa não cadastrada";
   }
 
   // =================== EVENTOS ===================
-
-  // Abrir modal
   empresaNome.addEventListener("click", async () => {
+    console.log("[MODAL] Abrindo modal empresa");
     modalEmpresaNovo.classList.add("show");
     await carregarEmpresa();
   });
 
-  // Fechar modal
-  btnFecharNovo.addEventListener("click", () => {
-    modalEmpresaNovo.classList.remove("show");
+  btnFecharNovo.addEventListener("click", () => modalEmpresaNovo.classList.remove("show"));
+  window.addEventListener("click", (e) => { if (e.target === modalEmpresaNovo) modalEmpresaNovo.classList.remove("show"); });
+  window.addEventListener("keydown", (e) => { if (e.key === "Escape") modalEmpresaNovo.classList.remove("show"); });
+
+  // =================== PREVIEW LOGO ===================
+  const previewLogo = document.getElementById("previewLogoNovo");
+  const placeholderLogo = previewLogo.nextElementSibling;
+  inputLogo.addEventListener("change", () => {
+    if(inputLogo.files && inputLogo.files[0]){
+      if(inputLogo.files[0].type !== "image/jpeg"){
+        alert("Apenas JPEG permitido para logo!");
+        inputLogo.value = "";
+        return;
+      }
+      logoFile = inputLogo.files[0];
+      const reader = new FileReader();
+      reader.onload = e => {
+        previewLogo.src = e.target.result;
+        placeholderLogo.style.display = "none";
+        console.log("[PREVIEW] Logo atualizado no preview");
+      };
+      reader.readAsDataURL(logoFile);
+    }
   });
 
-  window.addEventListener("click", (e) => {
-    if (e.target === modalEmpresaNovo) modalEmpresaNovo.classList.remove("show");
+  // =================== PREVIEW FUNDO ===================
+  const previewFundo = document.getElementById("previewFundoNovo");
+  const placeholderFundo = previewFundo.nextElementSibling;
+  const uploadBoxFundo = previewFundo.parentElement;
+  uploadBoxFundo.addEventListener("click", () => { inputFundo.value=""; inputFundo.click(); });
+
+  inputFundo.addEventListener("change", () => {
+    if(inputFundo.files && inputFundo.files[0]){
+      if(inputFundo.files[0].type !== "image/jpeg"){
+        alert("Apenas JPEG permitido para fundo!");
+        inputFundo.value = "";
+        return;
+      }
+      fundoFile = inputFundo.files[0];
+      const reader = new FileReader();
+      reader.onload = e => {
+        previewFundo.src = e.target.result;
+        placeholderFundo.style.display = "none";
+        console.log("[PREVIEW] Fundo atualizado no preview");
+      };
+      reader.readAsDataURL(fundoFile);
+    }
   });
 
-  window.addEventListener("keydown", (e) => {
-    if (e.key === "Escape") modalEmpresaNovo.classList.remove("show");
-  });
-
-  const inputWhatsApp = document.getElementById("inputWhatsAppNovo");
-  // =========== formataçao para tefefone ==========
-  // TELEFONE FIXO
-const inputTelefone = document.getElementById("inputTelefoneNovo");
-
-inputTelefone.addEventListener("input", function () {
-
-  let valor = this.value.replace(/\D/g, "");
-
-  if (valor.length > 10) {
-    valor = valor.slice(0, 10);
-  }
-
-  if (valor.length >= 10) {
-    valor = valor.replace(/(\d{2})(\d{4})(\d{4})/, "($1) $2-$3");
-  } 
-  else if (valor.length >= 6) {
-    valor = valor.replace(/(\d{2})(\d{4})/, "($1) $2");
-  } 
-  else if (valor.length >= 3) {
-    valor = valor.replace(/(\d{2})(\d+)/, "($1) $2");
-  }
-
-  this.value = valor;
-
-});
-
-  // =========== formataçao para cnpj + consulta ===
-  const inputCNPJ = document.getElementById("inputCNPJNovo");
-
-inputCNPJ.addEventListener("input", function () {
-
-  let valor = this.value.replace(/\D/g, "");
-
-  if (valor.length > 14) {
-    valor = valor.slice(0, 14);
-  }
-
-  valor = valor.replace(/^(\d{2})(\d)/, "$1.$2");
-  valor = valor.replace(/^(\d{2})\.(\d{3})(\d)/, "$1.$2.$3");
-  valor = valor.replace(/\.(\d{3})(\d)/, ".$1/$2");
-  valor = valor.replace(/(\d{4})(\d)/, "$1-$2");
-
-  this.value = valor;
-
-});
-
-
-  // ===========formataçao para whatsapp ===========
-inputWhatsApp.addEventListener("input", function () {
-
-  let valor = this.value.replace(/\D/g, "");
-
-  if (valor.length > 11) {
-    valor = valor.slice(0, 11);
-  }
-
-  if (valor.length >= 11) {
-    valor = valor.replace(/(\d{2})(\d{1})(\d{4})(\d{4})/, "($1) $2 $3-$4");
-  } 
-  else if (valor.length >= 7) {
-    valor = valor.replace(/(\d{2})(\d{1})(\d{4})/, "($1) $2 $3");
-  } 
-  else if (valor.length >= 3) {
-    valor = valor.replace(/(\d{2})(\d+)/, "($1) $2");
-  }
-
-  this.value = valor;
-
-});
-  // Salvar/Atualizar empresa
+  // =================== BOTÃO SALVAR ===================
   btnSalvarNovo.addEventListener("click", async () => {
+  console.log("[SALVAR] Iniciando salvamento da empresa");
+
   const nome = document.getElementById("inputNomeNovo").value;
   const endereco = document.getElementById("inputEnderecoNovo").value;
   const telefone = document.getElementById("inputTelefoneNovo").value;
@@ -1080,112 +1062,53 @@ inputWhatsApp.addEventListener("input", function () {
   const cnpj = document.getElementById("inputCNPJNovo").value;
   const criadoEm = new Date().toISOString();
 
-  const logoFile = inputLogo.files[0];
-  const fundoFile = inputFundo.files[0];
-
-  // ================= VALIDAÇÃO =================
-  if (!nome || !endereco || !telefone || !whatsapp || !cnpj) {
-    alert("Preencha todos os campos obrigatórios!");
-    return;
+  if (!nome || !endereco || !telefone || !whatsapp || !cnpj) { 
+    alert("Preencha todos os campos!"); 
+    return; 
   }
 
-  // Validação de CNPJ
-  function validarCNPJ(cnpjInput) {
-    let c = cnpjInput.replace(/\D/g, "");
-    if (c.length !== 14) return false;
-    if (/^(\d)\1+$/.test(c)) return false;
+  // Pega Base64 do preview
+  const logoBase64 = previewLogo.src.startsWith("data:image") ? previewLogo.src : null;
+  const fundoBase64 = previewFundo.src.startsWith("data:image") ? previewFundo.src : null;
 
-    let tamanho = c.length - 2;
-    let numeros = c.substring(0, tamanho);
-    let digitos = c.substring(tamanho);
+  console.log("[SALVAR] Logo Base64:", logoBase64 ? "Existe" : "Não existe");
+  console.log("[SALVAR] Fundo Base64:", fundoBase64 ? "Existe" : "Não existe");
 
-    let soma = 0;
-    let pos = tamanho - 7;
-    for (let i = tamanho; i >= 1; i--) {
-      soma += numeros.charAt(tamanho - i) * pos--;
-      if (pos < 2) pos = 9;
+  try {
+    const { data, error } = await supabase
+      .from("empresa")
+      .upsert([{
+        id: 1,
+        nome,
+        endereco,
+        telefone: telefone.replace(/\D/g,""),
+        whatsapp: whatsapp.replace(/\D/g,""),
+        cnpj: cnpj.replace(/\D/g,""),
+        criado_em: criadoEm,
+        logo_url: logoBase64,
+        fundo_url: fundoBase64
+      }], { onConflict: ["id"] });
+
+    if (error) {
+      console.error("[SALVAR] Erro ao salvar:", error.message);
+      alert("Erro ao salvar: " + error.message);
+      return;
     }
-    let resultado = soma % 11 < 2 ? 0 : 11 - (soma % 11);
-    if (resultado != digitos.charAt(0)) return false;
 
-    tamanho = tamanho + 1;
-    numeros = c.substring(0, tamanho);
-    soma = 0;
-    pos = tamanho - 7;
-    for (let i = tamanho; i >= 1; i--) {
-      soma += numeros.charAt(tamanho - i) * pos--;
-      if (pos < 2) pos = 9;
-    }
-    resultado = soma % 11 < 2 ? 0 : 11 - (soma % 11);
-
-    return resultado == digitos.charAt(1);
-  }
-
-  if (!validarCNPJ(cnpj)) {
-    alert("CNPJ inválido!");
-    return;
-  }
-
-  // ================= UPLOAD =================
-  const logoUrl = await uploadArquivo(logoFile, "logo");
-  const fundoUrl = await uploadArquivo(fundoFile, "fundo");
-
-  // ================= SALVAR NO SUPABASE =================
-  const { error } = await supabase
-    .from("empresa")
-    .upsert(
-      [
-        {
-          id: 1,
-          nome,
-          endereco,
-          telefone: telefone.replace(/\D/g, ""), // salva só números
-          whatsapp: whatsapp.replace(/\D/g, ""), // salva só números
-          cnpj: cnpj.replace(/\D/g, ""), // salva só números
-          criado_em: criadoEm,
-          logo_url: logoUrl,
-          fundo_url: fundoUrl,
-        },
-      ],
-      { onConflict: ["id"] }
-    );
-
-  if (error) {
-    alert("Erro ao salvar a empresa: " + error.message);
-  } else {
+    console.log("[SALVAR] Empresa cadastrada com sucesso!", data);
     alert("Empresa cadastrada com sucesso!");
+    
+    // Não apagamos o preview
     await carregarEmpresa();
-    await atualizarNomeEmpresa(); // Atualiza nome no header
+    await atualizarNomeEmpresa();
+
+  } catch (err) {
+    console.error("[SALVAR] Exceção:", err);
+    alert("Erro inesperado ao salvar empresa");
   }
 });
 
-  // =================== PREVIEW IMAGENS ===================
-  inputLogo.addEventListener("change", () => {
-    const file = inputLogo.files[0];
-    if (file) {
-      const reader = new FileReader();
-      reader.onload = (e) => {
-        document.getElementById("previewLogoNovo").src = e.target.result;
-        document.querySelector("#previewLogoNovo + .placeholder-text").style.display = "none";
-      };
-      reader.readAsDataURL(file);
-    }
-  });
-
-  inputFundo.addEventListener("change", () => {
-    const file = inputFundo.files[0];
-    if (file) {
-      const reader = new FileReader();
-      reader.onload = (e) => {
-        document.getElementById("previewFundoNovo").src = e.target.result;
-        document.querySelector("#previewFundoNovo + .placeholder-text").style.display = "none";
-      };
-      reader.readAsDataURL(file);
-    }
-  });
-
-  // =================== INICIAL ===================
-  await atualizarNomeEmpresa(); // atualiza o header ao iniciar
+  await atualizarNomeEmpresa();
 });
 
 // ================= funçao do modal Categorias ========
