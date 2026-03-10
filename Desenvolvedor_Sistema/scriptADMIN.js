@@ -29,37 +29,33 @@ async function carregarEmpresas() {
     const tr = document.createElement("tr");
 
     tr.innerHTML = `
-      <td class="empresaNome" style="cursor:pointer; color:#0d6efd;">
+      <td class="empresaNome" style="cursor:pointer;color:#0d6efd;">
         ${emp.nome}
       </td>
 
       <td>${formatCNPJ(emp.cnpj)}</td>
 
-      <td>
-        ${emp.bloqueado ? 'Bloqueado' : 'Liberado'}
-      </td>
+      <td>${emp.bloqueado ? 'Bloqueado' : 'Liberado'}</td>
 
       <td>
-        <button 
-        class="${emp.bloqueado ? 'liberado' : 'bloqueado'} toggle"
-        data-id="${emp.id}"
-        data-bloqueado="${emp.bloqueado}">
-        ${emp.bloqueado ? 'Liberar' : 'Bloquear'}
+        <button
+          class="${emp.bloqueado ? 'liberado' : 'bloqueado'} toggle"
+          data-id="${emp.id}"
+          data-bloqueado="${emp.bloqueado}">
+          ${emp.bloqueado ? 'Liberar' : 'Bloquear'}
         </button>
       </td>
     `;
 
-    // =============================
-    // ABRIR MODAL AO CLICAR NO NOME
-    // =============================
+    // abrir modal
     tr.querySelector('.empresaNome').addEventListener('click', () => {
 
       abrirModalEmpresa({
+        id: emp.id,
         nome: emp.nome,
         cnpj: emp.cnpj,
         status: emp.bloqueado ? "Bloqueado" : "Liberado",
-        endereco: emp.endereco || "Não informado",
-        pagamentos: []
+        endereco: emp.endereco || "Não informado"
       });
 
     });
@@ -68,9 +64,7 @@ async function carregarEmpresas() {
 
   });
 
-  // =============================
-  // BOTÃO BLOQUEAR / LIBERAR
-  // =============================
+  // botões bloquear
   document.querySelectorAll('.toggle').forEach(btn => {
 
     btn.addEventListener('click', async () => {
@@ -80,10 +74,8 @@ async function carregarEmpresas() {
       const bloquear = !bloqueadoAtual;
 
       if (bloquear) {
-
         const confirmar = confirm("Deseja realmente bloquear a empresa?");
         if (!confirmar) return;
-
       }
 
       await atualizarBloqueio(id, bloquear);
@@ -129,94 +121,131 @@ function formatCNPJ(cnpj) {
 // =============================
 // MODAL
 // =============================
-
 const modal = document.getElementById('modalEmpresa');
 const spanClose = document.querySelector('.modal .close');
 
-function abrirModalEmpresa(dadosEmpresa) {
+async function abrirModalEmpresa(dadosEmpresa) {
 
   document.getElementById('modalNomeEmpresa').textContent = dadosEmpresa.nome;
-
-  document.getElementById('modalCNPJ').textContent =
-    formatCNPJ(dadosEmpresa.cnpj);
-
-  document.getElementById('modalStatus').textContent =
-    dadosEmpresa.status;
-
-  document.getElementById('modalEndereco').textContent =
-    dadosEmpresa.endereco;
+  document.getElementById('modalCNPJ').textContent = formatCNPJ(dadosEmpresa.cnpj);
+  document.getElementById('modalStatus').textContent = dadosEmpresa.status;
+  document.getElementById('modalEndereco').textContent = dadosEmpresa.endereco;
 
   const tbodyPag = document.querySelector('#tabelaPagamentos tbody');
   tbodyPag.innerHTML = '';
 
-  if (dadosEmpresa.pagamentos && dadosEmpresa.pagamentos.length > 0) {
+  // =============================
+  // BUSCAR PAGAMENTOS
+  // =============================
+  const { data: pagamentos, error } = await supabase
+    .from('pagamentos_mensalidade')
+    .select('*')
+    .eq('empresa_id', dadosEmpresa.id);
 
-    dadosEmpresa.pagamentos.forEach(p => {
+  if (error) {
+    console.error(error);
+    return;
+  }
 
-      const tr = document.createElement('tr');
+  // 🚨 SE NÃO EXISTIR NENHUM REGISTRO, MOSTRA MENSAGEM
+  if (!pagamentos || pagamentos.length === 0) {
+    const tr = document.createElement('tr');
+    tr.innerHTML = `
+      <td colspan="3" style="text-align:center; font-weight:bold; color:#555;">
+        Nenhum registro encontrado
+      </td>
+    `;
+    tbodyPag.appendChild(tr);
+    modal.style.display = 'flex';
+    return;
+  }
 
-      tr.innerHTML = `
-        <td>${p.mes}</td>
-        <td>${p.vencimento}</td>
-        <td>${p.pago ? '✔️ Pago' : '❌ Não pago'}</td>
-      `;
+  const meses = [
+    "Janeiro","Fevereiro","Março","Abril","Maio","Junho",
+    "Julho","Agosto","Setembro","Outubro","Novembro","Dezembro"
+  ];
 
-      tbodyPag.appendChild(tr);
+  const hoje = new Date();
+  const anoAtual = hoje.getFullYear();
 
+  for (let i = 0; i < 12; i++) {
+
+    const mesNumero = i + 1;
+
+    const pagamentoMes = pagamentos.find(p => {
+      const data = new Date(p.data_vencimento);
+      return data.getMonth() + 1 === mesNumero;
     });
-
-  } else {
 
     const tr = document.createElement('tr');
 
+    let dataVencimento;
+    let statusTexto;
+
+    if (pagamentoMes) {
+
+      dataVencimento = pagamentoMes.data_vencimento;
+      statusTexto = "✔️ Pago";
+      tr.style.background = "#d4edda";
+
+    } else {
+
+      dataVencimento = `${anoAtual}-${String(mesNumero).padStart(2,'0')}-10`;
+      const vencimento = new Date(dataVencimento);
+
+      if (hoje > vencimento) {
+        statusTexto = "⚠️ Atrasado";
+        tr.style.background = "#f8d7da";
+
+      } else if (
+        hoje.getDate() === vencimento.getDate() &&
+        hoje.getMonth() === vencimento.getMonth()
+      ) {
+        statusTexto = "⏳ Vence hoje";
+        tr.style.background = "#cfe2ff";
+
+      } else {
+        statusTexto = "❌ Não pago";
+      }
+    }
+
     tr.innerHTML = `
-      <td colspan="3">Nenhum pagamento registrado</td>
+      <td>${meses[i]}</td>
+      <td>${dataVencimento}</td>
+      <td>${statusTexto}</td>
     `;
 
     tbodyPag.appendChild(tr);
-
   }
 
   modal.style.display = 'flex';
-
 }
 
 // =============================
 // FECHAR MODAL
 // =============================
-
 spanClose.onclick = function () {
   modal.style.display = 'none';
 }
 
 window.onclick = function (event) {
-
   if (event.target === modal) {
     modal.style.display = 'none';
   }
-
 }
 
 // =============================
 // FILTRAR EMPRESAS
 // =============================
-
 function filtrarEmpresas() {
 
-  const input = document
-    .getElementById("buscarEmpresa")
-    .value
-    .toLowerCase();
-
-  const linhas = document
-    .querySelectorAll("#listaEmpresas tr");
+  const input = document.getElementById("buscarEmpresa").value.toLowerCase();
+  const linhas = document.querySelectorAll("#listaEmpresas tr");
 
   linhas.forEach(linha => {
 
     const texto = linha.innerText.toLowerCase();
-
-    linha.style.display =
-      texto.includes(input) ? "" : "none";
+    linha.style.display = texto.includes(input) ? "" : "none";
 
   });
 

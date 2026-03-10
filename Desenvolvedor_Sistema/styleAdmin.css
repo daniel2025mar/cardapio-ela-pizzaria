@@ -348,6 +348,71 @@ padding:9px 12px;
   }
 }
 
+/* Modal já existente deve ter overflow: visible ou hidden */
+.modal {
+  display: none; /* padrão */
+  position: fixed;
+  z-index: 999;
+  left: 0;
+  top: 20px;
+  width: 100%;
+  height: 100%;
+  background: rgba(0,0,0,0.5);
+  overflow: visible; /* <-- não deixar a modal rolar */
+  justify-content: center;
+  align-items: center;
+}
+
+#modalNomeEmpresa {
+  color: #1d4fd8b7; /* azul bonito */
+  font-size: 24px;
+  margin-bottom: 10px;
+  font-weight: 700;
+}
+/* Conteúdo do modal */
+.modal-content {
+  background: #fff;
+  padding: 20px;
+  border-radius: 8px;
+  max-width: 600px;
+  width: 90%;
+  box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+}
+
+/* Container scroll apenas para o tbody */
+.tabela-scroll {
+  max-height: 300px; /* define altura fixa */
+  overflow-y: auto;  /* só scroll vertical aqui */
+}
+
+/* Tabela modal */
+.modal-table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+/* Cabeçalho fixo */
+.modal-table thead th {
+  position: sticky;
+  top: 0;
+  background-color: #111827;
+  color: #fff;
+  padding: 12px;
+  text-align: center;
+  z-index: 2;
+}
+
+/* Corpo da tabela */
+.modal-table tbody td {
+  padding: 10px;
+  text-align: center;
+  border-bottom: 1px solid #ddd;
+}
+
+/* Linhas alternadas */
+.modal-table tbody tr:nth-child(even) {
+  background-color: #f4f4f4;
+}
 /* ============================= */
 /* RESPONSIVO */
 /* ============================= */

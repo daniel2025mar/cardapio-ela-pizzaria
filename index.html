@@ -400,25 +400,30 @@
       <!-- Telefone / WhatsApp -->
       <div class="form-row lado-a-lado">
         <div class="form-group">
-         <label for="inputTelefoneNovo">Telefone:</label>
-         <input type="tel" id="inputTelefoneNovo" placeholder="(00) 0000-0000" maxlength="14">
+          <label for="inputTelefoneNovo">Telefone:</label>
+          <input type="tel" id="inputTelefoneNovo" placeholder="(00) 0000-0000" maxlength="14">
         </div>
         <div class="form-group">
-        <label for="inputWhatsAppNovo">WhatsApp:</label>
-        <input type="tel" id="inputWhatsAppNovo"placeholder="(00) 0 0000-0000"maxlength="16">
+          <label for="inputWhatsAppNovo">WhatsApp:</label>
+          <input type="tel" id="inputWhatsAppNovo" placeholder="(00) 0 0000-0000" maxlength="16">
         </div>
       </div>
 
-      <!-- CNPJ / Criado em -->
+      <!-- CNPJ / Criado em / Data de Pagamento -->
       <div class="form-row lado-a-lado">
         <div class="form-group">
-        <label for="inputCNPJNovo">CNPJ:</label>
-          <input type="tel"id="inputCNPJNovo"placeholder="00.000.000/0000-00"maxlength="18"inputmode="numeric"pattern="[0-9./-]*">
+          <label for="inputCNPJNovo">CNPJ:</label>
+          <input type="tel" id="inputCNPJNovo" placeholder="00.000.000/0000-00" maxlength="18" inputmode="numeric" pattern="[0-9./-]*">
         </div>
-        
+
         <div class="form-group">
           <label for="inputCriadoEmNovo">Criado em:</label>
           <input type="text" id="inputCriadoEmNovo" readonly>
+        </div>
+
+        <div class="form-group">
+          <label for="inputDataPagamentoNovo">Data de Pagamento:</label>
+          <input type="date" id="inputDataPagamentoNovo">
         </div>
       </div>
 
@@ -434,13 +439,13 @@
         </div>
 
         <div class="form-group upload-container">
-  <label>Foto de Fundo:</label>
-  <input type="file" id="inputFundoNovo" class="hidden" accept="image/*">
-  <div class="upload-box">
-    <img id="previewFundoNovo" class="preview-img" src="">
-    <span class="placeholder-text">Clique para adicionar</span>
-  </div>
-</div>
+          <label>Foto de Fundo:</label>
+          <input type="file" id="inputFundoNovo" class="hidden" accept="image/*">
+          <div class="upload-box" onclick="document.getElementById('inputFundoNovo').click()">
+            <img id="previewFundoNovo" class="preview-img" src="">
+            <span class="placeholder-text">Clique para adicionar</span>
+          </div>
+        </div>
       </div>
 
       <!-- Botão Salvar -->
@@ -570,11 +575,11 @@
     <img src="https://cdn-icons-png.flaticon.com/512/1828/1828843.png" alt="Bloqueio" class="icon-bloqueio">
     <h2>Atenção!</h2>
     <p>
-      O acesso ao sistema foi temporariamente suspenso devido a pendências financeiras.<br>
-      Data de vencimento: <span id="dataVencimento">--/--/----</span><br>
+      O acesso ao sistema da <strong id="nomeEmpresa">--empresa--</strong> foi temporariamente suspenso devido a pendências financeiras.<br>
+      Data de vencimento: <span id="dataVencimento">00/00/0000</span><br>
       Para restabelecer o acesso, solicitamos que entre em contato com o administrador responsável.
     </p>
-    <a href="mailto:admin@empresa.com" class="btn-contato">Contatar Administrador</a>
+    <a id="btnContato" href="mailto:admin@empresa.com" class="btn-contato">Contatar Administrador</a>
   </div>
 </div>
 

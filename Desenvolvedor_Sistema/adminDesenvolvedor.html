@@ -80,18 +80,20 @@ onkeyup="filtrarEmpresas()"
     <p><strong>Endereço:</strong> <span id="modalEndereco">Rua Exemplo, 123</span></p>
 
     <h3>Pagamentos Mensais</h3>
-    <table id="tabelaPagamentos" class="modal-table">
-      <thead>
-        <tr>
-          <th>Mês</th>
-          <th>Data de Vencimento</th>
-          <th>Pago?</th>
-        </tr>
-      </thead>
-      <tbody>
-        <!-- Linhas serão adicionadas pelo JS -->
-      </tbody>
-    </table>
+    <div class="tabela-scroll">
+      <table id="tabelaPagamentos" class="modal-table">
+        <thead>
+          <tr>
+            <th>Mês</th>
+            <th>Data de Vencimento</th>
+            <th>Pagamentos</th>
+          </tr>
+        </thead>
+        <tbody>
+          <!-- Linhas adicionadas pelo JS -->
+        </tbody>
+      </table>
+    </div>
   </div>
 </div>
 <script type="module" src="scriptADMIN.js"></script>

@@ -9,6 +9,7 @@ const supabase = createClient(SUPABASE_URL, SUPABASE_KEY);
 window.addEventListener('wheel', function (e) {
   if (e.ctrlKey) e.preventDefault(); // impede zoom com Ctrl + scroll
 }, { passive: false });
+
 // ID da empresa monitorada
 const empresaIdAtual = 1;
 
@@ -50,14 +51,22 @@ function desbloquearSistema() {
 // Função para verificar o status atual da empresa
 async function verificarBloqueio() {
   try {
+    // Busca nome e bloqueio da empresa
     const { data, error } = await supabase
       .from("empresa")
-      .select("bloqueado")
+      .select("nome, bloqueado")
       .eq("id", empresaIdAtual)
       .single();
 
     if (error) throw error;
 
+    // Atualiza o nome da empresa no overlay
+    if (data?.nome) {
+      const nomeElem = document.getElementById("nomeEmpresa");
+      if (nomeElem) nomeElem.innerText = data.nome;
+    }
+
+    // Bloqueia ou desbloqueia
     if (data?.bloqueado) {
       bloquearSistema();
     } else {
@@ -909,47 +918,33 @@ document.addEventListener("DOMContentLoaded", async () => {
   const empresaNome = document.querySelector(".empresaNome");
   const inputLogo = document.getElementById("inputLogoNovo");
   const inputFundo = document.getElementById("inputFundoNovo");
+  const inputDataPagamento = document.getElementById("inputDataPagamentoNovo");
+  const inputCNPJ = document.getElementById("inputCNPJNovo");
 
   if (!modalEmpresaNovo || !empresaNome) return;
 
   let logoFile = null;
   let fundoFile = null;
 
-  // =================== FUNÇÃO DE UPLOAD ===================
+  // =================== FUNÇÃO UPLOAD ===================
   async function uploadArquivo(file, pasta) {
     if (!file) return null;
-    console.log(`[UPLOAD] Iniciando upload para pasta: ${pasta}`);
-    const fileExt = "jpeg"; // forçar jpeg
+    const fileExt = "jpeg";
     const fileName = `${Date.now()}.${fileExt}`;
     try {
       const { data, error } = await supabase.storage
         .from("empresa")
         .upload(`${pasta}/${fileName}`, file, { upsert: true });
-      if (error) {
-        if (error.message.includes("Bucket not found")) {
-          console.error("[UPLOAD] Bucket 'empresa' não encontrado. Crie no Supabase Storage!");
-        } else {
-          console.error("[UPLOAD] Erro no upload:", error.message);
-        }
-        return null;
-      }
+      if (error) { console.error(error.message); return null; }
       const { publicUrl } = supabase.storage.from("empresa").getPublicUrl(`${pasta}/${fileName}`);
-      console.log("[UPLOAD] Upload concluído. URL pública:", publicUrl);
       return publicUrl;
-    } catch (err) {
-      console.error("[UPLOAD] Exceção:", err);
-      return null;
-    }
+    } catch (err) { console.error(err); return null; }
   }
 
-  // =================== BASE64 PARA FILE ===================
-  function base64ToFile(base64, filename) {
-    const [header, data] = base64.split(",");
-    const byteString = atob(data);
-    const ab = new ArrayBuffer(byteString.length);
-    const ia = new Uint8Array(ab);
-    for (let i = 0; i < byteString.length; i++) ia[i] = byteString.charCodeAt(i);
-    return new File([ab], filename, { type: "image/jpeg" });
+  // =================== FUNÇÃO FORMATA CNPJ ===================
+  function formatCNPJ(cnpj) {
+    if (!cnpj) return "";
+    return cnpj.replace(/^(\d{2})(\d{3})(\d{3})(\d{4})(\d{2})$/, "$1.$2.$3/$4-$5");
   }
 
   // =================== CARREGAR EMPRESA ===================
@@ -959,27 +954,36 @@ document.addEventListener("DOMContentLoaded", async () => {
       .select("*")
       .eq("id", 1)
       .single();
-
-    if (error) { console.error("[CARREGAR] Erro ao carregar empresa:", error.message); return; }
+    if (error) { console.error(error.message); return; }
 
     if (data) {
-      console.log("[CARREGAR] Empresa carregada:", data);
       document.getElementById("inputNomeNovo").value = data.nome || "";
       document.getElementById("inputEnderecoNovo").value = data.endereco || "";
       document.getElementById("inputTelefoneNovo").value = data.telefone || "";
       document.getElementById("inputWhatsAppNovo").value = data.whatsapp || "";
-      document.getElementById("inputCNPJNovo").value = data.cnpj || "";
+      document.getElementById("inputCNPJNovo").value = formatCNPJ(data.cnpj || "");
       document.getElementById("inputCriadoEmNovo").value = data.criado_em
         ? new Date(data.criado_em).toLocaleDateString()
         : "";
 
-      // Preview Logo
+      // =================== PEGAR PRIMEIRO VENCIMENTO ===================
+      const { data: primeiraParcela, error: pagamentoError } = await supabase
+        .from("pagamentos_mensalidade")
+        .select("data_vencimento")
+        .eq("empresa_id", 1)
+        .order("data_vencimento", { ascending: true })
+        .limit(1)
+        .single();
+
+      inputDataPagamento.value = primeiraParcela ? primeiraParcela.data_vencimento : "";
+
+      // =================== LOGO ===================
       const previewLogo = document.getElementById("previewLogoNovo");
       const placeholderLogo = previewLogo.nextElementSibling;
       previewLogo.src = data.logo_url || "";
       placeholderLogo.style.display = data.logo_url ? "none" : "inline";
 
-      // Preview Fundo
+      // =================== FUNDO ===================
       const previewFundo = document.getElementById("previewFundoNovo");
       const placeholderFundo = previewFundo.nextElementSibling;
       previewFundo.src = data.fundo_url || "";
@@ -997,7 +1001,6 @@ document.addEventListener("DOMContentLoaded", async () => {
 
   // =================== EVENTOS ===================
   empresaNome.addEventListener("click", async () => {
-    console.log("[MODAL] Abrindo modal empresa");
     modalEmpresaNovo.classList.add("show");
     await carregarEmpresa();
   });
@@ -1011,18 +1014,9 @@ document.addEventListener("DOMContentLoaded", async () => {
   const placeholderLogo = previewLogo.nextElementSibling;
   inputLogo.addEventListener("change", () => {
     if(inputLogo.files && inputLogo.files[0]){
-      if(inputLogo.files[0].type !== "image/jpeg"){
-        alert("Apenas JPEG permitido para logo!");
-        inputLogo.value = "";
-        return;
-      }
       logoFile = inputLogo.files[0];
       const reader = new FileReader();
-      reader.onload = e => {
-        previewLogo.src = e.target.result;
-        placeholderLogo.style.display = "none";
-        console.log("[PREVIEW] Logo atualizado no preview");
-      };
+      reader.onload = e => { previewLogo.src = e.target.result; placeholderLogo.style.display = "none"; };
       reader.readAsDataURL(logoFile);
     }
   });
@@ -1030,83 +1024,100 @@ document.addEventListener("DOMContentLoaded", async () => {
   // =================== PREVIEW FUNDO ===================
   const previewFundo = document.getElementById("previewFundoNovo");
   const placeholderFundo = previewFundo.nextElementSibling;
-  const uploadBoxFundo = previewFundo.parentElement;
-  uploadBoxFundo.addEventListener("click", () => { inputFundo.value=""; inputFundo.click(); });
-
   inputFundo.addEventListener("change", () => {
     if(inputFundo.files && inputFundo.files[0]){
-      if(inputFundo.files[0].type !== "image/jpeg"){
-        alert("Apenas JPEG permitido para fundo!");
-        inputFundo.value = "";
-        return;
-      }
       fundoFile = inputFundo.files[0];
       const reader = new FileReader();
-      reader.onload = e => {
-        previewFundo.src = e.target.result;
-        placeholderFundo.style.display = "none";
-        console.log("[PREVIEW] Fundo atualizado no preview");
-      };
+      reader.onload = e => { previewFundo.src = e.target.result; placeholderFundo.style.display = "none"; };
       reader.readAsDataURL(fundoFile);
     }
   });
 
   // =================== BOTÃO SALVAR ===================
   btnSalvarNovo.addEventListener("click", async () => {
-  console.log("[SALVAR] Iniciando salvamento da empresa");
+    const nome = document.getElementById("inputNomeNovo").value;
+    const endereco = document.getElementById("inputEnderecoNovo").value;
+    const telefone = document.getElementById("inputTelefoneNovo").value;
+    const whatsapp = document.getElementById("inputWhatsAppNovo").value;
+    const cnpj = document.getElementById("inputCNPJNovo").value.replace(/\D/g, ""); // salva sem máscara
+    const dataPagamentoValor = inputDataPagamento.value;
+    const criadoEm = new Date().toISOString();
 
-  const nome = document.getElementById("inputNomeNovo").value;
-  const endereco = document.getElementById("inputEnderecoNovo").value;
-  const telefone = document.getElementById("inputTelefoneNovo").value;
-  const whatsapp = document.getElementById("inputWhatsAppNovo").value;
-  const cnpj = document.getElementById("inputCNPJNovo").value;
-  const criadoEm = new Date().toISOString();
+    if (!nome || !endereco || !telefone || !whatsapp || !cnpj || !dataPagamentoValor) { 
+      alert("Preencha todos os campos, incluindo a data de pagamento!"); 
+      return; 
+    }
 
-  if (!nome || !endereco || !telefone || !whatsapp || !cnpj) { 
-    alert("Preencha todos os campos!"); 
-    return; 
-  }
+    const logoBase64 = previewLogo.src.startsWith("data:image") ? previewLogo.src : null;
+    const fundoBase64 = previewFundo.src.startsWith("data:image") ? previewFundo.src : null;
 
-  // Pega Base64 do preview
-  const logoBase64 = previewLogo.src.startsWith("data:image") ? previewLogo.src : null;
-  const fundoBase64 = previewFundo.src.startsWith("data:image") ? previewFundo.src : null;
+    try {
+      const { data: empresaAtual, error: empresaError } = await supabase.from("empresa").select("dia_pagamento").eq("id", 1).single();
+      if (empresaError) throw empresaError;
 
-  console.log("[SALVAR] Logo Base64:", logoBase64 ? "Existe" : "Não existe");
-  console.log("[SALVAR] Fundo Base64:", fundoBase64 ? "Existe" : "Não existe");
+      let diaPagamentoParaSalvar = empresaAtual && empresaAtual.dia_pagamento ? empresaAtual.dia_pagamento : dataPagamentoValor;
 
-  try {
-    const { data, error } = await supabase
-      .from("empresa")
-      .upsert([{
+      const { data, error } = await supabase.from("empresa").upsert([{
         id: 1,
         nome,
         endereco,
         telefone: telefone.replace(/\D/g,""),
         whatsapp: whatsapp.replace(/\D/g,""),
-        cnpj: cnpj.replace(/\D/g,""),
+        cnpj: cnpj,
         criado_em: criadoEm,
         logo_url: logoBase64,
-        fundo_url: fundoBase64
+        fundo_url: fundoBase64,
+        dia_pagamento: diaPagamentoParaSalvar
       }], { onConflict: ["id"] });
 
-    if (error) {
-      console.error("[SALVAR] Erro ao salvar:", error.message);
-      alert("Erro ao salvar: " + error.message);
-      return;
+      if (error) throw error;
+
+      const { data: configData, error: configError } = await supabase
+        .from("configuracoes_sistema")
+        .select("valor_num")
+        .eq("chave", "valor_mensalidade")
+        .single();
+      if (configError) throw configError;
+      const VALOR_FIXO_MENSALIDADE = parseFloat(configData.valor_num);
+
+      const diaMes = parseInt(diaPagamentoParaSalvar.split("-")[2]);
+      const hoje = new Date();
+      const anoAtual = hoje.getFullYear();
+      const mesAtual = hoje.getMonth() + 1;
+      const totalMeses = 12;
+
+      let vencimentos = [];
+      for (let i = 0; i < totalMeses; i++) {
+        let mes = mesAtual + i;
+        let ano = anoAtual;
+        if (mes > 12) { mes -= 12; ano += 1; }
+        let dia = Math.min(diaMes, new Date(ano, mes, 0).getDate());
+        let dataVenc = new Date(ano, mes - 1, dia);
+
+        vencimentos.push({ 
+          empresa_id: 1,
+          data_vencimento: dataVenc.toISOString().split("T")[0],
+          valor: VALOR_FIXO_MENSALIDADE,
+          status: "pendente",
+          criado_em: criadoEm
+        });
+      }
+
+      const { data: pagamentoData, error: pagamentoError } = await supabase
+        .from("pagamentos_mensalidade")
+        .upsert(vencimentos);
+      if (pagamentoError) throw pagamentoError;
+
+      alert("Empresa cadastrada e vencimentos criados com sucesso!");
+      await carregarEmpresa();
+      await atualizarNomeEmpresa();
+      modalEmpresaNovo.classList.remove("show");
+
+    } catch (err) {
+      console.error(err);
+      alert("Erro ao salvar empresa: " + (err.message || err));
     }
-
-    console.log("[SALVAR] Empresa cadastrada com sucesso!", data);
-    alert("Empresa cadastrada com sucesso!");
-    
-    // Não apagamos o preview
-    await carregarEmpresa();
-    await atualizarNomeEmpresa();
-
-  } catch (err) {
-    console.error("[SALVAR] Exceção:", err);
-    alert("Erro inesperado ao salvar empresa");
-  }
-});
+  });
 
   await atualizarNomeEmpresa();
 });
