@@ -100,7 +100,7 @@ document.addEventListener("DOMContentLoaded", async () => {
     pendencias.forEach((p) => {
       ultimaPendencia = p;
       const li = document.createElement("li");
-      li.textContent = `${p.empresa_id} está com pendência em atraso na data ${formatarData(p.data_vencimento)}`;
+      li.textContent = `${p.empresa_id} está com pendência em atraso na data ${formatarData(p.data_vencimento)}. Evite o bloqueio do sistema.`;
       lista.appendChild(li);
     });
 
@@ -299,6 +299,44 @@ window.addEventListener('gesturestart', function (e) {
   e.preventDefault(); // iOS Safari
 });
 
+
+// Seleciona elementos
+const formaPagamento = document.getElementById("formaPagamento"); // select de pagamento
+const pixModal = document.getElementById("pixModal");
+const closePix = document.querySelector(".closePix");
+const copiarChavePix = document.getElementById("copiarChavePix");
+const chavePixInput = document.getElementById("chavePix");
+
+// Função para abrir o modal PIX
+function abrirPixModal(qrCodeURL, chavePix) {
+    pixModal.style.display = "block";
+    document.getElementById("qrCodePix").src = qrCodeURL;
+    chavePixInput.value = chavePix;
+}
+
+// Escuta quando o usuário muda a forma de pagamento
+formaPagamento.addEventListener("change", (e) => {
+    if (e.target.value === "pix") {
+        // Substitua pelo seu QR code e chave real
+        abrirPixModal("caminho/para/qrcode.png", "34998217498");
+    }
+});
+
+// Fechar modal
+closePix.onclick = () => pixModal.style.display = "none";
+
+// Fechar ao clicar fora do modal
+window.onclick = (event) => {
+    if (event.target === pixModal) pixModal.style.display = "none";
+}
+
+// Copiar chave PIX
+copiarChavePix.onclick = () => {
+    chavePixInput.select();
+    chavePixInput.setSelectionRange(0, 99999); // Para mobile
+    document.execCommand("copy");
+    alert("Chave PIX copiada!");
+};
 // Bloquear zoom no desktop (Ctrl + scroll ou Ctrl + +/-)
 window.addEventListener('keydown', function (e) {
   // 17 = Ctrl, 187 = +, 189 = -, 61 = + (alguns navegadores), 173 = -

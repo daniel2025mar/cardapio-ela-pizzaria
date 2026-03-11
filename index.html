@@ -571,7 +571,7 @@
 </div>
 
 <!-- Toast de Pendências em Atraso -->
-<div id="modalPendenciasAtraso" class="toast-notificacao">
+<div id="modalPendenciasAtraso" class="toast-notificacao1">
   <h4>Pendências em Atraso</h4>
   <ul id="listaPendencias"></ul>
   <button id="fecharToast">Registrar Pagamento</button>
@@ -590,11 +590,8 @@
     <div class="pagamentoModal-infoEmpresa">
 
       <p><strong>Empresa:</strong> <span id="nomeEmpresaModal">---</span></p>
-
       <p><strong>CNPJ:</strong> <span id="cnpjEmpresaModal">---</span></p>
-
       <p><strong>Endereço:</strong> <span id="enderecoEmpresaModal">---</span></p>
-
       <p><strong>Status:</strong> <span id="statusEmpresaModal">---</span></p>
 
     </div>
@@ -621,7 +618,7 @@
       <label for="formaPagamento">Forma de Pagamento:</label>
       <select id="formaPagamento" name="formaPagamento" required>
         <option value="">Selecione</option>
-        <option value="dinheiro">Dinheiro</option>
+        <option value="dinheiro">Boleto</option>
         <option value="cartao">Cartão</option>
         <option value="pix">PIX</option>
       </select>
@@ -633,6 +630,30 @@
   </div>
 </div>
 
+<!-- Modal PIX -->
+<div id="pixModal" class="pixModal">
+  <div class="pixModalContent">
+    <span class="closePix">&times;</span>
+    <h2>Pagamento via PIX</h2>
+
+    <!-- QR Code -->
+    <div class="qrCodeContainer">
+      <img id="qrCodePix" src="caminho/para/qrcode.png" alt="QR Code PIX">
+    </div>
+
+    <!-- Informações fixas -->
+    <div class="infoPix">
+      <p>Banco: Nubank</p>
+      <p>Nome: Daniel Antonio Martins</p>
+      <p>Telefone: 34 99821-7498</p>
+    </div>
+    <!-- Chave PIX já preenchida -->
+    <div class="chavePixContainer">
+      <input type="text" id="chavePix" value="chavepix@exemplo.com" readonly>
+      <button id="copiarChavePix">Copiar</button>
+    </div>
+  </div>
+</div>
 <!-- Overlay de bloqueio -->
 <div id="bloqueioOverlay" class="overlay-bloqueio" style="display:none;">
   <div class="card-bloqueio">
