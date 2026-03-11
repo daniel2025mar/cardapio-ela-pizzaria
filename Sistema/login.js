@@ -159,9 +159,10 @@ async function verificarLogin() {
             btnEntrar.disabled = true;
 
             // Redireciona após 2 segundos
-            setTimeout(() => {
-                window.location.href = "../index.html";
-            }, 2000);
+            
+          setTimeout(() => {
+    window.location.href = "/sistema.html";
+         }, 2000);
 
         } else {
             mostrarModalErro(`Senha incorreta para o usuário "${usuario.username}".`);

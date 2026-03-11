@@ -1,681 +1,176 @@
 <!DOCTYPE html>
-<html lang="pt-br">
+<html lang="pt-BR">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0, user-scalable=no">
-  <title>GestioMax Sistema de Delivery</title>
-  <meta name="theme-color" content="#03305c">
-  <link rel="icon" type="image/png" href="../Imagem/LogoTipo.png">
-  <link rel="stylesheet" href="style.css">
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/lottie-web/5.10.1/lottie.min.js"></script>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Cardapio GestioMax</title>
+  <link rel="stylesheet" href="styleCardapio.css">
+
+  <!-- Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&family=Montserrat:wght@500;700&display=swap" rel="stylesheet">
+  
+  <!-- Font Awesome para ícones -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"/>
 </head>
 <body>
 
-  <div id="splashScreen">
-  <div class="splash-container">
-    <img src="./Imagem/LogoTipo.png" class="splash-logo" alt="Logo GestioMax">
+  <!-- ===================== Topo Estilo Perfil Restaurante ===================== -->
+  <section class="cardapio-topo-perfil">
+    <!-- Imagem de fundo -->
+  <img src="./Imagem/LogoTipo.png" alt="Fundo do Topo" class="fundo-topo">
 
-    <div class="progress-circle">
-      <svg viewBox="0 0 100 100">
-        <circle class="circle-bg" cx="50" cy="50" r="45"></circle>
-        <circle class="circle-progress" cx="50" cy="50" r="45"></circle>
-      </svg>
-      <div id="progressText">0%</div>
+    <!-- Logo redondo -->
+    <div class="logo-redonda-container">
+      <img src="./Imagem/LogoTipo.png" alt="Logo Sistema" class="logo-redonda" id="logoSistema">
     </div>
-    
-    <p class="splash-text">Preparando tudo para você… <i class="fas fa-spinner fa-spin"></i></p>
-  </div>
-</div>
-  <!-- HEADER -->
-  <header>
-  <button id="btnMenu" class="btn-menu">☰</button>
 
-  <div class="header-text">
-    <h1>Sistema Administrativo</h1>
-    <p class="empresaNome">Empresa NOME</p>
-  </div>
+    <!-- Nome do Restaurante -->
+    <h1 class="nome-restaurante">Empresa Nome</h1>
 
-  <!-- Ícone de Notificação -->
-  <div class="notificacao-container">
-    <i class="fas fa-bell"></i>
-    <span class="badge-notificacao">0</span>
-  </div>
-</header>
-
-  <div class="top-divider"></div>
-  <div class="container">
-
-    <!-- SIDEBAR MENUS -->
-    <aside class="sidebar" id="sidebar">
-  <ul>
-    <li><a href="#" id="menuDashboard"><i class="fas fa-tachometer-alt"></i> Dashboard</a></li>
-    <li><a href="#" id="menuAdicionar"><i class="fas fa-plus-circle"></i> Cadastrar Produto</a></li>
-    <li class="menu-com-submenu">
-      <a href="#" id="menuClientes">
-        <i class="fas fa-users"></i> Clientes
-        <i class="fas fa-chevron-down setinha"></i>
-      </a>
-      <ul class="submenu">
-        <li><a href="#">Lista de Clientes</a></li>
-        <li><a href="#" id="menuCadastroClientes">Cadastro de Clientes</a></li>
-      </ul>
-    </li>
-    <li><a href="#" id="menuCaixa"><i class="fas fa-cash-register"></i> Caixa</a></li>
-    <li><a href="#" id="confBtn"><i class="fas fa-cog"></i> Configuração</a></li>
-    <li><a href="#" id="logoutBtn"><i class="fas fa-sign-out-alt"></i> Logout</a></li>
-  </ul>
-
-  <!-- Rodapé com usuário -->
-  <div class="sidebar-footer-line"></div>
-<div class="sidebar-footer">
-  <i class="fas fa-user-circle user-icon"></i>
-  <div class="user-info">
-    <span class="user-name">Nome User</span>
-    <span class="user-role">Cargo</span>
-  </div>
-</div>
-</aside>
-
-    <!-- CONTEÚDO PRINCIPAL -->
-    <main class="main-content">
-
-      <!-- DASHBOARD MENU -->
-      <div id="dashboard" class="secao ativa">
-
-  <!-- HEADER -->
-  <div class="dashboard-header">
-    <div class="dashboard-text">
-      <h2>Dashboard de Vendas</h2>
-      <p class="descricao-dashboard">
-        Aqui você encontra um resumo das vendas, faturamento e desempenho do seu negócio.
-      </p>
+    <!-- Localização e informações adicionais -->
+    <div class="info-restaurante">
+      <span class="localizacao"><i class="fas fa-map-marker-alt"></i> Cidade - UF</span>
+      <span id="maisInfo" class="mais-info">• Mais informações</span>
     </div>
-    <div class="dashboard-img">
-      <img src="./Imagem/LogoTipo.png" alt="Ícone Dashboard" id="imgDashboard">
-      
+
+    <!-- Status de abertura -->
+    <div class="status-abertura aberto">
+      Aberto até 23h59
     </div>
+  </section>
+
+  <h2 class="titulo-cardapio">Conheça nosso Cardápio</h2>
+  <!-- Container principal onde categorias e produtos vão aparecer -->
+  <div id="categoriasContainer"></div>
+  <!-- ===================== Conteúdo do Cardápio ===================== -->
+  <main class="conteudo">
+
+    <div class="produtos-container" id="produtosContainerPizza">
+
+
+    </div>
+
+     <!-- Container de produtos Refrigerantes -->
+  <div class="produtos-container" id="produtosContainerRefri">
+    <!-- Produtos da categoria Refrigerantes serão adicionados aqui via JS -->
   </div>
+  </main>
 
   
-  <!-- CARDS PRINCIPAIS -->
-  <div class="info-cards">
 
-    <div class="card">
-      <i class="fas fa-box"></i>
-      <div>
-        <p class="card-title">Produtos</p>
-        <p class="card-value" id="totalProdutos">0</p>
+<!-- ===================== Modal do Carrinho ===================== --> 
+<div id="modalCarrinho" class="modal-carrinho">
+  <div class="modal-conteudo-carrinho">
+    <button id="fecharModalCarrinho" class="fechar-btn">&times;</button>
+    <h2>Meu Carrinho</h2>
+
+    <!-- Lista de produtos -->
+    <div id="itensCarrinho" class="itens-carrinho">
+      <p>Seu carrinho está vazio.</p>
+      <!-- Cada produto adicionado via JS terá esta estrutura:
+      <div class="item-carrinho">
+        <span class="nome-produto">Pizza Margherita</span>
+        <span class="quantidade-produto">Qtd: 1</span>
+        <span class="valor-produto">R$ 25,00</span>
       </div>
+      -->
     </div>
 
-    <div class="card">
-      <i class="fas fa-users"></i>
-      <div>
-        <p class="card-title">Clientes</p>
-        <p class="card-value" id="totalClientes">0</p>
-      </div>
+    <!-- Taxa de entrega -->
+    <div class="taxa-entrega">
+      <label for="valorEntrega">Taxa de Entrega: </label>
+      <span id="valorEntrega">R$ 0,00</span>
     </div>
 
-    <div class="card">
-      <i class="fas fa-shopping-cart"></i>
-      <div>
-        <p class="card-title">Vendas Hoje</p>
-        <p class="card-value" id="vendasHoje">0</p>
-      </div>
-    </div>
+    <!-- Campos de endereço e telefone -->
+    <div class="dados-cliente">
+  <label for="endereco">Endereço:</label>
+  <input type="text" id="endereco" placeholder="Ex: Nome da rua N 000 - Cidade UP - 00000-000">
 
-    <div class="card">
-      <i class="fas fa-cash-register"></i>
-      <div>
-        <p class="card-title">Faturamento Hoje</p>
-        <p class="card-value" id="faturamentoHoje">R$ 0,00</p>
-      </div>
-    </div>
+  <label for="telefone">Telefone:</label>
+  <input type="text" id="telefone" class="telefone" placeholder="(00) 0 0000-0000">
+</div>
 
-    <div class="card">
-      <i class="fas fa-chart-line"></i>
-      <div>
-        <p class="card-title">Faturamento do Mês</p>
-        <p class="card-value" id="faturamentoMes">R$ 0,00</p>
-      </div>
+    <!-- Total final e botão -->
+    <div class="total-carrinho">
+      <span>Total: R$ <span id="totalCarrinho">0,00</span></span>
+      <button id="finalizarCompra" class="btn-compra">Finalizar Compra</button>
     </div>
-
   </div>
+</div>
 
-  <!-- VENDAS RECENTES -->
-  <div class="dashboard-section">
-    <h3>Últimas Vendas</h3>
-    <table class="tabela-vendas">
-      <thead>
-        <tr>
-          <th>Cliente</th>
-          <th>Produto</th>
-          <th>Valor</th>
-          <th>Data</th>
-        </tr>
-      </thead>
-      <tbody id="listaVendasRecentes">
-        <!-- JS vai preencher -->
-      </tbody>
-    </table>
-  </div>
+<!-- ===================== Modal de Cadastro do Cliente ===================== -->
+<!-- ===================== Modal Cadastro Cliente ===================== -->
+<div id="modalCadastroCliente" class="modal-cadastro">
+  <div class="modal-conteudo-cadastro">
+    <button id="fecharModalCadastro" class="fechar-btn">&times;</button>
+    <h2>Cadastro do Cliente</h2>
 
-  <!-- PRODUTOS MAIS VENDIDOS -->
-  <div class="dashboard-section">
-    <h3>Produtos Mais Vendidos</h3>
-    <ul id="produtosMaisVendidos">
-      <!-- JS vai preencher -->
-    </ul>
-  </div>
-
-  <!-- CARDÁPIO -->
-  <div id="cardapioContainer"></div>
-
-      </div>
-       
-     <!-- ===================== CADASTRO DE CLIENTES ===================== -->
-<div id="cadastroClientes" class="secao">
-
-  <!-- Título fora do card, alinhado à esquerda -->
-  <h2 class="cadastro-titulo">Cadastro de Cliente</h2>
-
-  <!-- Texto de instrução fora do card, alinhado à esquerda -->
-  <div class="cadastro-instrucao">
-    Preencha os dados do cliente para cadastrá-lo no sistema.
-  </div>
-
-  <!-- Card do formulário -->
-  <div class="cadastro-text">
     <form id="formCadastroCliente">
+      <label for="nomeCliente">Nome completo:</label>
+      <input type="text" id="nomeCliente" placeholder="Digite o nome completo" required>
 
-      <!-- Agrupamento Código + CPF lado a lado -->
-<div id="form-row-codigo-cpf">
-  <!-- Código do cliente (gerado automaticamente, readonly) -->
-  <div class="form-group-codigo-cpf">
-    <label for="codigoCliente">Cód</label>
-    <input type="text" id="codigoCliente" placeholder="0000" readonly>
-  </div>
+      <label for="celularCliente">Celular:</label>
+      <input type="text" id="celularCliente" placeholder="(00) 0 0000-0000" required>
 
-  <!-- CPF -->
-  <div class="form-group-codigo-cpf">
-    <label for="cpfCliente">CPF</label>
-    <input type="text"id="cpfCliente"placeholder="000.000.000-00"maxlength="14"inputmode="numeric"pattern="[0-9.-]*"autocomplete="off">
-  </div>
-</div>
-      <!-- Nome -->
-      <label for="nomeCliente">Nome</label>
-      <input type="text" id="nomeCliente" placeholder="Digite o nome completo">
+      <label for="ruaCliente">Endereço (Rua):</label>
+      <input type="text" id="ruaCliente" placeholder="Rua" required>
 
-  
-      <!-- Telefone -->
-      <label for="telefoneCliente">Telefone</label>
-      <input type="tel" id="telefoneCliente" placeholder="Digite o telefone">
-
-      <!-- E-mail -->
-      <label for="emailCliente">E-mail</label>
-      <input type="email" id="emailCliente" placeholder="Digite o e-mail">
-
-      <!-- Data de nascimento -->
-      <label for="dataNascimento">Data de Nascimento</label>
-      <input type="date" id="dataNascimento">
-
-      <!-- Limite de crédito -->
-      <label for="limiteCredito">Limite de Crédito</label>
-      <input type="number" id="limiteCredito" placeholder="Digite o limite de crédito">
-
-      <!-- Foto do cliente -->
-      <label for="fotoCliente">Foto do Cliente</label>
-      <input type="file" id="fotoCliente" accept="image/*">
-
-      <!-- Botão de cadastro -->
-      <button type="submit" id="btnCadastrarCliente">Cadastrar Cliente</button>
-    </form>
-  </div>
-</div>
-
-      <!--Cadastro de Produtos-->
-      <div id="cadastroProdutos" class="secao">
-
-  <!-- Título e descrição fora do card -->
-  <div class="secao-titulo">
-    <h2>Cadastro de Itens</h2>
-    <p>Cadastre novos produtos para venda.</p>
-  </div>
-
-  <!-- Card do formulário -->
-  <div class="card-form">
-    <form id="formProduto" class="form-produto">
-
-      <!-- Nome do Produto -->
-      <div class="form-group">
-        <label for="nomeProduto">Nome do Produto</label>
-        <input type="text" id="nomeProduto" placeholder="Ex: Refrigerante 350ml" required>
-      </div>
-
-      <!-- Categoria com select dinâmico e botão -->
-      <div class="form-group-inline">
+      <!-- Número e Bairro lado a lado -->
+      <div class="campo-linha">
         <div class="campo-pequeno">
-          <label for="categoriaProduto">Categoria</label>
-          <select id="categoriaProduto" required>
-            <option value="">Carregando...</option>
-          </select>
+          <label for="numeroCliente">Número:</label>
+          <input type="text" id="numeroCliente" placeholder="Número" required>
         </div>
         <div class="campo-pequeno">
-          <label>&nbsp;</label>
-          <button type="button" id="novaCategoria">Nova Categoria</button>
+          <label for="bairroCliente">Bairro:</label>
+          <input type="text" id="bairroCliente" placeholder="Bairro" required>
         </div>
       </div>
 
-      <!-- Preço, Promoção e Custo lado a lado -->
-      <div class="form-group-inline">
+      <!-- Cidade e Estado em linha (opcional) -->
+      <div class="campo-linha">
         <div class="campo-pequeno">
-          <label for="precoProduto">Preço</label>
-          <input type="number" id="precoProduto" placeholder="R$ 0,00" step="0.01" required>
+          <label for="cidadeCliente">Cidade:</label>
+          <input type="text" id="cidadeCliente" placeholder="Cidade" required>
         </div>
-
         <div class="campo-pequeno">
-          <label for="promocao">Valor Promoção</label>
-          <input type="number" id="promocao" placeholder="R$ 0,00" step="0.01" required>
-        </div>
-
-        <div class="campo-pequeno">
-          <label for="custo">Valor de Custo</label>
-          <input type="number" id="custo" placeholder="R$ 0,00" step="0.01" required>
+          <label for="estadoCliente">Estado:</label>
+          <input type="text" id="estadoCliente" placeholder="UF" maxlength="2" required>
         </div>
       </div>
 
-      <!-- Estoque -->
-      <div class="form-group">
-        <label for="estoqueProduto">Quantidade em Estoque</label>
-        <input type="number" id="estoqueProduto" placeholder="0" required>
-      </div>
-
-      <!-- Descrição -->
-      <div class="form-group">
-        <label for="descricaoProduto">Descrição</label>
-        <textarea id="descricaoProduto" placeholder="Detalhes do produto"></textarea>
-      </div>
-
-      <!-- Foto do Produto -->
-      <div class="form-group">
-        <label>Foto do Produto</label>
-        <div class="foto-preview-container">
-          <img id="previewProduto" src="./Imagem/inventory.jpg" alt="Preview" class="foto-preview">
-          <input type="file" id="fotoProduto" accept="image/*">
-        </div>
-        <small class="descricao-foto">Clique no quadrado para escolher a imagem</small>
-      </div>
-
-      <!-- Botões Salvar e Cancelar -->
-      <div class="form-botoes">
-        <button type="submit" class="btn-salvar">
-          <i class="fas fa-save"></i> Salvar Produto
-        </button>
-        <button type="button" class="btn-cancelar">
-          <i class="fas fa-times"></i> Cancelar
-        </button>
-      </div>
-
-    </form>
-  </div>
-
-</div>
-
-      <!-- ADICIONAR PRODUTO -->
-      <div id="adicionarProduto" class="hidden">
-        <h2>Adicionar Produto</h2>
-        <form id="formAdicionarProduto">
-          <input type="text" id="nomeProduto" placeholder="Nome do produto" required>
-          <input type="number" id="precoProduto" placeholder="Preço" step="0.01" required>
-          <button type="submit">Adicionar</button>
-        </form>
-      </div>
-
-    </main>
-  </div>
-
-  <!-- FOOTER -->
-  <footer class="footer">
-    <p>Desenvolvido por <strong>DM DESIGN GRAFICO</strong> © 2026</p>
-  </footer>
-
-  <!--modais aqui-->
- <!-- Modal Desenvolvedor -->
-<div id="modalDesenvolvedor" class="modal">
-  <div class="modal-content">
-    <!-- Botão fechar -->
-    <span class="close">&times;</span>
-
-    <!-- Foto e nome -->
-    <div class="dev-header">
-      <img src="./Imagem/image.png" alt="Foto do Desenvolvedor" class="dev-foto">
-      <h2>DM DESIGN GRAFICO</h2>
-    </div>
-
-    <!-- Informações -->
-    <div class="dev-info">
-      <p><strong>Nome:</strong> Daniel Antonio Martins</p>
-      <p><strong>Email:</strong> <span id="devEmail">dmdesigngrafico20@hotmail.com</span> <button class="copy-email" title="Copiar email">📋</button></p>
-      <p><strong>Site:</strong> <a href="https://www.dmdesigngrafico.com.br" target="_blank">www.dmdesigngrafico.com.br</a></p>
-      <p><strong>Função:</strong> Desenvolvimento Front-end e Back-end</p>
-      <p><strong>Design:</strong> Layout Responsivo e moderno para Descktop e celulares</p>
-      <p><strong>Build Version:</strong> 1.0</p>
-    </div>
-
-    <!-- Redes sociais -->
-    <div class="dev-social">
-      <a href="https://www.linkedin.com/in/daniel-martins-0b1b9a277/" target="_blank"><i class="fab fa-linkedin"></i></a>
-      <a href="https://github.com/danieldimas" target="_blank"><i class="fab fa-github"></i></a>
-      <a href="https://www.instagram.com/design_grafico_dm/?hl=pt-br" target="_blank"><i class="fab fa-instagram"></i></a>
-    </div>
-  </div>
-</div>
-
-<!-- Modal Cadastro da Empresa -->
-<div id="modalEmpresaNovo" class="modal-empresa">
-  <div class="modal-conteudo">
-
-    <!-- Botão Fechar -->
-    <button id="fecharModalNovo" class="fechar-btn">&times;</button>
-
-    <h2 class="modal-titulo">Cadastro da Empresa</h2>
-    <p class="modal-subtitulo">Preencha as informações da empresa</p>
-
-    <div class="linha-separadora"></div> <!-- LINHA SEPARADORA -->
-    <form id="formEmpresaNovo" class="form-empresa">
-
-      <!-- Nome da Empresa -->
-      <div class="form-group">
-        <label for="inputNomeNovo">Nome:</label>
-        <input type="text" id="inputNomeNovo" placeholder="Ex: Empresa Ltda">
-      </div>
-
-      <!-- Endereço -->
-      <div class="form-group">
-        <label for="inputEnderecoNovo">Endereço:</label>
-        <input type="text" id="inputEnderecoNovo" placeholder="Ex: Nome da rua N 000 - Cidade UP - 00000-000">
-      </div>
-
-      <!-- Telefone / WhatsApp -->
-      <div class="form-row lado-a-lado">
-        <div class="form-group">
-          <label for="inputTelefoneNovo">Telefone:</label>
-          <input type="tel" id="inputTelefoneNovo" placeholder="(00) 0000-0000" maxlength="14">
-        </div>
-        <div class="form-group">
-          <label for="inputWhatsAppNovo">WhatsApp:</label>
-          <input type="tel" id="inputWhatsAppNovo" placeholder="(00) 0 0000-0000" maxlength="16">
-        </div>
-      </div>
-
-      <!-- CNPJ / Criado em / Data de Pagamento -->
-      <div class="form-row lado-a-lado">
-        <div class="form-group">
-          <label for="inputCNPJNovo">CNPJ:</label>
-          <input type="tel" id="inputCNPJNovo" placeholder="00.000.000/0000-00" maxlength="18" inputmode="numeric" pattern="[0-9./-]*">
-        </div>
-
-        <div class="form-group">
-          <label for="inputCriadoEmNovo">Criado em:</label>
-          <input type="text" id="inputCriadoEmNovo" readonly>
-        </div>
-
-        <div class="form-group">
-          <label for="inputDataPagamentoNovo">Data de Pagamento:</label>
-          <input type="date" id="inputDataPagamentoNovo">
-        </div>
-      </div>
-
-      <!-- Upload de Imagens -->
-      <div class="form-row">
-        <div class="form-group upload-container">
-          <label>Logotipo:</label>
-          <input type="file" id="inputLogoNovo" class="hidden" accept="image/*">
-          <div class="upload-box" onclick="document.getElementById('inputLogoNovo').click()">
-            <img id="previewLogoNovo" class="preview-img" src="">
-            <span class="placeholder-text">Clique para adicionar</span>
-          </div>
-        </div>
-
-        <div class="form-group upload-container">
-          <label>Foto de Fundo:</label>
-          <input type="file" id="inputFundoNovo" class="hidden" accept="image/*">
-          <div class="upload-box" onclick="document.getElementById('inputFundoNovo').click()">
-            <img id="previewFundoNovo" class="preview-img" src="">
-            <span class="placeholder-text">Clique para adicionar</span>
-          </div>
-        </div>
-      </div>
-
-      <!-- Botão Salvar -->
-      <button type="button" id="btnSalvarEmpresaNovo" class="btn-salvar-modal">Salvar Alterações</button>
-
+      <button type="submit" class="btn-compra">Cadastrar Cliente</button>
     </form>
   </div>
 </div>
+  <!-- ===================== Footer do Cardápio ===================== -->
+  <section class="footer-section">
+    <p class="desenvolvido">Desenvolvido por</p>
 
+    <a href="https://www.dmdesigngrafico.com.br" target="_blank" title="Visite o site da DM Design Gráfico">
+      <img src="./Imagem/DMDESIGN.png" alt="Logo DM Design Gráfico" class="footer-logo" />
+    </a>
 
-
-<!-- Modal -->
-<div id="modalMensagem" class="modal">
-  <div class="modal-conteudo">
-    <span id="fecharModal" class="fechar-btn">&times;</span>
-    <h2>Atenção!</h2>
-    <p>Para continuar utilizando o sistema, por favor cadastre os dados da empresa.</p>
-    <button id="okModal" class="btn-ok">OK</button>
-  </div>
-</div>
-<!-- MODAL DE CONFIRMAÇÃO DE LOGOUT -->
-<div id="modalLogout" class="modal-logout">
-  <div class="modal-conteudo-logout">
-    <p>Deseja realmente sair do sistema?</p>
-    <div class="botoes-logout">
-      <button id="btnSimLogout">Sim</button>
-      <button id="btnNaoLogout">Não</button>
-    </div>
-  </div>
-</div>
-
-<!-- Modal de Cadastro de Nova Categoria -->
-<div id="modalNovaCategoria" class="modal">
-  <div class="modal-content">
-    <span class="btn-fechar-modal">&times;</span>
-    <h2>Nova Categoria</h2>
-    
-    <form id="formNovaCategoria">
-      <div class="form-group">
-        <label for="inputTituloCategoria">Título</label>
-        <input type="text" id="inputTituloCategoria" placeholder="Ex: Bebidas" required>
-      </div>
-
-      <div class="form-group">
-        <label for="inputDescricaoCategoria">Descrição da Categoria</label>
-        <textarea id="inputDescricaoCategoria" placeholder="Descrição da categoria"></textarea>
-      </div>
-
-      <div class="form-group">
-        <label>Selecione o Icone</label>
-        <div class="icone-container">
-          <!-- Bebidas -->
-          <i class="fas fa-coffee icone-selecionavel"></i>
-          <i class="fas fa-beer icone-selecionavel"></i>
-          <i class="fas fa-wine-glass icone-selecionavel"></i>
-          <i class="fas fa-wine-bottle icone-selecionavel"></i>
-          <i class="fas fa-cocktail icone-selecionavel"></i>
-          <i class="fas fa-glass-martini icone-selecionavel"></i>
-          
-          <!-- Comidas rápidas / lanches -->
-          <i class="fas fa-hamburger icone-selecionavel"></i>
-          <i class="fas fa-hotdog icone-selecionavel"></i>
-          <i class="fas fa-pizza-slice icone-selecionavel"></i>
-          <i class="fas fa-fish icone-selecionavel"></i>
-          <i class="fas fa-drumstick-bite icone-selecionavel"></i>
-          
-          <!-- Sobremesas -->
-          <i class="fas fa-ice-cream icone-selecionavel"></i>
-          <i class="fas fa-birthday-cake icone-selecionavel"></i>
-          <i class="fas fa-cookie icone-selecionavel"></i>
-          
-          <!-- Frutas e vegetais -->
-          <i class="fas fa-apple-alt icone-selecionavel"></i>
-          <i class="fas fa-carrot icone-selecionavel"></i>
-          <i class="fas fa-lemon icone-selecionavel"></i>
-          <i class="fas fa-egg icone-selecionavel"></i>
-          
-          <!-- Laticínios e pães -->
-          <i class="fas fa-cheese icone-selecionavel"></i>
-          <i class="fas fa-bread-slice icone-selecionavel"></i>
-          
-          <!-- Utensílios e restaurante -->
-          <i class="fas fa-utensils icone-selecionavel"></i>
-          <i class="fas fa-glass-whiskey icone-selecionavel"></i>
-          <i class="fas fa-wine-glass-alt icone-selecionavel"></i>
-        </div>
-      </div>
-
-      <div class="form-botoes">
-        <button type="submit" class="btn-salvar">Salvar</button>
-        <button type="button" class="btn-cancelar">Cancelar</button>
-      </div>
-    </form>
-  </div>
-</div>
-
-<!-- Modal de Alteração de Senha -->
-<div id="modalAlterarSenha" class="modalAlterarSenha">
-  <div class="modal-content-alterar-senha">
-    <span class="close">&times;</span>
-    <h2>Alterar Senha</h2>
-    <form id="formAlterarSenha_unique">
-      <label for="senhaAtual_unique">Senha Atual:</label>
-      <input type="password" id="senhaAtual_unique" disabled>
-
-      <label for="novaSenha_unique">Nova Senha:</label>
-      <input type="password" id="novaSenha_unique" required>
-
-      <label for="confirmarSenha_unique">Confirmar Nova Senha:</label>
-      <input type="password" id="confirmarSenha_unique" required>
-
-      <button type="submit">Salvar</button>
-    </form>
-    <p id="mensagemSenha_unique" style="color:rgb(230, 54, 54); margin-top:10px;"></p>
-  </div>
-</div>
-
-
-<!-- Modal de Usuários Online -->
-<div id="modalUsuariosOnline" class="toast-notificacao">
-  <h4>Usuários Online</h4>
-  <ul id="listaUsuariosOnline"></ul>
-</div>
-
-<!-- Toast de Pendências em Atraso -->
-<div id="modalPendenciasAtraso" class="toast-notificacao1">
-  <h4>Pendências em Atraso</h4>
-  <ul id="listaPendencias"></ul>
-  <button id="fecharToast">Registrar Pagamento</button>
-</div>
-
-<!-- Modal de Pagamento -->
-<div id="modalPagamento" class="pagamentoModal">
-  <div class="pagamentoModal-content">
-
-    <span class="pagamentoModal-close" id="fecharModalPagamento">&times;</span>
-
-    <!-- Título -->
-    <h2 class="pagamentoModal-titulo">Registrar Pagamento</h2>
-
-    <!-- Informações da Empresa -->
-    <div class="pagamentoModal-infoEmpresa">
-
-      <p><strong>Empresa:</strong> <span id="nomeEmpresaModal">---</span></p>
-      <p><strong>CNPJ:</strong> <span id="cnpjEmpresaModal">---</span></p>
-      <p><strong>Endereço:</strong> <span id="enderecoEmpresaModal">---</span></p>
-      <p><strong>Status:</strong> <span id="statusEmpresaModal">---</span></p>
-
+    <div class="empresa-info">
+      <p id="empresaCNPJ">Sua Empresa — CNPJ: 00.000.000/0000-00</p>
+      <p>© 2026 Todos os direitos reservados</p>
     </div>
 
-    <hr>
-
-    <!-- Formulário -->
-    <form id="formPagamento">
-
-      <input type="hidden" id="empresaPagamento" name="empresaPagamento">
-
-      <div class="linhaCampos">
-  <div class="campo">
-    <label for="valorPagamento">Valor:</label>
-    <input type="text" id="valorPagamento" name="valorPagamento" readonly>
-  </div>
-
-  <div class="campo">
-    <label for="dataPagamento">Data de Pagamento:</label>
-    <input type="date" id="dataPagamento" name="dataPagamento" required>
-  </div>
-</div>
-
-      <label for="formaPagamento">Forma de Pagamento:</label>
-      <select id="formaPagamento" name="formaPagamento" required>
-        <option value="">Selecione</option>
-        <option value="dinheiro">Boleto</option>
-        <option value="cartao">Cartão</option>
-        <option value="pix">PIX</option>
-      </select>
-
-      <button type="submit" class="pagamentoModal-btn">Salvar Pagamento</button>
-
-    </form>
-
-  </div>
-</div>
-
-<!-- Modal PIX -->
-<div id="pixModal" class="pixModal">
-  <div class="pixModalContent">
-    <span class="closePix">&times;</span>
-    <h2>Pagamento via PIX</h2>
-
-    <!-- QR Code -->
-    <div class="qrCodeContainer">
-      <img id="qrCodePix" src="caminho/para/qrcode.png" alt="QR Code PIX">
-    </div>
-
-    <!-- Informações fixas -->
-    <div class="infoPix">
-      <p>Banco: Nubank</p>
-      <p>Nome: Daniel Antonio Martins</p>
-      <p>Telefone: 34 99821-7498</p>
-    </div>
-    <!-- Chave PIX já preenchida -->
-    <div class="chavePixContainer">
-      <input type="text" id="chavePix" value="chavepix@exemplo.com" readonly>
-      <button id="copiarChavePix">Copiar</button>
-    </div>
-  </div>
-</div>
-<!-- Overlay de bloqueio -->
-<div id="bloqueioOverlay" class="overlay-bloqueio" style="display:none;">
-  <div class="card-bloqueio">
-    <img src="https://cdn-icons-png.flaticon.com/512/1828/1828843.png" alt="Bloqueio" class="icon-bloqueio">
-    <h2>Atenção!</h2>
-    <p>
-      O acesso ao sistema da <strong id="nomeEmpresa">--empresa--</strong> foi temporariamente suspenso devido a pendências financeiras.<br>
-      Data de vencimento: <span id="dataVencimento">00/00/0000</span><br>
-      Para restabelecer o acesso, solicitamos que entre em contato com o administrador responsável.
+    <p class="footer-slogan">
+      DM DESIGN GRÁFICO — Tecnologia & Soluções para Delivery
     </p>
-    <a id="btnContato" href="mailto:admin@empresa.com" class="btn-contato">Contatar Administrador</a>
-  </div>
-</div>
+  </section>
 
-<!-- Novo Modal de alerta -->
-<div id="modalAlerta" class="modal">
-  <div class="modal-content">
-    <span class="modal-close" id="modalCloseAlerta">&times;</span>
-    <p id="modalTextoAlerta"></p>
-    <button id="modalOkAlerta">OK</button>
-  </div>
-</div>
-  <script type="module" src="scriptprincipal.js"></script>
+  <!-- ===================== Footer do Carrinho Fixado ===================== -->
+  <footer class="cart-footer">
+    <button id="card-btn">
+      (<span id="card-count">0</span>) Veja o meu carrinho
+      <i class="fas fa-shopping-cart"></i>
+    </button>
+  </footer>
+  <script type="module" src="scriptCardapio.js"></script>
 </body>
 </html>
