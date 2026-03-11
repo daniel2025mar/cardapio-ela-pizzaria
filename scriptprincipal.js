@@ -6,7 +6,6 @@ const SUPABASE_URL = "https://vixurbnyhalixuwyytjx.supabase.co";
 const SUPABASE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InZpeHVyYm55aGFsaXh1d3l5dGp4Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzI3MTc0ODksImV4cCI6MjA4ODI5MzQ4OX0._0kx5t0Yi6uAge5K9BFCh9PHs66YrW3sTY80yncTLeM";
 const supabase = createClient(SUPABASE_URL, SUPABASE_KEY);
 
-
 // ===================== FUNÇÃO PARA ESPERAR A SPLASH TERMINAR =====================
 function esperarSplashTerminar() {
   return new Promise((resolve) => {
@@ -23,36 +22,56 @@ function esperarSplashTerminar() {
   });
 }
 
+// ===================== FUNÇÃO AUXILIAR PARA FORMATAR DATA =====================
+function formatarData(data) {
+  const d = new Date(data + "T00:00:00");
+  const dia = String(d.getDate()).padStart(2, "0");
+  const mes = String(d.getMonth() + 1).padStart(2, "0");
+  const ano = d.getFullYear();
+  return `${dia}/${mes}/${ano}`;
+}
+
+// ===================== FUNÇÃO AUXILIAR PARA FORMATAR CNPJ =====================
+function formatarCNPJ(cnpj) {
+  if (!cnpj) return "";
+  cnpj = cnpj.replace(/\D/g, "");
+  return cnpj.replace(/^(\d{2})(\d{3})(\d{3})(\d{4})(\d{2})$/, "$1.$2.$3/$4-$5");
+}
+
+// ===================== FUNÇÃO AUXILIAR PARA FORMATAR MOEDA =====================
+function formatarValor(valor) {
+  if (valor == null || valor === "") return "";
+  return new Intl.NumberFormat("pt-BR", { style: "currency", currency: "BRL" }).format(valor);
+}
+
 // ===================== SCRIPT DE PENDÊNCIAS =====================
 document.addEventListener("DOMContentLoaded", async () => {
   console.log("✅ Script carregado e DOM pronto");
 
-  // ===== Espera a splash terminar =====
   await esperarSplashTerminar();
 
   const toast = document.getElementById("modalPendenciasAtraso");
   const lista = document.getElementById("listaPendencias");
   const btnFechar = document.getElementById("fecharToast");
-  const modalPagamento = document.getElementById("modalPagamento");
 
-  if (!toast || !lista || !btnFechar || !modalPagamento) {
+  if (!toast || !lista || !btnFechar) {
     console.error("❌ Elementos não encontrados no DOM");
     return;
   }
 
-  // Som do toast
   const somToast = new Audio("https://notificationsounds.com/storage/sounds/file-sounds-1128-failure.mp3");
   somToast.volume = 0.6;
   somToast.preload = "auto";
 
-  // Variável para guardar a última pendência
   let ultimaPendencia = null;
 
-  // Fecha toast e abre modalPagamento
   btnFechar.addEventListener("click", () => {
     toast.style.display = "none";
     console.log("✖ Toast fechado manualmente");
-    if (ultimaPendencia) abrirModalPagamento(ultimaPendencia);
+
+    if (ultimaPendencia) {
+      abrirModalPagamento(ultimaPendencia);
+    }
   });
 
   const hoje = new Date().toISOString().split("T")[0];
@@ -76,26 +95,21 @@ document.addEventListener("DOMContentLoaded", async () => {
     }
 
     console.log(`⚠ Foram encontradas ${pendencias.length} pendência(s) em atraso`);
-
     lista.innerHTML = "";
 
     pendencias.forEach((p) => {
-      ultimaPendencia = p; // guarda a última pendência
+      ultimaPendencia = p;
       const li = document.createElement("li");
       li.textContent = `${p.empresa_id} está com pendência em atraso na data ${formatarData(p.data_vencimento)}`;
       lista.appendChild(li);
     });
 
-    // Mostrar toast com som
     toast.style.display = "block";
     somToast.play().catch((e) => console.log("❌ Erro ao reproduzir som:", e));
-    console.log("✅ Toast exibido com som");
 
-    // Fecha automaticamente após 15 segundos e abre modalPagamento
     setTimeout(() => {
       toast.style.display = "none";
       console.log("⌛ Toast fechado automaticamente após 15s");
-      if (ultimaPendencia) abrirModalPagamento(ultimaPendencia);
     }, 15000);
 
   } catch (err) {
@@ -107,15 +121,18 @@ document.addEventListener("DOMContentLoaded", async () => {
 const btnFecharPagamento = document.getElementById("fecharModalPagamento");
 const formPagamento = document.getElementById("formPagamento");
 
-function abrirModalPagamento(pendencia) {
+async function abrirModalPagamento(pendencia) {
   if (!pendencia) return;
 
   const modalPagamento = document.getElementById("modalPagamento");
   modalPagamento.style.display = "block";
 
-  document.getElementById("empresaPagamento").value = pendencia.empresa_id;
-  document.getElementById("valorPagamento").value = pendencia.valor;
+  // Preencher valor e data
+  document.getElementById("valorPagamento").value = formatarValor(pendencia.valor); // valor formatado
   document.getElementById("dataPagamento").valueAsDate = new Date();
+
+  // Buscar dados da empresa
+  await carregarDadosEmpresa(pendencia.empresa_id);
 }
 
 // Fechar modal pagamento
@@ -133,10 +150,13 @@ window.addEventListener("click", (e) => {
 formPagamento.addEventListener("submit", async (e) => {
   e.preventDefault();
 
-  const empresa_id = document.getElementById("empresaPagamento").value;
-  const valor = document.getElementById("valorPagamento").value;
+  // Remover símbolos e pontos para enviar valor correto ao banco
+  let valor = document.getElementById("valorPagamento").value.replace(/[^\d,]/g, "").replace(",", ".");
+  valor = parseFloat(valor);
+
   const data_pagamento = document.getElementById("dataPagamento").value;
   const forma_pagamento = document.getElementById("formaPagamento").value;
+  const empresaId = document.getElementById("empresaPagamento").value;
 
   try {
     const { data, error } = await supabase
@@ -146,29 +166,48 @@ formPagamento.addEventListener("submit", async (e) => {
         status: "pago",
         forma_pagamento: forma_pagamento
       })
-      .eq("empresa_id", empresa_id)
+      .eq("empresa_id", empresaId)
       .eq("valor", valor)
-      .is("status", "pendente");
+      .eq("status", "pendente");
 
     if (error) throw error;
 
     console.log("✅ Pagamento registrado:", data);
     document.getElementById("modalPagamento").style.display = "none";
     alert("Pagamento registrado com sucesso!");
+
   } catch (err) {
     console.error("❌ Erro ao salvar pagamento:", err);
     alert("Erro ao registrar pagamento!");
   }
 });
 
-// ===================== FUNÇÃO AUXILIAR =====================
-function formatarData(data) {
-  const d = new Date(data + "T00:00:00");
-  const dia = String(d.getDate()).padStart(2, "0");
-  const mes = String(d.getMonth() + 1).padStart(2, "0");
-  const ano = d.getFullYear();
-  return `${dia}/${mes}/${ano}`;
+// ===================== FUNÇÃO BUSCAR DADOS DA EMPRESA =====================
+async function carregarDadosEmpresa(empresaId) {
+  try {
+    const { data: empresa, error } = await supabase
+      .from("empresa")
+      .select("*")
+      .eq("id", empresaId)
+      .single();
+
+    if (error) throw error;
+    if (!empresa) return;
+
+    document.getElementById("nomeEmpresaModal").textContent = empresa.nome;
+    document.getElementById("cnpjEmpresaModal").textContent = formatarCNPJ(empresa.cnpj);
+    document.getElementById("enderecoEmpresaModal").textContent = empresa.endereco;
+    document.getElementById("statusEmpresaModal").textContent = empresa.bloqueado ? "Bloqueado" : "Ativo";
+
+    // Guardar ID internamente
+    document.getElementById("empresaPagamento").value = empresa.id;
+
+  } catch (err) {
+    console.error("❌ Erro ao carregar dados da empresa:", err);
+  }
 }
+
+
 
 window.addEventListener('wheel', function (e) {
   if (e.ctrlKey) e.preventDefault(); // impede zoom com Ctrl + scroll

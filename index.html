@@ -574,24 +574,49 @@
 <div id="modalPendenciasAtraso" class="toast-notificacao">
   <h4>Pendências em Atraso</h4>
   <ul id="listaPendencias"></ul>
-  <button id="fecharToast">Pagar</button>
+  <button id="fecharToast">Registrar Pagamento</button>
 </div>
 
 <!-- Modal de Pagamento -->
-<div id="modalPagamento" class="modal">
-  <div class="modal-content">
-    <span class="closeModal" id="fecharModalPagamento">&times;</span>
-    
-    
+<div id="modalPagamento" class="pagamentoModal">
+  <div class="pagamentoModal-content">
+
+    <span class="pagamentoModal-close" id="fecharModalPagamento">&times;</span>
+
+    <!-- Título -->
+    <h2 class="pagamentoModal-titulo">Registrar Pagamento</h2>
+
+    <!-- Informações da Empresa -->
+    <div class="pagamentoModal-infoEmpresa">
+
+      <p><strong>Empresa:</strong> <span id="nomeEmpresaModal">---</span></p>
+
+      <p><strong>CNPJ:</strong> <span id="cnpjEmpresaModal">---</span></p>
+
+      <p><strong>Endereço:</strong> <span id="enderecoEmpresaModal">---</span></p>
+
+      <p><strong>Status:</strong> <span id="statusEmpresaModal">---</span></p>
+
+    </div>
+
+    <hr>
+
+    <!-- Formulário -->
     <form id="formPagamento">
-      <label for="empresaPagamento">Empresa:</label>
-      <input type="text" id="empresaPagamento" name="empresaPagamento" readonly>
 
-      <label for="valorPagamento">Valor:</label>
-      <input type="text" id="valorPagamento" name="valorPagamento" readonly>
+      <input type="hidden" id="empresaPagamento" name="empresaPagamento">
 
-      <label for="dataPagamento">Data de Pagamento:</label>
-      <input type="date" id="dataPagamento" name="dataPagamento" required>
+      <div class="linhaCampos">
+  <div class="campo">
+    <label for="valorPagamento">Valor:</label>
+    <input type="text" id="valorPagamento" name="valorPagamento" readonly>
+  </div>
+
+  <div class="campo">
+    <label for="dataPagamento">Data de Pagamento:</label>
+    <input type="date" id="dataPagamento" name="dataPagamento" required>
+  </div>
+</div>
 
       <label for="formaPagamento">Forma de Pagamento:</label>
       <select id="formaPagamento" name="formaPagamento" required>
@@ -601,8 +626,10 @@
         <option value="pix">PIX</option>
       </select>
 
-      <button type="submit">Salvar Pagamento</button>
+      <button type="submit" class="pagamentoModal-btn">Salvar Pagamento</button>
+
     </form>
+
   </div>
 </div>
 
