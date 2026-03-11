@@ -563,10 +563,47 @@
   </div>
 </div>
 
+
 <!-- Modal de Usuários Online -->
 <div id="modalUsuariosOnline" class="toast-notificacao">
   <h4>Usuários Online</h4>
   <ul id="listaUsuariosOnline"></ul>
+</div>
+
+<!-- Toast de Pendências em Atraso -->
+<div id="modalPendenciasAtraso" class="toast-notificacao">
+  <h4>Pendências em Atraso</h4>
+  <ul id="listaPendencias"></ul>
+  <button id="fecharToast">Pagar</button>
+</div>
+
+<!-- Modal de Pagamento -->
+<div id="modalPagamento" class="modal">
+  <div class="modal-content">
+    <span class="closeModal" id="fecharModalPagamento">&times;</span>
+    
+    
+    <form id="formPagamento">
+      <label for="empresaPagamento">Empresa:</label>
+      <input type="text" id="empresaPagamento" name="empresaPagamento" readonly>
+
+      <label for="valorPagamento">Valor:</label>
+      <input type="text" id="valorPagamento" name="valorPagamento" readonly>
+
+      <label for="dataPagamento">Data de Pagamento:</label>
+      <input type="date" id="dataPagamento" name="dataPagamento" required>
+
+      <label for="formaPagamento">Forma de Pagamento:</label>
+      <select id="formaPagamento" name="formaPagamento" required>
+        <option value="">Selecione</option>
+        <option value="dinheiro">Dinheiro</option>
+        <option value="cartao">Cartão</option>
+        <option value="pix">PIX</option>
+      </select>
+
+      <button type="submit">Salvar Pagamento</button>
+    </form>
+  </div>
 </div>
 
 <!-- Overlay de bloqueio -->

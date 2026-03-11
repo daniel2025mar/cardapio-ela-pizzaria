@@ -1,3 +1,31 @@
+/* ============================= */
+/* TEMA (CLARO / ESCURO) */
+/* ============================= */
+
+:root{
+--bg:#f5f5f5;
+--text:#222;
+--card:#ffffff;
+--card2:#f8f9fa;
+--border:#ddd;
+--toolbar:#1f2937;
+--tableHeader:#007BFF;
+--hover:#f1f1f1;
+--rowAlt:#fafafa;
+}
+
+body.dark{
+--bg:#0f172a;
+--text:#e5e7eb;
+--card:#1e293b;
+--card2:#111827;
+--border:#374151;
+--toolbar:#020617;
+--tableHeader:#1d4ed8;
+--hover:rgba(255,255,255,0.05);
+--rowAlt:rgba(255,255,255,0.03);
+}
+
 /* RESET */
 
 *{
@@ -10,8 +38,10 @@ box-sizing:border-box;
 
 body{
 font-family: Arial, sans-serif;
-background:#f5f5f5;
+background:var(--bg);
+color:var(--text);
 line-height:1.4;
+transition:0.3s;
 }
 
 /* TOOLBAR */
@@ -20,7 +50,7 @@ line-height:1.4;
 display:flex;
 justify-content:space-between;
 align-items:center;
-background:#1f2937;
+background:var(--toolbar);
 color:white;
 padding:12px 20px;
 position:sticky;
@@ -101,7 +131,7 @@ font-size:24px;
 table{
 width:100%;
 border-collapse:collapse;
-background:#fff;
+background:var(--card);
 box-shadow:0 0 10px rgba(0,0,0,0.1);
 border-radius:6px;
 overflow:hidden;
@@ -110,7 +140,7 @@ overflow:hidden;
 /* CABEÇALHO */
 
 th{
-background:#007BFF;
+background:var(--tableHeader);
 color:white;
 padding:12px;
 text-align:left;
@@ -121,14 +151,14 @@ font-size:14px;
 
 td{
 padding:12px;
-border-bottom:1px solid #ddd;
+border-bottom:1px solid var(--border);
 font-size:14px;
 }
 
 /* HOVER */
 
 tr:hover{
-background-color:#f1f1f1;
+background-color:var(--hover);
 }
 
 /* BOTÕES */
@@ -212,15 +242,11 @@ h1{
 font-size:20px;
 }
 
-/* TABELA RESPONSIVA */
-
 table{
 display:block;
 overflow-x:auto;
 white-space:nowrap;
 }
-
-/* BOTÕES MAIORES PARA TOQUE */
 
 button{
 padding:10px 14px;
@@ -251,183 +277,140 @@ padding:9px 12px;
 }
 
 /* ============================= */
-/* MODAL EMPRESA */
+/* MODAL */
 /* ============================= */
 
-.modal {
-  display: none; /* inicia fechado */
-  position: fixed;
-  z-index: 1000;
-  left: 0;
-  top: 0;
-  width: 100%;
-  height: 100%;
-  background: rgba(0,0,0,0.6);
-  backdrop-filter: blur(3px);
-  justify-content: center;
-  align-items: center;
+.modal{
+display:none;
+position:fixed;
+z-index:999;
+left:0;
+top:20px;
+width:100%;
+height:100%;
+background:rgba(0,0,0,0.5);
+overflow:visible;
+justify-content:center;
+align-items:center;
 }
 
-/* Conteúdo do modal */
-.modal-content {
-  background: #ffffff;
-  width: 90%;
-  max-width: 600px;
-  border-radius: 10px;
-  padding: 25px;
-  position: relative;
-  animation: abrirModal 0.25s ease;
-  box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+.modal-content{
+background:var(--card);
+padding:20px;
+border-radius:8px;
+max-width:600px;
+width:90%;
+box-shadow:0 5px 15px rgba(0,0,0,0.3);
 }
 
-/* Botão fechar */
-.close {
-  position: absolute;
-  top: 12px;
-  right: 15px;
-  font-size: 26px;
-  font-weight: bold;
-  color: #555;
-  cursor: pointer;
+.close{
+position:absolute;
+top:12px;
+right:15px;
+font-size:26px;
+font-weight:bold;
+color:#555;
+cursor:pointer;
 }
 
-.close:hover {
-  color: red;
+.close:hover{
+color:red;
 }
 
-/* Título */
-.modal-content h2 {
-  margin-bottom: 10px;
-  font-size: 22px;
+.modal-content h2{
+margin-bottom:10px;
+font-size:22px;
 }
 
-/* Informações */
-.modal-content p {
-  margin: 6px 0;
-  font-size: 15px;
+/* INFO EMPRESA */
+
+.modal p{
+display:flex;
+align-items:center;
+gap:6px;
+background:var(--card2);
+padding:6px 10px;
+border-radius:6px;
+border:1px solid var(--border);
+margin:4px 0;
+font-size:13px;
+}
+
+.modal p strong{
+color:#555;
+min-width:70px;
+font-size:12px;
+}
+
+#modalCNPJ,
+#modalStatus,
+#modalEndereco{
+font-weight:600;
+color:var(--text);
+}
+
+#modalStatus{
+padding:2px 6px;
+border-radius:5px;
+background:#e8f5e9;
+color:#2e7d32;
+font-size:12px;
+}
+
+#modalNomeEmpresa{
+color:#1d4fd8b7;
+font-size:24px;
+margin-bottom:10px;
+font-weight:700;
 }
 
 /* ============================= */
 /* TABELA PAGAMENTOS */
 /* ============================= */
 
-.modal-table {
-  width: 100%;
-  border-collapse: collapse;
-  margin-top: 10px;
+.tabela-scroll{
+max-height:300px;
+overflow-y:auto;
+}
+
+.modal-table{
+width:100%;
+border-collapse:collapse;
+}
+
+.modal-table thead th{
+position:sticky;
+top:0;
+background-color:#111827;
+color:#fff;
+padding:12px;
+text-align:center;
+z-index:2;
+}
+
+.modal-table tbody td{
+padding:10px;
+text-align:center;
+border-bottom:1px solid var(--border);
+}
+
+.modal-table tbody tr:nth-child(even){
+background-color:var(--rowAlt);
+}
+
+/* RESPONSIVO */
+
+@media (max-width:600px){
+
+.modal-content{
+width:95%;
+padding:20px;
 }
 
 .modal-table th,
-.modal-table td {
-  padding: 10px;
-  border: 1px solid #ddd;
-  text-align: center;
+.modal-table td{
+font-size:13px;
+padding:8px;
 }
-
-.modal-table th {
-  background: #f4f4f4;
-  font-weight: 600;
-}
-
-.modal-table tr:nth-child(even) {
-  background: #fafafa;
-}
-
-/* ============================= */
-/* ANIMAÇÃO */
-/* ============================= */
-
-@keyframes abrirModal {
-  from {
-    transform: scale(0.9);
-    opacity: 0;
-  }
-  to {
-    transform: scale(1);
-    opacity: 1;
-  }
-}
-
-/* Modal já existente deve ter overflow: visible ou hidden */
-.modal {
-  display: none; /* padrão */
-  position: fixed;
-  z-index: 999;
-  left: 0;
-  top: 20px;
-  width: 100%;
-  height: 100%;
-  background: rgba(0,0,0,0.5);
-  overflow: visible; /* <-- não deixar a modal rolar */
-  justify-content: center;
-  align-items: center;
-}
-
-#modalNomeEmpresa {
-  color: #1d4fd8b7; /* azul bonito */
-  font-size: 24px;
-  margin-bottom: 10px;
-  font-weight: 700;
-}
-/* Conteúdo do modal */
-.modal-content {
-  background: #fff;
-  padding: 20px;
-  border-radius: 8px;
-  max-width: 600px;
-  width: 90%;
-  box-shadow: 0 5px 15px rgba(0,0,0,0.3);
-}
-
-/* Container scroll apenas para o tbody */
-.tabela-scroll {
-  max-height: 300px; /* define altura fixa */
-  overflow-y: auto;  /* só scroll vertical aqui */
-}
-
-/* Tabela modal */
-.modal-table {
-  width: 100%;
-  border-collapse: collapse;
-}
-
-/* Cabeçalho fixo */
-.modal-table thead th {
-  position: sticky;
-  top: 0;
-  background-color: #111827;
-  color: #fff;
-  padding: 12px;
-  text-align: center;
-  z-index: 2;
-}
-
-/* Corpo da tabela */
-.modal-table tbody td {
-  padding: 10px;
-  text-align: center;
-  border-bottom: 1px solid #ddd;
-}
-
-/* Linhas alternadas */
-.modal-table tbody tr:nth-child(even) {
-  background-color: #f4f4f4;
-}
-/* ============================= */
-/* RESPONSIVO */
-/* ============================= */
-
-@media (max-width: 600px) {
-
-  .modal-content {
-    width: 95%;
-    padding: 20px;
-  }
-
-  .modal-table th,
-  .modal-table td {
-    font-size: 13px;
-    padding: 8px;
-  }
 
 }
