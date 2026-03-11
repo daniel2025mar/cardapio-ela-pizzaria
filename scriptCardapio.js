@@ -203,6 +203,27 @@ function montarCards() {
 // ===================== Chamar a função =====================
 montarCards();
 
+// Seleciona elementos
+const btnMaisInfo = document.getElementById("maisInfo");
+const modalEmpresa = document.getElementById("modalInfoEmpresa");
+const fecharModalEmpresa = document.querySelector(".fechar-empresa-cardapio");
+
+// Abrir modal ao clicar em maisInfo
+btnMaisInfo.addEventListener("click", () => {
+  modalEmpresa.style.display = "block";
+});
+
+// Fechar ao clicar no X
+fecharModalEmpresa.addEventListener("click", () => {
+  modalEmpresa.style.display = "none";
+});
+
+// Fechar ao clicar fora do modal
+window.addEventListener("click", (event) => {
+  if (event.target === modalEmpresa) {
+    modalEmpresa.style.display = "none";
+  }
+});
 
 // ===================== Abrir e fechar modal do carrinho =====================
 const btnCarrinho = document.getElementById("card-btn");
