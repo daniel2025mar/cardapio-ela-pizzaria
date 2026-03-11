@@ -161,7 +161,7 @@ async function verificarLogin() {
             // Redireciona após 2 segundos
             
           setTimeout(() => {
-    window.location.href = "/sistema.html";
+    window.location.href = "../sistema.html";
          }, 2000);
 
         } else {
