@@ -879,3 +879,155 @@ grid-template-columns:repeat(3,1fr);
 .mais-info {
   cursor: pointer;
 }
+
+/* ==================== Barra de Pesquisa Estilizada ==================== */
+.search-bar {
+  position: relative;
+  width: 100%;
+  max-width: 400px;    /* mantém o tamanho no desktop */
+  margin: 20px auto;
+}
+
+.search-bar input {
+  width: 100%;
+  padding: 12px 50px 12px 20px; /* espaço para o ícone */
+  border-radius: 50px;
+  border: none;
+  outline: none;
+  font-size: 16px;
+  background: #910b0b;
+  color: #fff;
+  box-shadow: 0 4px 6px rgba(0,0,0,0.15);
+  transition: all 0.3s ease;
+}
+
+.search-bar input::placeholder {
+  color: rgba(255,255,255,0.7);
+  font-weight: 500;
+}
+
+.search-bar i {
+  position: absolute;
+  right: 15px;
+  top: 50%;
+  transform: translateY(-50%);
+  color: #fff;
+  font-size: 18px;
+  cursor: pointer;
+}
+
+/* ==================== Ajustes Responsivos ==================== */
+@media (max-width: 768px) {
+  .search-bar {
+    max-width: 300px;  /* barra mais curta em tablets e celulares maiores */
+  }
+
+  .search-bar input {
+    font-size: 14px;
+    padding: 10px 40px 10px 15px;
+  }
+
+  .search-bar i {
+    font-size: 16px;
+    right: 12px;
+  }
+}
+
+@media (max-width: 480px) {
+  .search-bar {
+    max-width: 250px; /* barra mais compacta em celulares pequenos */
+  }
+
+  .search-bar input {
+    font-size: 13px;
+    padding: 8px 35px 8px 12px;
+  }
+
+  .search-bar i {
+    font-size: 15px;
+    right: 10px;
+  }
+}
+
+/* ===================== Container de Categorias ===================== */
+#categoriasContainer {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(120px, 1fr)); /* responsivo */
+  gap: 20px;
+  padding: 20px;
+}
+
+/* ===================== Cards de Categoria ===================== */
+.categoria-card {
+  background: #ffffff; /* cor principal do app */
+  color: #7e2a2a;
+  border-radius: 15px;
+  padding: 15px;
+  text-align: center;
+  cursor: pointer;
+  transition: transform 0.3s, box-shadow 0.3s;
+  box-shadow: 0 4px 8px rgba(0,0,0,0.15);
+}
+
+.categoria-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 8px 16px rgba(0,0,0,0.25);
+}
+
+/* ===================== Imagem do Card ===================== */
+.categoria-card img {
+  width: 60px;
+  height: 60px;
+  object-fit: cover;
+  border-radius: 50%; /* deixa circular */
+  margin-bottom: 10px;
+  border: 2px solid #fff;
+  transition: transform 0.3s;
+}
+
+.categoria-card img:hover {
+  transform: scale(1.1);
+}
+
+/* ===================== Título do Card ===================== */
+.categoria-card h3 {
+  font-size: 16px;
+  font-weight: 600;
+  margin: 0;
+  text-transform: capitalize;
+}
+
+/* ===================== Responsivo ===================== */
+@media (max-width: 768px) {
+  #categoriasContainer {
+    grid-template-columns: repeat(auto-fit, minmax(100px, 1fr));
+    gap: 15px;
+    padding: 15px;
+  }
+
+  .categoria-card img {
+    width: 50px;
+    height: 50px;
+  }
+
+  .categoria-card h3 {
+    font-size: 14px;
+  }
+}
+
+@media (max-width: 480px) {
+  #categoriasContainer {
+    grid-template-columns: repeat(auto-fit, minmax(80px, 1fr));
+    gap: 10px;
+    padding: 10px;
+  }
+
+  .categoria-card img {
+    width: 40px;
+    height: 40px;
+  }
+
+  .categoria-card h3 {
+    font-size: 13px;
+  }
+}

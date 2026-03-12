@@ -6,9 +6,8 @@ const SUPABASE_URL = "https://vixurbnyhalixuwyytjx.supabase.co";
 const SUPABASE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InZpeHVyYm55aGFsaXh1d3l5dGp4Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzI3MTc0ODksImV4cCI6MjA4ODI5MzQ4OX0._0kx5t0Yi6uAge5K9BFCh9PHs66YrW3sTY80yncTLeM";
 const supabase = createClient(SUPABASE_URL, SUPABASE_KEY);
 
-// ===================== VARIÁVEL GLOBAL =====================
-let pendenciaAtualId = null;
-let ultimaPendencia = null;
+// ==== BLOQUEIO DE ZOOM ====
+
 
 // ===================== FUNÇÃO PARA ESPERAR A SPLASH TERMINAR =====================
 function esperarSplashTerminar() {
@@ -1683,39 +1682,189 @@ document.addEventListener("DOMContentLoaded", async () => {
   await atualizarNomeEmpresa();
 });
 
-// ================= funçao do modal Categorias ========
-
-// Seleciona elementos
-const btnNovaCategoria = document.getElementById('novaCategoria'); // botão que abre modal
+// ==================== Categorias ====================
+const btnNovaCategoria = document.getElementById('novaCategoria');
 const modalNovaCategoria = document.getElementById('modalNovaCategoria');
-const btnFecharModal = modalNovaCategoria.querySelector('.btn-fechar-modal');
-const btnCancelarModal = modalNovaCategoria.querySelector('.btn-cancelar');
+const btnFecharModalCat = modalNovaCategoria.querySelector('.btn-fechar-modal');
+const btnCancelarModalCat = modalNovaCategoria.querySelector('.btn-cancelar');
+const formNovaCategoria = modalNovaCategoria.querySelector('#formNovaCategoria');
+const inputTitulo = modalNovaCategoria.querySelector('#inputTituloCategoria');
+const inputDescricao = modalNovaCategoria.querySelector('#inputDescricaoCategoria');
+let iconeSelecionado = null;
+const categoriaProduto = document.getElementById('categoriaProduto');
 
-// Garante que modal comece escondido
+// Inicializa modal escondido
 modalNovaCategoria.style.display = 'none';
 
-// Função para abrir modal
-function abrirModal() {
-  modalNovaCategoria.style.display = 'flex';
-}
+// Abrir/Fechar modal
+btnNovaCategoria.addEventListener('click', () => modalNovaCategoria.style.display = 'flex');
+btnFecharModalCat.addEventListener('click', () => fecharModalCategoria());
+btnCancelarModalCat?.addEventListener('click', () => fecharModalCategoria());
+window.addEventListener('click', e => { if(e.target === modalNovaCategoria) fecharModalCategoria(); });
 
-// Função para fechar modal
-function fecharModal() {
+function fecharModalCategoria() {
   modalNovaCategoria.style.display = 'none';
+  formNovaCategoria.reset();
+  iconeSelecionado = null;
+  document.querySelectorAll('.icone-selecionavel').forEach(i => i.classList.remove('selecionado'));
 }
 
-// Abrir modal somente ao clicar no botão
-btnNovaCategoria.addEventListener('click', abrirModal);
+// Seleção de ícone
+document.querySelectorAll('.icone-selecionavel').forEach(icon => {
+  icon.addEventListener('click', () => {
+    document.querySelectorAll('.icone-selecionavel').forEach(i => i.classList.remove('selecionado'));
+    icon.classList.add('selecionado');
+    iconeSelecionado = icon.dataset.icone;
+  });
+});
 
-// Fechar modal ao clicar no X
-btnFecharModal.addEventListener('click', fecharModal);
+// Carregar categorias
+async function carregarCategorias() {
+  categoriaProduto.innerHTML = '<option value="">Carregando...</option>';
+  const { data, error } = await supabase.from('categorias').select('id,titulo').order('titulo',{ascending:true});
+  if(error){ console.error(error); categoriaProduto.innerHTML='<option value="">Erro ao carregar</option>'; return; }
+  categoriaProduto.innerHTML = '<option value="">Selecione a categoria</option>';
+  data.forEach(cat=>{
+    const opt = document.createElement('option');
+    opt.value = cat.id; opt.textContent = cat.titulo;
+    categoriaProduto.appendChild(opt);
+  });
+}
+carregarCategorias();
 
-// Fechar modal ao clicar em Cancelar
-btnCancelarModal.addEventListener('click', fecharModal);
+// Enviar nova categoria
+formNovaCategoria.addEventListener('submit', async e=>{
+  e.preventDefault();
+  if(!inputTitulo.value.trim() || !iconeSelecionado){ alert("Título e Ícone obrigatórios!"); return; }
+  const { error } = await supabase.from('categorias').insert([{titulo:inputTitulo.value.trim(), descricao:inputDescricao.value.trim(), icone:iconeSelecionado}]);
+  if(error){ console.error(error); alert("Erro ao salvar categoria."); }
+  else{ alert("Categoria salva!"); fecharModalCategoria(); carregarCategorias(); }
+});
 
-// Fechar modal ao clicar fora da área do conteúdo
-window.addEventListener('click', (e) => {
-  if(e.target === modalNovaCategoria) {
-    fecharModal();
+// ==================== Produto ====================
+const formProduto = document.getElementById('formProduto');
+const nomeProduto = document.getElementById('nomeProduto');
+const precoProduto = document.getElementById('precoProduto');
+const promocaoProduto = document.getElementById('promocao');
+const custoProduto = document.getElementById('custo');
+const estoqueProduto = document.getElementById('estoqueProduto');
+const descricaoProduto = document.getElementById('descricaoProduto');
+const fotoProduto = document.getElementById('fotoProduto');
+const previewProduto = document.getElementById('previewProduto');
+const btnSalvarProduto = formProduto.querySelector('button[type="submit"]');
+
+// ==================== Modal Tamanhos ====================
+const btnAbrirModalTamanhos = document.getElementById('btnAbrirModalTamanhos');
+const modalTamanhos = document.getElementById('modalTamanhos');
+const btnFecharModalTamanhos = modalTamanhos.querySelector('.btn-fechar-modal');
+const btnAdicionarTamanho = document.getElementById('btnAdicionarTamanho');
+const tabelaTamanhosBody = modalTamanhos.querySelector('tbody');
+let listaTamanhos = [];
+
+// Abrir/Fechar modal tamanhos
+btnAbrirModalTamanhos.addEventListener('click', ()=> modalTamanhos.style.display='flex');
+btnFecharModalTamanhos.addEventListener('click', ()=> modalTamanhos.style.display='none');
+window.addEventListener('click', e=>{if(e.target===modalTamanhos) modalTamanhos.style.display='none';});
+
+// Adicionar tamanho
+btnAdicionarTamanho.addEventListener('click', ()=>{
+  const tamanho = document.getElementById('tamanho').value.trim();
+  const preco = parseFloat(document.getElementById('precoTamanho').value);
+  if(!tamanho||isNaN(preco)){ alert("Tamanho e preço obrigatórios"); return; }
+  listaTamanhos.push({tamanho, preco});
+  atualizarTabelaTamanhos();
+  document.getElementById('tamanho').value=''; document.getElementById('precoTamanho').value='';
+});
+
+function atualizarTabelaTamanhos(){
+  tabelaTamanhosBody.innerHTML='';
+  listaTamanhos.forEach((t,i)=>{
+    const tr = document.createElement('tr');
+    tr.innerHTML=`<td>${t.tamanho}</td><td>${t.preco.toFixed(2)}</td><td><button type="button" onclick="removerTamanho(${i})">Remover</button></td>`;
+    tabelaTamanhosBody.appendChild(tr);
+  });
+}
+function removerTamanho(i){ listaTamanhos.splice(i,1); atualizarTabelaTamanhos(); }
+
+// ==================== Base64 Reduzido ====================
+async function getBase64Reduzido(file,maxWidth=800,maxHeight=800){
+  return new Promise((resolve,reject)=>{
+    const reader = new FileReader();
+    reader.readAsDataURL(file);
+    reader.onload=event=>{
+      const img=new Image();
+      img.src=event.target.result;
+      img.onload=()=>{
+        const canvas=document.createElement('canvas');
+        let w=img.width; let h=img.height;
+        if(w>maxWidth){ h=h*(maxWidth/w); w=maxWidth; }
+        if(h>maxHeight){ w=w*(maxHeight/h); h=maxHeight; }
+        canvas.width=w; canvas.height=h;
+        const ctx=canvas.getContext('2d');
+        ctx.drawImage(img,0,0,w,h);
+        resolve(canvas.toDataURL('image/jpeg',0.8));
+      };
+      img.onerror=err=>reject(err);
+    };
+    reader.onerror=err=>reject(err);
+  });
+}
+
+// Atualizar preview
+fotoProduto.addEventListener('change', async e=>{
+  const file=e.target.files[0];
+  if(file){ try{ previewProduto.src=await getBase64Reduzido(file); }catch(err){console.error(err);} }
+  else{ previewProduto.src="./Imagem/inventory.jpg"; }
+});
+
+// ==================== Enviar produto ====================
+formProduto.addEventListener('submit', async e=>{
+  e.preventDefault();
+  btnSalvarProduto.disabled=true;
+  btnSalvarProduto.textContent="Salvando...";
+
+  const nome = nomeProduto.value.trim();
+  const categoria_id = categoriaProduto.value;
+  const preco = parseFloat(precoProduto.value);
+  const promocao = parseFloat(promocaoProduto.value)||0;
+  const custo = parseFloat(custoProduto.value)||0;
+  const estoque = parseInt(estoqueProduto.value)||0;
+  const descricao = descricaoProduto.value.trim();
+
+  if(!nome||!categoria_id||isNaN(preco)||preco<=0){
+    alert("Nome, Categoria e Preço obrigatórios e válidos");
+    btnSalvarProduto.disabled=false; btnSalvarProduto.textContent="Salvar Produto"; return;
   }
+
+  try{
+    let foto_base64=null;
+    const file=fotoProduto.files[0];
+    if(file) foto_base64=await getBase64Reduzido(file);
+
+    // Inserir produto
+    const { data: produtoData, error: produtoError } = await supabase.from('produtos')
+      .insert([{nome,categoria_id,preco,promocao,custo,estoque,descricao,foto_url:foto_base64}])
+      .select();
+
+    if(produtoError){ console.error(produtoError); alert("Erro ao salvar produto"); btnSalvarProduto.disabled=false; btnSalvarProduto.textContent="Salvar Produto"; return; }
+
+    const produto_id = produtoData[0].id;
+
+    // Inserir variações
+    if(listaTamanhos.length>0){
+      const variacoes = listaTamanhos.map(t=>({produto_id,tamanho:t.tamanho,preco:t.preco}));
+      const { error: varError } = await supabase.from('produto_variacoes').insert(variacoes);
+      if(varError){ console.error(varError); alert("Produto salvo, mas erro ao salvar variações"); }
+    }
+
+    alert("Produto e variações cadastrados com sucesso!");
+    formProduto.reset();
+    previewProduto.src="./Imagem/inventory.jpg";
+    listaTamanhos=[];
+    atualizarTabelaTamanhos();
+
+  }catch(err){ console.error(err); alert("Erro ao cadastrar produto"); }
+
+  btnSalvarProduto.disabled=false;
+  btnSalvarProduto.textContent="Salvar Produto";
 });

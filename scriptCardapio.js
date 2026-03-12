@@ -6,6 +6,40 @@ const SUPABASE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZ
 const supabase = createClient(SUPABASE_URL, SUPABASE_KEY);
 
 
+// Desktop: Ctrl + scroll ou Ctrl + +/- 
+window.addEventListener('wheel', function(e) {
+  if (e.ctrlKey) e.preventDefault();
+}, { passive: false });
+
+window.addEventListener('keydown', function(e) {
+  if (e.ctrlKey && ['+', '-', '=', '_'].includes(e.key)) {
+    e.preventDefault();
+  }
+});
+
+// Mobile: pinça (multitouch) e gesto no iOS
+window.addEventListener('touchstart', function(e) {
+  if (e.touches.length > 1) e.preventDefault();
+}, { passive: false });
+
+window.addEventListener('gesturestart', function(e) {
+  e.preventDefault();
+});
+
+// Evitar zoom via meta viewport (apenas reforço)
+const meta = document.querySelector('meta[name=viewport]');
+if (meta) {
+  meta.setAttribute('content', 'width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no');
+} else {
+  const m = document.createElement('meta');
+  m.name = "viewport";
+  m.content = "width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no";
+  document.head.appendChild(m);
+}
+// ===================== VARIÁVEL GLOBAL =====================
+let pendenciaAtualId = null;
+let ultimaPendencia = null;
+
 async function carregarImagensEmpresa() {
   try {
     const { data: empresa, error } = await supabase
@@ -128,88 +162,157 @@ async function carregarEmpresa() {
 
 // Executa quando a página carregar
 window.addEventListener("DOMContentLoaded", carregarEmpresa);
-// ===================== Lista de produtos exemplo =====================
-const produtos = [
-  {
-    codigo: "001",
-    nome: "Pizza Margherita",
-    descricao: "Deliciosa pizza com molho de tomate, mussarela e manjericão fresco.",
-    preco: "39,90",
-    foto: "./Imagem/pizza-margherita.jpg"
-  },
-  {
-    codigo: "002",
-    nome: "Hambúrguer Gourmet",
-    descricao: "Carne premium, queijo cheddar, alface, tomate e maionese artesanal.",
-    preco: "24,90",
-    foto: "./Imagem/hamburguer.jpg"
-  },
-  {
-    codigo: "003",
-    nome: "Suco Natural",
-    descricao: "Suco de laranja fresco, 100% natural, sem adição de açúcar.",
-    preco: "8,90",
-    foto: "./Imagem/suco.jpg"
-  },
-  {
-    codigo: "004",
-    nome: "Pizza Calabresa",
-    descricao: "Pizza com calabresa, cebola e queijo mussarela.",
-    preco: "42,90",
-    foto: "./Imagem/pizza-calabresa.jpg"
-  },
-  {
-    codigo: "005",
-    nome: "Batata Frita",
-    descricao: "Porção crocante com molho especial.",
-    preco: "18,90",
-    foto: "./Imagem/batata.jpg"
-  },
-  {
-    codigo: "006",
-    nome: "Refrigerante Lata",
-    descricao: "Bebida gelada 350ml.",
-    preco: "6,90",
-    foto: "./Imagem/refrigerante.jpg"
+
+
+async function montarCardsCategorias() {
+  try {
+    // Busca categorias no Supabase
+    const { data: categorias, error } = await supabase
+      .from("categorias")
+      .select("id, titulo, icone") // só titulo e icone (classes FA)
+      .order("titulo");
+
+    if (error) {
+      console.error("Erro ao buscar categorias:", error);
+      return;
+    }
+
+    const container = document.getElementById("categoriasContainer");
+    container.innerHTML = ""; // limpa antes de montar
+
+    categorias.forEach(cat => {
+      const card = document.createElement("div");
+      card.className = "categoria-card";
+      card.innerHTML = `
+        <i class="${cat.icone || 'fas fa-question'}"></i>
+        <h3>${cat.titulo}</h3>
+      `;
+      container.appendChild(card);
+    });
+
+    // ===================== FILTRO DE PESQUISA =====================
+    const inputSearch = document.getElementById("searchCategoria");
+    inputSearch.addEventListener("input", () => {
+      const filtro = inputSearch.value.toLowerCase();
+      const filtradas = categorias.filter(cat => cat.titulo.toLowerCase().includes(filtro));
+      container.innerHTML = "";
+      filtradas.forEach(cat => {
+        const card = document.createElement("div");
+        card.className = "categoria-card";
+        card.innerHTML = `
+          <i class="${cat.icone || 'fas fa-question'}"></i>
+          <h3>${cat.titulo}</h3>
+        `;
+        container.appendChild(card);
+      });
+    });
+
+  } catch (err) {
+    console.error("Erro inesperado ao montar categorias:", err);
   }
-];
-
-// ===================== Função para criar os cards =====================
-function montarCards() {
-  const container = document.getElementById('produtosContainerPizza');
-  container.innerHTML = ""; // Limpa antes de montar
-
-  produtos.forEach(produto => {
-    const card = document.createElement('div');
-    card.className = "cardapio-item";
-
-    card.innerHTML = `
-      <img src="${produto.foto}" alt="${produto.nome}" class="produto-img">
-      <span class="codigo-produto">Cód: ${produto.codigo}</span>
-      <h2>${produto.nome}</h2>
-      <p>${produto.descricao}</p>
-      <div class="produto-footer">
-        <span class="preco">R$ ${produto.preco}</span>
-        <button class="btn-comprar">
-          <i class="fas fa-shopping-cart"></i> Comprar
-        </button>
-      </div>
-    `;
-
-    container.appendChild(card);
-  });
 }
 
-// ===================== Chamar a função =====================
-montarCards();
+// Chama ao carregar a página
+document.addEventListener("DOMContentLoaded", montarCardsCategorias);
+// ===================== Função para criar os cards =====================
 
-// Seleciona elementos
+
+async function montarCardsSupabase() {
+  try {
+    // Busca os produtos da tabela "produtos"
+    const { data: produtos, error } = await supabase
+      .from("produtos")
+      .select("id, nome, descricao, preco, promocao, foto_url, categoria_id")
+      .order("nome"); // opcional: ordena por nome
+
+    if (error) {
+      console.error("Erro ao buscar produtos:", error);
+      return;
+    }
+
+    const container = document.getElementById('produtosContainerPizza');
+    container.innerHTML = ""; // Limpa antes de montar
+
+    produtos.forEach(produto => {
+      const card = document.createElement('div');
+      card.className = "cardapio-item";
+
+      // Usando promocao caso exista
+      const precoDisplay = produto.promocao ? produto.promocao.toFixed(2) : produto.preco.toFixed(2);
+
+      card.innerHTML = `
+        <img src="${produto.foto_url || './Imagem/default.jpg'}" alt="${produto.nome}" class="produto-img">
+        <span class="codigo-produto">ID: ${produto.id.slice(0, 8)}</span>
+        <h2>${produto.nome}</h2>
+        <p>${produto.descricao || ''}</p>
+        <div class="produto-footer">
+          <span class="preco">R$ ${precoDisplay.replace('.', ',')}</span>
+          <button class="btn-comprar">
+            <i class="fas fa-shopping-cart"></i> Comprar
+          </button>
+        </div>
+      `;
+
+      container.appendChild(card);
+    });
+
+  } catch (err) {
+    console.error("Erro inesperado ao montar produtos:", err);
+  }
+}
+
+// Chama a função ao carregar a página
+document.addEventListener("DOMContentLoaded", montarCardsSupabase);
+
+// =====================
+// MODAL INFORMAÇÕES DA EMPRESA
+// =====================
+
+// Seleciona elementos do modal
 const btnMaisInfo = document.getElementById("maisInfo");
 const modalEmpresa = document.getElementById("modalInfoEmpresa");
 const fecharModalEmpresa = document.querySelector(".fechar-empresa-cardapio");
 
+// Função para carregar informações da empresa do Supabase
+async function carregarInfoEmpresa() {
+
+  try {
+    // Busca a primeira empresa cadastrada
+    const { data, error } = await supabase
+      .from("empresa")
+      .select("nome, endereco, telefone")
+      .limit(1)
+      .single();
+
+    if (error) {
+      console.error("Erro ao buscar empresa:", error);
+      return;
+    }
+
+    if (!data) {
+      console.warn("Nenhum registro de empresa encontrado.");
+      return;
+    }
+
+    // Atualiza o conteúdo do modal
+    modalEmpresa.querySelector("p:nth-of-type(1)").innerHTML =
+      `<strong>Nome:</strong> ${data.nome}`;
+
+    modalEmpresa.querySelector("p:nth-of-type(2)").innerHTML =
+      `<strong>Endereço:</strong> ${data.endereco}`;
+
+    modalEmpresa.querySelector("p:nth-of-type(3)").innerHTML =
+      `<strong>Telefone:</strong> ${data.telefone}`;
+
+  } catch (err) {
+    console.error("Erro inesperado ao carregar empresa:", err);
+  }
+
+}
+
 // Abrir modal ao clicar em maisInfo
-btnMaisInfo.addEventListener("click", () => {
+btnMaisInfo.addEventListener("click", async () => {
+  await carregarInfoEmpresa(); // carrega info antes de abrir
   modalEmpresa.style.display = "block";
 });
 
