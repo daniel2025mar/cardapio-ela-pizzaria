@@ -745,6 +745,9 @@ document.addEventListener("DOMContentLoaded", async () => {
 // =====================
 // CARREGAR VALOR DA MENSALIDADE
 // =====================
+// =====================
+// CARREGAR VALOR DA MENSALIDADE
+// =====================
 async function carregarValorMensalidade() {
 
   try {
@@ -780,6 +783,61 @@ async function carregarValorMensalidade() {
 
 
 // =====================
+// ATUALIZAR DIA DOS PAGAMENTOS PENDENTES
+// =====================
+async function atualizarDiaVencimento(diaNovo) {
+
+  try {
+
+    const { data, error } = await supabase
+      .from("pagamentos_mensalidade")
+      .select("id, data_vencimento")
+      .eq("status", "pendente");
+
+    if (error) {
+      console.error("Erro ao buscar pagamentos:", error);
+      return;
+    }
+
+    if (!data || data.length === 0) {
+      console.log("Nenhum pagamento pendente encontrado.");
+      return;
+    }
+
+    for (const pagamento of data) {
+
+      const dataOriginal = pagamento.data_vencimento;
+
+      const partes = dataOriginal.split("-");
+
+      const ano = partes[0];
+      const mes = partes[1];
+
+      const novoDia = String(diaNovo).padStart(2, "0");
+
+      const novaData = `${ano}-${mes}-${novoDia}`;
+
+      const { error: erroUpdate } = await supabase
+        .from("pagamentos_mensalidade")
+        .update({ data_vencimento: novaData })
+        .eq("id", pagamento.id);
+
+      if (erroUpdate) {
+        console.error("Erro ao atualizar data:", erroUpdate);
+      }
+
+    }
+
+    console.log("Datas de vencimento atualizadas!");
+
+  } catch (err) {
+    console.error("Erro inesperado:", err);
+  }
+
+}
+
+
+// =====================
 // SALVAR CONFIGURAÇÃO
 // =====================
 async function salvarConfiguracaoMensalidade() {
@@ -787,10 +845,11 @@ async function salvarConfiguracaoMensalidade() {
   try {
 
     const campoValor = document.getElementById("valorMensalidade");
+    const campoDia = document.getElementById("diaVencimento");
 
     if (!campoValor) return;
 
-    // remove formatação
+    // remove formatação do valor
     let valor = campoValor.value
       .replace("R$", "")
       .replace(/\s/g, "")
@@ -817,7 +876,7 @@ async function salvarConfiguracaoMensalidade() {
     }
 
     // ====================================
-    // 2 ATUALIZA pagamentos pendentes
+    // 2 ATUALIZA pagamentos pendentes (valor)
     // ====================================
     const { error: erroPagamentos } = await supabase
       .from("pagamentos_mensalidade")
@@ -827,6 +886,17 @@ async function salvarConfiguracaoMensalidade() {
     if (erroPagamentos) {
       console.error("Erro ao atualizar pagamentos:", erroPagamentos);
       return;
+    }
+
+    // ====================================
+    // 3 ATUALIZA DIA DE VENCIMENTO
+    // ====================================
+    if (campoDia && campoDia.value) {
+
+      const diaNovo = parseInt(campoDia.value);
+
+      await atualizarDiaVencimento(diaNovo);
+
     }
 
     console.log("Configuração atualizada com sucesso!");
@@ -841,7 +911,7 @@ async function salvarConfiguracaoMensalidade() {
 
 
 // =====================
-// FORMATAÇÃO AO DIGITAR
+// FORMATAÇÃO AO DIGITAR (MOEDA)
 // =====================
 function formatarCampoMoeda() {
 
@@ -864,18 +934,59 @@ function formatarCampoMoeda() {
 }
 
 
+// ===================
+// CARREGAR DIA DE VENCIMENTO
+// ===================
+async function carregarDiaVencimento() {
+
+  console.log("🔎 Buscando dia de vencimento...");
+
+  try {
+
+    const { data, error } = await supabase
+      .from("pagamentos_mensalidade")
+      .select("data_vencimento")
+      .eq("empresa_id", 1)
+      .limit(1);
+
+    if (error) {
+      console.error("Erro Supabase:", error);
+      return;
+    }
+
+    if (!data || data.length === 0) {
+      console.warn("Nenhum registro encontrado.");
+      return;
+    }
+
+    const dataVencimento = data[0].data_vencimento;
+
+    const dia = dataVencimento.split("-")[2];
+
+    const campoDia = document.getElementById("diaVencimento");
+
+    if (campoDia) {
+      campoDia.value = dia;
+    }
+
+  } catch (err) {
+    console.error("Erro inesperado:", err);
+  }
+
+}
+
+
 // =====================
 // EVENTOS AO CARREGAR A PÁGINA
 // =====================
 document.addEventListener("DOMContentLoaded", () => {
 
-  // carregar valor da mensalidade
   carregarValorMensalidade();
 
-  // aplicar formatação
+  carregarDiaVencimento();
+
   formatarCampoMoeda();
 
-  // botão salvar
   const botaoSalvar = document.querySelector(".btn-salvar-config");
 
   if (botaoSalvar) {
@@ -883,54 +994,6 @@ document.addEventListener("DOMContentLoaded", () => {
   }
 
 });
-
-// =================== CARREGAR DIA DE VENCIMENTO ===================
-
-
-async function carregarDiaVencimento() {
-
-  console.log("🔎 Iniciando busca do dia de vencimento...");
-
-  try {
-
-    const { data, error } = await supabase
-      .from("pagamentos_mensalidade") // CORRIGIDO
-      .select("data_vencimento")
-      .eq("empresa_id", 1)
-      .limit(1);
-
-    console.log("📦 DATA:", data);
-
-    if (error) {
-      console.error("❌ Erro Supabase:", error);
-      return;
-    }
-
-    if (!data || data.length === 0) {
-      console.warn("⚠️ Nenhum registro encontrado.");
-      return;
-    }
-
-    const dataVencimento = data[0].data_vencimento;
-
-    console.log("📅 Data recebida:", dataVencimento);
-
-    const dia = dataVencimento.split("-")[2];
-
-    console.log("📆 Dia extraído:", dia);
-
-    const campoDia = document.getElementById("diaVencimento");
-
-    if (campoDia) {
-      campoDia.value = dia;
-      console.log("✅ Dia inserido:", dia);
-    }
-
-  } catch (err) {
-    console.error("❌ Erro inesperado:", err);
-  }
-
-}
 // Seleciona elementos do novo modal
 const modalAlerta = document.getElementById('modalAlerta');
 const modalTextoAlerta = document.getElementById('modalTextoAlerta');
