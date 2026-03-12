@@ -1046,3 +1046,83 @@ grid-template-columns:repeat(3,1fr);
   margin: 20px 0;      /* espaço acima e abaixo */
   border-radius: 1px;  /* bordas arredondadas opcionais */
 }
+
+.categoria-titulo {
+  font-size: 1.8rem;
+  font-weight: bold;
+  margin-bottom: 15px; /* espaço entre título e cards */
+  color: #333;
+}
+
+/* Container que segura todos os cards */
+#produtosContainerPizza {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr); /* 4 cards por linha */
+  gap: 20px; /* espaço entre os cards */
+  margin-top: 20px;
+}
+
+/* Estilo do card */
+.cardapio-item {
+  background: #fff;
+  border-radius: 15px;
+  padding: 15px;
+  text-align: center;
+  box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  transition: transform 0.3s, box-shadow 0.3s;
+}
+
+.cardapio-item:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 6px 12px rgba(0,0,0,0.15);
+}
+
+.produto-img {
+  width: 100%;
+  height: 150px;
+  object-fit: cover;
+  border-radius: 10px;
+}
+
+.produto-footer {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-top: 10px;
+}
+
+.btn-comprar {
+  background-color: #e53935;
+  color: white;
+  border: none;
+  padding: 5px 10px;
+  border-radius: 8px;
+  cursor: pointer;
+}
+
+.btn-comprar:hover {
+  background-color: #d32f2f;
+}
+
+/* Responsivo para telas menores */
+@media (max-width: 1200px) {
+  #produtosContainerPizza {
+    grid-template-columns: repeat(3, 1fr); /* 3 por linha */
+  }
+}
+
+@media (max-width: 900px) {
+  #produtosContainerPizza {
+    grid-template-columns: repeat(2, 1fr); /* 2 por linha */
+  }
+}
+
+@media (max-width: 600px) {
+  #produtosContainerPizza {
+    grid-template-columns: 1fr; /* 1 por linha */
+  }
+}
+
