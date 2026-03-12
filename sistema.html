@@ -180,7 +180,7 @@
       </div>
        
      <!-- ===================== CADASTRO DE CLIENTES ===================== -->
-<div id="cadastroClientes" class="secao">
+     <div id="cadastroClientes" class="secao">
 
   <!-- Título fora do card, alinhado à esquerda -->
   <h2 class="cadastro-titulo">Cadastro de Cliente</h2>
@@ -237,7 +237,7 @@
       <button type="submit" id="btnCadastrarCliente">Cadastrar Cliente</button>
     </form>
   </div>
-</div>
+     </div>
 
       <!--Cadastro de Produtos-->
       <div id="cadastroProdutos" class="secao">
@@ -323,6 +323,47 @@
       </div>
 
     </form>
+  </div>
+
+      </div>
+
+      <div id="configuracoes" class="secao">
+
+  <div class="config-header">
+    <h2>Configurações do Sistema</h2>
+    <p>Gerencie as configurações da sua assinatura.</p>
+  </div>
+
+  <div class="config-container" id="configContainer" style="display:none;">
+
+    <h3>Mensalidade do Sistema</h3>
+
+    <div class="config-row">
+
+  <div class="config-item">
+    <label>Valor da mensalidade</label>
+    <input type="text" id="valorMensalidade" placeholder="Ex: R$ 49.90">
+  </div>
+
+  <div class="config-item">
+    <label>Dia de vencimento</label>
+    <input type="number" id="diaVencimento" placeholder="Ex: 10">
+  </div>
+
+</div>
+
+    <div class="config-item">
+      <label>Status da cobrança</label>
+      <select id="statusMensalidade">
+        <option value="ativo">Ativa</option>
+        <option value="desativado">Desativada</option>
+      </select>
+    </div>
+
+    <button class="btn-salvar-config">
+      <i class="fas fa-save"></i> Salvar Configuração
+    </button>
+
   </div>
 
 </div>

@@ -609,22 +609,24 @@ window.addEventListener("click", (e) => {
   if (e.target === modalDesenvolvedor) modalDesenvolvedor.style.display = "none";
 });
 // =================== FUNÇÃO ABRIR MENUS ===================
-
 // PEGAR MENUS
 const menuDashboard = document.getElementById("menuDashboard");
 const menuAdicionar = document.getElementById("menuAdicionar");
-const menuCadastroClientes = document.getElementById("menuCadastroClientes"); // NOVO MENU
+const menuCadastroClientes = document.getElementById("menuCadastroClientes");
+const confBtn = document.getElementById("confBtn"); // MENU CONFIGURAÇÃO
 
 // PEGAR SEÇÕES
 const dashboard = document.getElementById("dashboard");
 const cadastroProdutos = document.getElementById("cadastroProdutos");
-const cadastroClientes = document.getElementById("cadastroClientes"); // NOVA SEÇÃO
+const cadastroClientes = document.getElementById("cadastroClientes");
+const configuracoes = document.getElementById("configuracoes"); // SEÇÃO CONFIGURAÇÃO
 
 // TODAS AS SEÇÕES
 const secoes = document.querySelectorAll(".secao");
 
 // FUNÇÃO PARA ABRIR QUALQUER SEÇÃO
 function abrirSecao(secaoAtiva) {
+
   // Esconder todas
   secoes.forEach(secao => {
     secao.style.display = "none";
@@ -635,10 +637,14 @@ function abrirSecao(secaoAtiva) {
 }
 
 // CLICK NOS MENUS
-menuDashboard.addEventListener("click", () => abrirSecao(dashboard));
-menuAdicionar.addEventListener("click", () => abrirSecao(cadastroProdutos));
-menuCadastroClientes.addEventListener("click", () => abrirSecao(cadastroClientes)); // NOVO CLICK
+menuDashboard?.addEventListener("click", () => abrirSecao(dashboard));
+menuAdicionar?.addEventListener("click", () => abrirSecao(cadastroProdutos));
+menuCadastroClientes?.addEventListener("click", () => abrirSecao(cadastroClientes));
+confBtn?.addEventListener("click", () => abrirSecao(configuracoes)); // CLICK CONFIGURAÇÃO
+
+
 // =================== MODAL LOGOUT ===================
+
 const modalLogout = document.getElementById("modalLogout");
 const logoutBtn = document.getElementById("logoutBtn");
 const btnSimLogout = document.getElementById("btnSimLogout");
@@ -649,12 +655,16 @@ logoutBtn?.addEventListener("click", () => {
 });
 
 btnSimLogout?.addEventListener("click", async () => {
+
   modalLogout.style.display = "none";
 
   try {
+
     // Pega o usuário logado do localStorage
     const usuarioNome = localStorage.getItem("usuarioNome");
+
     if (usuarioNome) {
+
       // Atualiza last_seen para null no Supabase
       const { error } = await supabase
         .from("usuarios")
@@ -665,24 +675,175 @@ btnSimLogout?.addEventListener("click", async () => {
         console.error("Erro ao limpar last_seen:", error.message);
       }
 
-      // Remove o usuário do localStorage
+      // Remove usuário do localStorage
       localStorage.removeItem("usuarioNome");
     }
 
-    // Redireciona para a tela de login
+    // Redireciona para login
     window.location.href = "./Sistema/Login.html";
 
   } catch (err) {
+
     console.error("Erro no logout:", err);
-    // Redireciona mesmo se ocorrer erro
+
+    // Redireciona mesmo se erro
     window.location.href = "./Sistema/Login.html";
+
   }
+
 });
 
 btnNaoLogout?.addEventListener("click", () => {
   modalLogout.style.display = "none";
 });
 
+// =================== VERIFICAR SE É ADMIN ===================
+
+async function verificarAdmin() {
+
+  try {
+
+    const usuarioNome = localStorage.getItem("usuarioNome");
+
+    if (!usuarioNome) return;
+
+    const { data, error } = await supabase
+      .from("usuarios")
+      .select("username")
+      .eq("username", usuarioNome)
+      .single();
+
+    if (error) {
+      console.error("Erro ao verificar admin:", error);
+      return;
+    }
+
+    // Se for admin mostra as configurações
+    if (data.username === "admin") {
+
+      const configContainer = document.getElementById("configContainer");
+
+      if (configContainer) {
+        configContainer.style.display = "block";
+      }
+
+    }
+
+  } catch (err) {
+    console.error("Erro:", err);
+  }
+
+}
+
+document.addEventListener("DOMContentLoaded", async () => {
+  verificarAdmin();
+  await carregarValorMensalidade();
+  carregarDiaVencimento();
+});
+
+// =================== CARREGAR VALOR DA MENSALIDADE ===================
+
+async function carregarValorMensalidade() {
+
+  try {
+
+    const { data, error } = await supabase
+      .from("configuracoes_sistema")
+      .select("valor_num")
+      .eq("chave", "valor_mensalidade")
+      .single();
+
+    if (error) {
+      console.error("Erro ao buscar valor da mensalidade:", error);
+      return;
+    }
+
+    const campoValor = document.getElementById("valorMensalidade");
+
+    if (campoValor && data) {
+
+      // converte para número
+      const valor = parseFloat(data.valor_num);
+
+      // formata para moeda brasileira
+      campoValor.value = "R$ " + valor.toFixed(2).replace(".", ",");
+
+    }
+
+  } catch (err) {
+    console.error("Erro inesperado:", err);
+  }
+
+}
+
+
+// FORMATAÇÃO AO DIGITAR
+document.addEventListener("DOMContentLoaded", () => {
+
+  const campo = document.getElementById("valorMensalidade");
+
+  if (!campo) return;
+
+  campo.addEventListener("input", function () {
+
+    let valor = this.value.replace(/\D/g, "");
+
+    valor = (valor / 100).toFixed(2) + "";
+    valor = valor.replace(".", ",");
+
+    this.value = "R$ " + valor;
+
+  });
+
+});
+
+// =================== CARREGAR DIA DE VENCIMENTO ===================
+
+
+async function carregarDiaVencimento() {
+
+  console.log("🔎 Iniciando busca do dia de vencimento...");
+
+  try {
+
+    const { data, error } = await supabase
+      .from("pagamentos_mensalidade") // CORRIGIDO
+      .select("data_vencimento")
+      .eq("empresa_id", 1)
+      .limit(1);
+
+    console.log("📦 DATA:", data);
+
+    if (error) {
+      console.error("❌ Erro Supabase:", error);
+      return;
+    }
+
+    if (!data || data.length === 0) {
+      console.warn("⚠️ Nenhum registro encontrado.");
+      return;
+    }
+
+    const dataVencimento = data[0].data_vencimento;
+
+    console.log("📅 Data recebida:", dataVencimento);
+
+    const dia = dataVencimento.split("-")[2];
+
+    console.log("📆 Dia extraído:", dia);
+
+    const campoDia = document.getElementById("diaVencimento");
+
+    if (campoDia) {
+      campoDia.value = dia;
+      console.log("✅ Dia inserido:", dia);
+    }
+
+  } catch (err) {
+    console.error("❌ Erro inesperado:", err);
+  }
+
+}
 // Seleciona elementos do novo modal
 const modalAlerta = document.getElementById('modalAlerta');
 const modalTextoAlerta = document.getElementById('modalTextoAlerta');

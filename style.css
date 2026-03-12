@@ -2428,3 +2428,60 @@ header .header-text p.empresaNome {
 .btn-pagar-mensalidade:hover {
   background: #cc0000;
 }
+
+.config-header{
+  margin-bottom: 25px;
+}
+
+.config-header h2{
+  font-size: 24px;
+}
+
+.config-header p{
+  color: #777;
+}
+
+.config-container{
+  background: white;
+  padding: 25px;
+  border-radius: 10px;
+  max-width: 500px;
+}
+
+.config-item{
+  display: flex;
+  flex-direction: column;
+  margin-bottom: 15px;
+}
+
+.config-item label{
+  font-weight: 600;
+  margin-bottom: 5px;
+}
+
+.config-item input,
+.config-item select{
+  padding: 10px;
+  border-radius: 6px;
+  border: 1px solid #ccc;
+}
+
+.btn-salvar-config{
+  margin-top: 10px;
+  padding: 12px;
+  border: none;
+  background: #ff0000;
+  color: white;
+  border-radius: 6px;
+  cursor: pointer;
+}
+
+.config-row{
+  display: flex;
+  gap: 20px;
+  width: 100%;
+}
+
+.config-row .config-item{
+  flex: 1;
+}
