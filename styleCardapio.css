@@ -951,83 +951,98 @@ grid-template-columns:repeat(3,1fr);
 
 /* ===================== Container de Categorias ===================== */
 #categoriasContainer {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(120px, 1fr)); /* responsivo */
+  display: flex;
+  flex-wrap: wrap;
   gap: 20px;
+  justify-content: center; /* centraliza os cards */
   padding: 20px;
 }
 
 /* ===================== Cards de Categoria ===================== */
 .categoria-card {
-  background: #ffffff; /* cor principal do app */
-  color: #7e2a2a;
+  background: #ffffff;
   border-radius: 15px;
-  padding: 15px;
+  width: 120px;  /* largura fixa */
+  height: 120px; /* altura fixa */
   text-align: center;
   cursor: pointer;
   transition: transform 0.3s, box-shadow 0.3s;
   box-shadow: 0 4px 8px rgba(0,0,0,0.15);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center; /* centraliza conteúdo verticalmente */
 }
 
+/* ===================== Ícone dentro de círculo ===================== */
+.categoria-card i {
+  font-size: 30px;
+  color: #910b0b;
+  background: #f9ecec; /* círculo de fundo */
+  padding: 15px;
+  border-radius: 50%;
+  margin-bottom: 10px;
+  transition: transform 0.3s, background 0.3s, color 0.3s;
+}
+
+.categoria-card i:hover {
+  transform: scale(1.2);
+  background: #ffe6e6;
+  color: #ff6b6b;
+}
+
+/* ===================== Título do Card ===================== */
+.categoria-card h3 {
+  font-size: 14px;
+  font-weight: 600;
+  margin: 0;
+  color: #333;
+  text-transform: capitalize;
+}
+
+/* ===================== Hover no card inteiro ===================== */
 .categoria-card:hover {
   transform: translateY(-5px);
   box-shadow: 0 8px 16px rgba(0,0,0,0.25);
 }
 
-/* ===================== Imagem do Card ===================== */
-.categoria-card img {
-  width: 60px;
-  height: 60px;
-  object-fit: cover;
-  border-radius: 50%; /* deixa circular */
-  margin-bottom: 10px;
-  border: 2px solid #fff;
-  transition: transform 0.3s;
-}
-
-.categoria-card img:hover {
-  transform: scale(1.1);
-}
-
-/* ===================== Título do Card ===================== */
-.categoria-card h3 {
-  font-size: 16px;
-  font-weight: 600;
-  margin: 0;
-  text-transform: capitalize;
-}
-
 /* ===================== Responsivo ===================== */
 @media (max-width: 768px) {
-  #categoriasContainer {
-    grid-template-columns: repeat(auto-fit, minmax(100px, 1fr));
-    gap: 15px;
-    padding: 15px;
+  .categoria-card {
+    width: 100px;
+    height: 100px;
   }
 
-  .categoria-card img {
-    width: 50px;
-    height: 50px;
-  }
-
-  .categoria-card h3 {
-    font-size: 14px;
-  }
-}
-
-@media (max-width: 480px) {
-  #categoriasContainer {
-    grid-template-columns: repeat(auto-fit, minmax(80px, 1fr));
-    gap: 10px;
-    padding: 10px;
-  }
-
-  .categoria-card img {
-    width: 40px;
-    height: 40px;
+  .categoria-card i {
+    font-size: 25px;
+    padding: 12px;
   }
 
   .categoria-card h3 {
     font-size: 13px;
   }
+}
+
+@media (max-width: 480px) {
+  .categoria-card {
+    width: 80px;
+    height: 80px;
+  }
+
+  .categoria-card i {
+    font-size: 20px;
+    padding: 10px;
+  }
+
+  .categoria-card h3 {
+    font-size: 12px;
+  }
+}
+
+.linha-separadora {
+  width: 100%;         /* ocupa toda a largura */
+  height: 2px;         /* espessura da linha */
+  background-color: #ccc; /* cor da linha */
+  margin: 20px 0;      /* espaço acima e abaixo */
+  border-radius: 1px;  /* bordas arredondadas opcionais */
 }
