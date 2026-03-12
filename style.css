@@ -2485,3 +2485,13 @@ header .header-text p.empresaNome {
 .config-row .config-item{
   flex: 1;
 }
+
+/* SOMENTE NO CELULAR */
+@media (max-width: 600px){
+
+  .config-row{
+    flex-direction: column;
+    gap: 12px;
+  }
+
+}

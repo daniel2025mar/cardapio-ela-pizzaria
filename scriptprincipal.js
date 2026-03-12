@@ -742,7 +742,9 @@ document.addEventListener("DOMContentLoaded", async () => {
 });
 
 // =================== CARREGAR VALOR DA MENSALIDADE ===================
-
+// =====================
+// CARREGAR VALOR DA MENSALIDADE
+// =====================
 async function carregarValorMensalidade() {
 
   try {
@@ -762,11 +764,11 @@ async function carregarValorMensalidade() {
 
     if (campoValor && data) {
 
-      // converte para número
       const valor = parseFloat(data.valor_num);
 
-      // formata para moeda brasileira
-      campoValor.value = "R$ " + valor.toFixed(2).replace(".", ",");
+      campoValor.value = "R$ " + valor
+        .toFixed(2)
+        .replace(".", ",");
 
     }
 
@@ -777,8 +779,71 @@ async function carregarValorMensalidade() {
 }
 
 
+// =====================
+// SALVAR CONFIGURAÇÃO
+// =====================
+async function salvarConfiguracaoMensalidade() {
+
+  try {
+
+    const campoValor = document.getElementById("valorMensalidade");
+
+    if (!campoValor) return;
+
+    // remove formatação
+    let valor = campoValor.value
+      .replace("R$", "")
+      .replace(/\s/g, "")
+      .replace(",", ".");
+
+    valor = parseFloat(valor);
+
+    if (isNaN(valor)) {
+      alert("Valor inválido");
+      return;
+    }
+
+    // ====================================
+    // 1 ATUALIZA configuracoes_sistema
+    // ====================================
+    const { error: erroConfig } = await supabase
+      .from("configuracoes_sistema")
+      .update({ valor_num: valor })
+      .eq("chave", "valor_mensalidade");
+
+    if (erroConfig) {
+      console.error("Erro ao atualizar configuracao:", erroConfig);
+      return;
+    }
+
+    // ====================================
+    // 2 ATUALIZA pagamentos pendentes
+    // ====================================
+    const { error: erroPagamentos } = await supabase
+      .from("pagamentos_mensalidade")
+      .update({ valor: valor })
+      .eq("status", "pendente");
+
+    if (erroPagamentos) {
+      console.error("Erro ao atualizar pagamentos:", erroPagamentos);
+      return;
+    }
+
+    console.log("Configuração atualizada com sucesso!");
+
+    alert("Configuração salva com sucesso!");
+
+  } catch (err) {
+    console.error("Erro inesperado:", err);
+  }
+
+}
+
+
+// =====================
 // FORMATAÇÃO AO DIGITAR
-document.addEventListener("DOMContentLoaded", () => {
+// =====================
+function formatarCampoMoeda() {
 
   const campo = document.getElementById("valorMensalidade");
 
@@ -789,11 +854,33 @@ document.addEventListener("DOMContentLoaded", () => {
     let valor = this.value.replace(/\D/g, "");
 
     valor = (valor / 100).toFixed(2) + "";
+
     valor = valor.replace(".", ",");
 
     this.value = "R$ " + valor;
 
   });
+
+}
+
+
+// =====================
+// EVENTOS AO CARREGAR A PÁGINA
+// =====================
+document.addEventListener("DOMContentLoaded", () => {
+
+  // carregar valor da mensalidade
+  carregarValorMensalidade();
+
+  // aplicar formatação
+  formatarCampoMoeda();
+
+  // botão salvar
+  const botaoSalvar = document.querySelector(".btn-salvar-config");
+
+  if (botaoSalvar) {
+    botaoSalvar.addEventListener("click", salvarConfiguracaoMensalidade);
+  }
 
 });
 
