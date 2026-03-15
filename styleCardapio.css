@@ -24,7 +24,7 @@ TOPO
   padding:160px 20px;
   text-align:center;
   box-shadow:0 4px 12px rgba(0,0,0,0.15); /* sombra um pouco mais visível */
-  border-bottom:3px solid #e63946; /* pequena borda inferior */
+  border-bottom:3px solid #39e639; /* pequena borda inferior */
   position:relative;
   z-index:1;
   overflow:hidden;
@@ -215,14 +215,160 @@ BOTÃO
   background:#c92f3a;
 }
 
+/* Estilo padrão - desktop */
+.horario-restaurante {
+    text-align: center;
+    font-size: 14px;
+    font-weight: 400;
+    color: #666;
+    margin-top: 5px;
+    letter-spacing: 0.5px;
+}
 
+/* Mobile: telas pequenas */
+@media (max-width: 480px) {
+    .horario-restaurante {
+        font-size: 12px;
+        margin-top: 3px;
+        line-height: 1.4; /* quebra elegante em 2 linhas */
+    }
+}
+
+.horario-restaurante {
+    text-align: center;
+    font-size: 14px;
+    font-weight: 400;
+    color: #666; /* cor do texto */
+    margin-top: 5px;
+    letter-spacing: 0.5px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 6px; /* espaço entre ícone e texto */
+}
+
+.horario-restaurante i {
+    color: #28a745; /* verde do ícone */
+}
+
+/* Esconde no celular */
+@media (max-width: 768px) {
+    .horario-restaurante {
+        display: none;
+    }
+}
+
+/* ===================== CARROSSEL MODERNO ===================== */
+.area-carrossel {
+    position: relative;
+    width: 100%;         /* ocupa toda a largura da tela */
+    height: 400px;       /* mantém altura fixa */
+    overflow: hidden;
+    border-radius: 12px; /* opcional, se quiser bordas arredondadas */
+    margin: 0;           /* remove margens */
+}
+
+.carrossel-container {
+    display: flex;
+    transition: transform 0.6s ease-in-out;
+}
+
+.slide {
+    min-width: 100%;
+    box-sizing: border-box;
+}
+
+.slide img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;    
+    object-position: center; /* garante que a parte central da imagem fique visível */
+    display: block;
+    border-radius: 12px;
+}
+
+/* ===================== DOTS DE NAVEGAÇÃO ===================== */
+.dots-carrossel {
+    position: absolute;
+    bottom: 15px;          
+    left: 50%;
+    transform: translateX(-50%);
+    display: flex;
+    gap: 10px; /* mais espaçamento para mobile */
+    z-index: 10;
+}
+
+.dots-carrossel .dot {
+    width: 12px;
+    height: 12px;
+    border-radius: 50%;
+    background-color: rgba(255,255,255,0.5); 
+    cursor: pointer;
+    transition: 0.3s;
+}
+
+.dots-carrossel .dot.active {
+    background-color: #28a745; 
+}
+
+/* ===================== RESPONSIVO ===================== */
+@media (max-width: 1024px) {
+    .area-carrossel {
+        height: 300px;
+        width: calc(100% - 30px); /* padding menor no tablet */
+    }
+}
+
+@media (max-width: 768px) {
+    .area-carrossel {
+        height: 200px;
+        width: calc(100% - 20px); /* ajusta para celular */
+    }
+    .dots-carrossel {
+        gap: 12px;
+    }
+    .dots-carrossel .dot {
+        width: 10px;
+        height: 10px;
+    }
+}
+
+@media (max-width: 480px) {
+    .area-carrossel {
+        height: 160px;
+        width: calc(100% - 15px); /* celulares pequenos */
+    }
+    .dots-carrossel {
+        gap: 10px;
+    }
+    .dots-carrossel .dot {
+        width: 8px;
+        height: 8px;
+    }
+}
+
+/* ===================== TELAS MUITO PEQUENAS (360px) ===================== */
+@media (max-width: 360px) {
+    .area-carrossel {
+        height: 140px;
+        width: calc(100% - 10px); /* deixa uma margem mínima */
+        margin: 15px auto;
+    }
+    .dots-carrossel {
+        gap: 8px;
+    }
+    .dots-carrossel .dot {
+        width: 7px;
+        height: 7px;
+    }
+}
 /* =========================
 BARRA SUPERIOR
 ========================= */
 
 .barra-superior{
   width:100%;
-  background:#e63946;
+  background:#e00719;
   padding:8px 0;
   box-shadow:0 2px 6px rgba(0,0,0,0.1);
   position:relative;
@@ -285,7 +431,7 @@ BARRA SUPERIOR
 
 .area-pesquisa{
   width:100%;
-  height:135px;           /* altura do retângulo */
+  height:100px;           /* altura do retângulo */
   background:#ececec;     /* vermelho */
   display:flex;
   align-items:flex-end;   /* coloca a pesquisa na parte de baixo */

@@ -371,6 +371,43 @@ async function carregarCategorias() {
 
 }
 
+// Variáveis do carrossel moderno
+const carouselSlidesFade = document.querySelectorAll('.area-carrossel .slide');
+const carouselDotsFade = document.querySelectorAll('.area-carrossel .dot');
+let carouselIndexFade = 0;
+
+// Inicializa slides: só o primeiro visível
+carouselSlidesFade.forEach((slide, i) => {
+    slide.style.opacity = i === 0 ? '1' : '0';
+    slide.style.transition = 'opacity 1s ease-in-out';
+    slide.style.position = 'absolute';
+    slide.style.top = '0';
+    slide.style.left = '0';
+    slide.style.width = '100%';
+});
+
+// Função para mostrar slide atual com fade
+function showCarouselSlideFade(i) {
+    carouselSlidesFade.forEach((slide, idx) => {
+        slide.style.opacity = idx === i ? '1' : '0';
+    });
+    carouselDotsFade.forEach(dot => dot.classList.remove('active'));
+    carouselDotsFade[i].classList.add('active');
+}
+
+// Clique nas dots para navegação manual
+carouselDotsFade.forEach((dot, i) => {
+    dot.addEventListener('click', () => {
+        carouselIndexFade = i;
+        showCarouselSlideFade(carouselIndexFade);
+    });
+});
+
+// Auto-slide a cada 5 segundos
+setInterval(() => {
+    carouselIndexFade = (carouselIndexFade + 1) % carouselSlidesFade.length;
+    showCarouselSlideFade(carouselIndexFade);
+}, 5000);
 
 // =============================
 // INICIAR

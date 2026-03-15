@@ -70,31 +70,50 @@ href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"
         <p class="descricao-restaurante">
             Bem-vindo ao nosso cardápio
         </p>
+        <p class="horario-restaurante" id="horarioRestaurante"><i class="fas fa-calendar-alt"></i></p>
 
     </div>
 
 </section>
 
+
 <!-- ======================= PESQUISA ======================= -->
 
 <div class="area-pesquisa">
-
     <div class="container-pesquisa">
-
         <input 
             type="text" 
             id="campoPesquisa" 
-            placeholder="Pesquisar produto..."
+            placeholder="Buscar no Cardápio"
         >
-
         <button class="btn-pesquisa">
             <i class="fas fa-search"></i>
         </button>
-
+        <ul id="listaSugestoes" class="lista-sugestoes"></ul>
     </div>
-
 </div>
 
+<!-- ======================= CARROSSEL ======================= -->
+<section class="area-carrossel">
+  <div class="carrossel-container">
+    <div class="slide">
+      <img src="./Imagem/Banner 1.jpg" alt="Promoção 1">
+    </div>
+    <div class="slide">
+      <img src="./Imagem/Banner 2.jpg" alt="Promoção 2">
+    </div>
+    <div class="slide">
+      <img src="./Imagem/Banner 3.jpg" alt="Promoção 3">
+    </div>
+  </div>
+
+  <!-- Dots de navegação -->
+  <div class="dots-carrossel">
+    <span class="dot active"></span>
+    <span class="dot"></span>
+    <span class="dot"></span>
+  </div>
+</section>
 <!-- ======================= CATEGORIAS ======================= -->
 
 <section class="area-categorias">
