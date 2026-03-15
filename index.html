@@ -120,6 +120,51 @@ As categorias serão criadas automaticamente pelo JavaScript
 <!-- SUPABASE -->
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js"></script>
 
+
+<!-- ================= MODAL CARRINHO ================= -->
+<div id="modalCarrinho" class="modal-carrinho">
+
+  <div class="modal-carrinho-content">
+
+    <!-- Botão fechar -->
+    <span class="fechar-carrinho" id="fecharCarrinho">&times;</span>
+
+    <!-- Título -->
+    <h2 class="titulo-carrinho">Seu Carrinho</h2>
+
+    <!-- Lista de produtos (JS vai preencher) -->
+    <div id="listaCarrinho" class="lista-carrinho">
+      <!-- Produtos adicionados via JavaScript -->
+    </div>
+
+    <!-- Resumo da compra -->
+    <div class="resumo-carrinho">
+
+      <div class="linha-resumo">
+        <span>Subtotal</span>
+        <span id="subtotalCarrinho">R$ 0,00</span>
+      </div>
+
+      <div class="linha-resumo">
+        <span>Frete</span>
+        <span id="freteCarrinho">Calcular</span>
+      </div>
+
+      <div class="linha-total">
+        <span>Total</span>
+        <span id="totalCarrinho">R$ 0,00</span>
+      </div>
+
+    </div>
+
+    <!-- Botão finalizar -->
+    <button id="btnFinalizarPedido" class="btn-finalizar">
+      Finalizar Pedido
+    </button>
+
+  </div>
+
+</div>
 <!-- SCRIPT DO CARDÁPIO -->
 <script type="module" src="scriptCardapio.js"></script>
 

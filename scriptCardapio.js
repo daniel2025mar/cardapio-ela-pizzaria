@@ -191,6 +191,32 @@ botaoPesquisa.addEventListener("mouseenter", abrirPesquisa);
 
 // abre ao clicar
 botaoPesquisa.addEventListener("click", abrirPesquisa);
+
+document.addEventListener("DOMContentLoaded", function () {
+
+  const btnCarrinho = document.querySelector(".btn-carrinho");
+  const modalCarrinho = document.getElementById("modalCarrinho");
+  const fecharCarrinho = document.getElementById("fecharCarrinho");
+
+  if (btnCarrinho && modalCarrinho) {
+    btnCarrinho.addEventListener("click", function () {
+      modalCarrinho.style.display = "flex";
+    });
+  }
+
+  if (fecharCarrinho) {
+    fecharCarrinho.addEventListener("click", function () {
+      modalCarrinho.style.display = "none";
+    });
+  }
+
+  window.addEventListener("click", function (event) {
+    if (event.target === modalCarrinho) {
+      modalCarrinho.style.display = "none";
+    }
+  });
+
+});
 // =============================
 // INICIAR
 // =============================
