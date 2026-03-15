@@ -1,199 +1,128 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-  <title>Cardapio GestioMax</title>
-  <link rel="stylesheet" href="styleCardapio.css">
 
-  <!-- Google Fonts -->
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&family=Montserrat:wght@500;700&display=swap" rel="stylesheet">
-  
-  <!-- Font Awesome para ícones -->
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"/>
+<head>
+
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+
+<title>Cardapio</title>
+
+<!-- CSS -->
+<link rel="stylesheet" href="styleCardapio.css">
+
+<!-- Font Awesome -->
+<link rel="stylesheet"
+href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+
+<!-- Google Font -->
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+
+<link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&display=swap" rel="stylesheet">
+
 </head>
+
 <body>
 
-  <!-- ===================== Topo Estilo Perfil Restaurante ===================== -->
-  <section class="cardapio-topo-perfil">
-    <!-- Imagem de fundo -->
-  <img src="./Imagem/LogoTipo.png" alt="Fundo do Topo" class="fundo-topo">
+<!-- ======================= BARRA SUPERIOR ======================= -->
+<div class="barra-superior">
+    <div class="container-barra">
+        <button class="btn-entrar">Entrar</button>
 
-    <!-- Logo redondo -->
-    <div class="logo-redonda-container">
-      <img src="./Imagem/LogoTipo.png" alt="Logo Sistema" class="logo-redonda" id="logoSistema">
+        <button class="btn-carrinho">
+            <i class="fas fa-shopping-cart"></i> Meu Carrinho
+        </button>
     </div>
+</div>
 
-    <!-- Nome do Restaurante -->
-    <h1 class="nome-restaurante">Empresa Nome</h1>
 
-    <!-- Localização e informações adicionais -->
+<!-- ======================= TOPO DO RESTAURANTE ======================= -->
+<header class="topo-cardapio">
+    <div class="img-fundo">
+        <img src="./Imagem/LogoTipo.png" alt="Fundo do Topo">
+    </div>
+</header>
+
+
+<!-- ======================= CONTAINER EMPRESA ======================= -->
+
+<section class="container-empresa">
+
+    <!-- CARD DA LOGO -->
+    <section class="card-restaurante">
+
+        <div class="logo-restaurante">
+            <img src="./Imagem/LogoTipo.png" alt="Logo da Empresa">
+        </div>
+
+    </section>
+
+
+    <!-- INFORMAÇÕES DA EMPRESA (lado direito) -->
+
     <div class="info-restaurante">
-      <span class="localizacao"><i class="fas fa-map-marker-alt"></i> Cidade - UF</span>
-      <span id="maisInfo" class="mais-info">• Mais informações</span>
-    </div>
 
-    <!-- Status de abertura -->
-    <div class="status-abertura aberto">
-      Aberto até 23h59
-    </div>
-  </section>
+        <h1 class="nome-restaurante">
+            Nome da Empresa
+        </h1>
 
-  <h2 class="titulo-cardapio">Conheça nosso Cardápio</h2>
-
-  <div class="search-bar">
-  <input type="text" placeholder="Search here" id="barraPesquisa">
-  <i class="fas fa-search"></i>
-</div>
-  <!-- Container principal onde categorias e produtos vão aparecer -->
-  <div id="categoriasContainer"></div>
-
-  <!-- Linha separadora -->
-<div class="linha-separadora"></div>
-
-<div class="categoria-titulo"></div>
-  <!-- ===================== Conteúdo do Cardápio ===================== -->
-  <main class="conteudo">
-
-    <div class="produtos-container" id="produtosContainerPizza">
-
+        <p class="descricao-restaurante">
+            Bem-vindo ao nosso cardápio
+        </p>
 
     </div>
 
-     <!-- Container de produtos Refrigerantes -->
-  <div class="produtos-container" id="produtosContainerRefri">
-    <!-- Produtos da categoria Refrigerantes serão adicionados aqui via JS -->
-  </div>
-  </main>
+</section>
 
-  
+<!-- ======================= PESQUISA ======================= -->
 
-<!-- ===================== Modal do Carrinho ===================== --> 
-<div id="modalCarrinho" class="modal-carrinho">
-  <div class="modal-conteudo-carrinho">
-    <button id="fecharModalCarrinho" class="fechar-btn">&times;</button>
-    <h2>Meu Carrinho</h2>
+<div class="area-pesquisa">
 
-    <!-- Lista de produtos -->
-    <div id="itensCarrinho" class="itens-carrinho">
-      <p>Seu carrinho está vazio.</p>
-      <!-- Cada produto adicionado via JS terá esta estrutura:
-      <div class="item-carrinho">
-        <span class="nome-produto">Pizza Margherita</span>
-        <span class="quantidade-produto">Qtd: 1</span>
-        <span class="valor-produto">R$ 25,00</span>
-      </div>
-      -->
+    <div class="container-pesquisa">
+
+        <input 
+            type="text" 
+            id="campoPesquisa" 
+            placeholder="Pesquisar produto..."
+        >
+
+        <button class="btn-pesquisa">
+            <i class="fas fa-search"></i>
+        </button>
+
     </div>
 
-    <!-- Taxa de entrega -->
-    <div class="taxa-entrega">
-      <label for="valorEntrega">Taxa de Entrega: </label>
-      <span id="valorEntrega">R$ 0,00</span>
-    </div>
-
-    <!-- Campos de endereço e telefone -->
-    <div class="dados-cliente">
-  <label for="endereco">Endereço:</label>
-  <input type="text" id="endereco" placeholder="Ex: Nome da rua N 000 - Cidade UP - 00000-000">
-
-  <label for="telefone">Telefone:</label>
-  <input type="text" id="telefone" class="telefone" placeholder="(00) 0 0000-0000">
 </div>
 
-    <!-- Total final e botão -->
-    <div class="total-carrinho">
-      <span>Total: R$ <span id="totalCarrinho">0,00</span></span>
-      <button id="finalizarCompra" class="btn-compra">Finalizar Compra</button>
-    </div>
-  </div>
+<!-- ======================= CARDÁPIO ======================= -->
+
+<main id="cardapioContainer">
+
+<!-- 
+As categorias serão criadas automaticamente pelo JavaScript
+-->
+
+</main>
+
+
+
+<!-- ======================= LOADING ======================= -->
+
+<div id="loadingCardapio">
+<p>Carregando cardápio...</p>
 </div>
 
-<!-- ===================== Modal de Cadastro do Cliente ===================== -->
-<!-- ===================== Modal Cadastro Cliente ===================== -->
-<div id="modalCadastroCliente" class="modal-cadastro">
-  <div class="modal-conteudo-cadastro">
-    <button id="fecharModalCadastro" class="fechar-btn">&times;</button>
-    <h2>Cadastro do Cliente</h2>
 
-    <form id="formCadastroCliente">
-      <label for="nomeCliente">Nome completo:</label>
-      <input type="text" id="nomeCliente" placeholder="Digite o nome completo" required>
 
-      <label for="celularCliente">Celular:</label>
-      <input type="text" id="celularCliente" placeholder="(00) 0 0000-0000" required>
+<!-- ======================= SCRIPTS ======================= -->
 
-      <label for="ruaCliente">Endereço (Rua):</label>
-      <input type="text" id="ruaCliente" placeholder="Rua" required>
+<!-- SUPABASE -->
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js"></script>
 
-      <!-- Número e Bairro lado a lado -->
-      <div class="campo-linha">
-        <div class="campo-pequeno">
-          <label for="numeroCliente">Número:</label>
-          <input type="text" id="numeroCliente" placeholder="Número" required>
-        </div>
-        <div class="campo-pequeno">
-          <label for="bairroCliente">Bairro:</label>
-          <input type="text" id="bairroCliente" placeholder="Bairro" required>
-        </div>
-      </div>
+<!-- SCRIPT DO CARDÁPIO -->
+<script type="module" src="scriptCardapio.js"></script>
 
-      <!-- Cidade e Estado em linha (opcional) -->
-      <div class="campo-linha">
-        <div class="campo-pequeno">
-          <label for="cidadeCliente">Cidade:</label>
-          <input type="text" id="cidadeCliente" placeholder="Cidade" required>
-        </div>
-        <div class="campo-pequeno">
-          <label for="estadoCliente">Estado:</label>
-          <input type="text" id="estadoCliente" placeholder="UF" maxlength="2" required>
-        </div>
-      </div>
-
-      <button type="submit" class="btn-compra">Cadastrar Cliente</button>
-    </form>
-  </div>
-</div>
-  <!-- ===================== Footer do Cardápio ===================== -->
-  <section class="footer-section">
-    <p class="desenvolvido">Desenvolvido por</p>
-
-    <a href="https://www.dmdesigngrafico.com.br" target="_blank" title="Visite o site da DM Design Gráfico">
-      <img src="./Imagem/DMDESIGN.png" alt="Logo DM Design Gráfico" class="footer-logo" />
-    </a>
-
-    <div class="empresa-info">
-      <p id="empresaCNPJ">Sua Empresa — CNPJ: 00.000.000/0000-00</p>
-      <p>© 2026 Todos os direitos reservados</p>
-    </div>
-
-    <p class="footer-slogan">
-      DM DESIGN GRÁFICO — Tecnologia & Soluções para Delivery
-    </p>
-  </section>
-
-  <!-- ===================== Footer do Carrinho Fixado ===================== -->
-  <footer class="cart-footer">
-    <button id="card-btn">
-      (<span id="card-count">0</span>) Veja o meu carrinho
-      <i class="fas fa-shopping-cart"></i>
-    </button>
-  </footer>
-
-<!-- Modal da Empresa -->
-<div id="modalInfoEmpresa" class="modal-empresa-cardapio">
-  <div class="modal-conteudo-empresa-cardapio">
-    <span class="fechar-empresa-cardapio">&times;</span>
-    <h2>Sobre a Empresa</h2>
-    <p><strong>Nome:</strong> Nome da Empresa</p>
-    <p><strong>Endereço:</strong> R Nome da rua bairro - Cidade UF</p>
-    <p><strong>Telefone:</strong> (00) 0 0000-0000</p>
-    <p><strong>Horário de Funcionamento:</strong> Nao informado</p>
-  </div>
-</div>
-
-  <script type="module" src="scriptCardapio.js"></script>
 </body>
+
 </html>

@@ -1733,12 +1733,43 @@ async function carregarCategorias() {
 carregarCategorias();
 
 // Enviar nova categoria
-formNovaCategoria.addEventListener('submit', async e=>{
+formNovaCategoria.addEventListener('submit', async (e) => {
   e.preventDefault();
-  if(!inputTitulo.value.trim() || !iconeSelecionado){ alert("Título e Ícone obrigatórios!"); return; }
-  const { error } = await supabase.from('categorias').insert([{titulo:inputTitulo.value.trim(), descricao:inputDescricao.value.trim(), icone:iconeSelecionado}]);
-  if(error){ console.error(error); alert("Erro ao salvar categoria."); }
-  else{ alert("Categoria salva!"); fecharModalCategoria(); carregarCategorias(); }
+
+  const titulo = inputTitulo.value.trim();
+  const descricao = inputDescricao.value.trim();
+
+  console.log("Titulo:", titulo);
+  console.log("Descricao:", descricao);
+  console.log("Icone:", iconeSelecionado);
+
+  if (!titulo || !iconeSelecionado) {
+    alert("Título e Ícone obrigatórios!");
+    return;
+  }
+
+  const { data, error } = await supabase
+    .from('categorias')
+    .insert([
+      {
+        titulo: titulo,
+        descricao: descricao,
+        icone: iconeSelecionado
+      }
+    ])
+    .select();
+
+  console.log("DATA:", data);
+  console.log("ERROR:", error);
+
+  if (error) {
+    alert("Erro ao salvar categoria.");
+    console.error(error);
+  } else {
+    alert("Categoria salva!");
+    fecharModalCategoria();
+    carregarCategorias();
+  }
 });
 
 // ==================== Produto ====================
@@ -1868,3 +1899,30 @@ formProduto.addEventListener('submit', async e=>{
   btnSalvarProduto.disabled=false;
   btnSalvarProduto.textContent="Salvar Produto";
 });
+
+async function carregarTotalProdutos() {
+  try {
+
+    const { data, error } = await supabase
+      .from("produtos")
+      .select("estoque");
+
+    if (error) {
+      console.error("Erro ao buscar estoque:", error);
+      return;
+    }
+
+    let total = 0;
+
+    data.forEach(produto => {
+      total += produto.estoque ? parseInt(produto.estoque) : 0;
+    });
+
+    document.getElementById("totalProdutos").textContent = total;
+
+  } catch (err) {
+    console.error("Erro geral:", err);
+  }
+}
+
+carregarTotalProdutos();

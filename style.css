@@ -1059,15 +1059,15 @@ header .header-text p.empresaNome {
   z-index: 1000;
   left: 0; top: 0;
   width: 100%; height: 100%;
-  background-color: rgba(0,0,0,0.6);
+  background-color: rgba(148, 65, 65, 0.6);
   justify-content: center;
   align-items: center;
 }
 
 /* Conteúdo do modal */
-.modal-content {
+.modal-content1 {
   background-color: #1f1f1f;
-  color: #fff;
+  color: #ffffff;
   padding: 25px 30px;
   border-radius: 12px;
   width: 90%;
@@ -1079,7 +1079,7 @@ header .header-text p.empresaNome {
 }
 
 /* Botão fechar */
-.modal-content .close {
+.modal-content1 .close {
   position: absolute;
   top: 12px;
   right: 15px;
@@ -1088,7 +1088,7 @@ header .header-text p.empresaNome {
   cursor: pointer;
   transition: color 0.3s;
 }
-.modal-content .close:hover { color: #1e90ff; }
+.modal-content1 .close:hover { color: #1e90ff; }
 
 /* Cabeçalho do dev */
 .dev-header {
