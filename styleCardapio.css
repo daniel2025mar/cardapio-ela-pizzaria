@@ -540,6 +540,199 @@ BOTAO FINALIZAR
 }
 
 /* =========================
+FOOTER CARDÁPIO
+========================= */
+
+.footer-cardapio{
+  background:#000;
+  text-align:center;
+  padding:30px 20px 60px;
+  border-top-left-radius:20px;
+  border-top-right-radius:20px;
+  color:#ccc;
+}
+
+.footer-dev{
+  font-size:13px;
+  letter-spacing:1px;
+  margin-bottom:10px;
+}
+
+.logo-footer{
+  width:110px;
+  margin:10px auto 20px;
+  display:block;
+  cursor:pointer;
+  filter: brightness(0) invert(1);
+  transition:transform .3s;
+}
+
+.logo-footer:hover{
+  transform:scale(1.1);
+}
+
+.footer-info{
+  font-size:13px;
+  margin-bottom:8px;
+}
+
+.footer-info p{
+  margin:3px 0;
+}
+
+#empresaCNPJ{
+  font-weight:600;
+  color:#e0e0e0;
+}
+
+.direitos{
+  color:#999;
+}
+
+.footer-slogan{
+  font-size:13px;
+  font-weight:500;
+  color:#ff4d4d;
+  margin-top:10px;
+  letter-spacing:1px;
+}
+
+/* =========================
+AREA DAS CATEGORIAS
+========================= */
+
+.area-categorias{
+  width:100%;
+  padding:20px 15px;
+  background:#f8f8f8;
+}
+
+/* container dos cards */
+
+.categorias-container{
+  display:grid;
+  grid-template-columns:repeat(auto-fit,minmax(95px,1fr));
+  gap:12px;
+}
+
+
+/* =========================
+CARD DA CATEGORIA
+========================= */
+
+.categoria-card{
+  background:#ffffff;
+  border-radius:16px;
+  padding:14px 10px;
+  text-align:center;
+  cursor:pointer;
+
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  justify-content:center;
+
+  border:1px solid #f0f0f0;
+
+  box-shadow:0 3px 12px rgba(0,0,0,0.06);
+
+  transition:all .25s ease;
+}
+
+/* hover */
+
+.categoria-card:hover{
+
+  transform:translateY(-5px);
+
+  box-shadow:0 10px 22px rgba(0,0,0,0.12);
+
+  border-color:#e63946;
+
+}
+
+
+/* =========================
+ICONE DA CATEGORIA
+========================= */
+
+.categoria-icone{
+
+  width:52px;
+  height:52px;
+
+  border-radius:50%;
+
+  background:linear-gradient(135deg,#ff4d4d,#e63946);
+
+  display:flex;
+  align-items:center;
+  justify-content:center;
+
+  margin-bottom:8px;
+
+}
+
+.categoria-icone i{
+
+  font-size:20px;
+  color:#fff;
+
+}
+
+
+/* =========================
+NOME DA CATEGORIA
+========================= */
+
+.categoria-nome{
+
+  font-size:13px;
+
+  font-weight:600;
+
+  color:#333;
+
+  letter-spacing:0.3px;
+
+}
+
+/* =========================
+LINHA SEPARADORA
+========================= */
+
+.linha-separadora{
+  width:100%;
+  height:1px;
+  background:linear-gradient(to right, transparent, #000, transparent);
+  margin:10px 0 20px 0;
+}
+
+/* =========================
+TITULO MENU
+========================= */
+
+.titulo-menu{
+  text-align:center;
+  font-size:20px;
+  font-weight:700;
+  letter-spacing:2px;
+  color:#000;
+  margin:10px 0 5px 0; /* diminui o espaço abaixo */
+}
+
+/* =========================
+FRASE DO MENU
+========================= */
+
+.frase-menu{
+  text-align:center;
+  font-size:14px;
+  color:#666;
+  margin-bottom:20px;
+  font-weight:400;
+}
+/* =========================
 RESPONSIVO
 ========================= */
 

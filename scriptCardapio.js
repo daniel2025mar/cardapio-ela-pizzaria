@@ -217,6 +217,161 @@ document.addEventListener("DOMContentLoaded", function () {
   });
 
 });
+
+// ===============================
+// Função para formatar CNPJ
+// ===============================
+function formatarCNPJ(cnpj) {
+
+  if (!cnpj) return "";
+
+  // remove tudo que não for número
+  cnpj = cnpj.replace(/\D/g, "");
+
+  // aplica máscara do CNPJ
+  return cnpj
+    .replace(/^(\d{2})(\d)/, "$1.$2")
+    .replace(/^(\d{2})\.(\d{3})(\d)/, "$1.$2.$3")
+    .replace(/\.(\d{3})(\d)/, ".$1/$2")
+    .replace(/(\d{4})(\d)/, "$1-$2");
+}
+
+
+// ===============================
+// Buscar empresa no Supabase
+// ===============================
+async function carregarEmpresa() {
+
+  try {
+
+    const { data, error } = await supabase
+      .from("empresa")
+      .select("nome, cnpj")
+      .limit(1)
+      .single();
+
+    if (error) {
+      console.error("Erro ao buscar empresa:", error);
+      return;
+    }
+
+    console.log("Empresa encontrada:", data);
+
+    const empresaElement = document.getElementById("empresaCNPJ");
+
+    if (!empresaElement) {
+      console.warn("Elemento empresaCNPJ não encontrado no HTML");
+      return;
+    }
+
+    const cnpjFormatado = formatarCNPJ(data.cnpj);
+
+    empresaElement.textContent = `${data.nome} — CNPJ: ${cnpjFormatado}`;
+
+  } catch (err) {
+
+    console.error("Erro inesperado:", err);
+
+  }
+}
+
+// ===============================
+// CARREGAR CATEGORIAS COM PRODUTOS
+// ===============================
+
+async function carregarCategorias() {
+
+  try {
+
+    // busca categorias
+    const { data: categorias, error: erroCategorias } = await supabase
+      .from("categorias")
+      .select("id, titulo, icone")
+      .order("titulo");
+
+    if (erroCategorias) {
+      console.error("Erro ao buscar categorias:", erroCategorias);
+      return;
+    }
+
+    const container = document.getElementById("categoriasContainer");
+
+    if (!container) {
+      console.error("categoriasContainer não encontrado");
+      return;
+    }
+
+    container.innerHTML = "";
+
+    // =========================
+    // CARD PADRÃO "TODOS"
+    // =========================
+
+    const cardTodos = document.createElement("div");
+    cardTodos.classList.add("categoria-card", "categoria-ativa");
+
+    cardTodos.innerHTML = `
+      <div class="categoria-icone">
+        <i class="fa-solid fa-utensils"></i>
+      </div>
+
+      <div class="categoria-nome">
+        Todos
+      </div>
+    `;
+
+    container.appendChild(cardTodos);
+
+
+    // =========================
+    // CATEGORIAS DO BANCO
+    // =========================
+
+    for (const categoria of categorias) {
+
+      // verifica se existe produto nessa categoria
+      const { data: produtos, error: erroProdutos } = await supabase
+        .from("produtos")
+        .select("id")
+        .eq("categoria_id", categoria.id)
+        .limit(1);
+
+      if (erroProdutos) {
+        console.error("Erro ao verificar produtos:", erroProdutos);
+        continue;
+      }
+
+      // se não tiver produto não cria card
+      if (!produtos || produtos.length === 0) {
+        continue;
+      }
+
+      const card = document.createElement("div");
+      card.classList.add("categoria-card");
+
+      card.innerHTML = `
+        <div class="categoria-icone">
+          <i class="fa-solid ${categoria.icone}"></i>
+        </div>
+
+        <div class="categoria-nome">
+          ${categoria.titulo}
+        </div>
+      `;
+
+      container.appendChild(card);
+
+    }
+
+  } catch (err) {
+
+    console.error("Erro inesperado:", err);
+
+  }
+
+}
+
+
 // =============================
 // INICIAR
 // =============================
@@ -225,6 +380,8 @@ document.addEventListener("DOMContentLoaded", () => {
   carregarLogoRestaurante();   // separada
   carregarCardapio();          // separada
   carregarNomeEmpresa();
+  carregarCategorias();
+  carregarEmpresa();
 
   // atualizar a cada 1 segundo
   setInterval(() => {
