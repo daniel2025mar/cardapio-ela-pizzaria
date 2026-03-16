@@ -202,7 +202,7 @@ BOTÃO
 .btn-adicionar{
   width:100%;
   border:none;
-  background:#e63946;
+  background:#fd0015;
   color:#fff;
   padding:9px;
   cursor:pointer;
@@ -212,7 +212,7 @@ BOTÃO
 }
 
 .btn-adicionar:hover{
-  background:#c92f3a;
+  background:#81c92f;
 }
 
 /* Estilo padrão - desktop */
