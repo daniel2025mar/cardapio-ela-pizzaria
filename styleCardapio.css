@@ -930,7 +930,7 @@ RESPONSIVO
   display: flex;
   align-items: center;
   justify-content: center;
-  z-index: 9999;
+  z-index: 999999;
 }
 
 /* CARD */
@@ -966,13 +966,13 @@ RESPONSIVO
   margin: 0 auto 12px;
   border-radius: 18px;
 
-  background: linear-gradient(135deg, #ff0000, #ff0000);
+  background: linear-gradient(135deg, #002fff, #003cff);
   
   display: flex;
   align-items: center;
   justify-content: center;
 
-  box-shadow: 0 10px 30px rgba(255, 0, 0, 0.4);
+  box-shadow: 0 10px 30px rgba(0, 17, 255, 0.4);
 }
 
 /* SVG */
@@ -994,8 +994,8 @@ RESPONSIVO
   align-items: center;
   gap: 6px;
 
-  background: rgba(255, 0, 0, 0.12);
-  color: #ff0000;
+  background: rgba(0, 17, 255, 0.12);
+  color: #001aff;
 
   padding: 6px 12px;
   border-radius: 999px;
@@ -1074,7 +1074,7 @@ RESPONSIVO
   width: 18px;
   height: 18px;
   border-radius: 50%;
-  border: 2px solid #ff0000;
+  border: 2px solid #1100ff;
   display: inline-block;
   position: relative;
   transition: 0.3s;
@@ -1082,7 +1082,7 @@ RESPONSIVO
 
 /* FUNDO QUANDO MARCADO */
 .checkbox-area input:checked + .checkmark {
-  background: linear-gradient(135deg, #ff0000, #ff0000);
+  background: linear-gradient(135deg, #0044ff, #0026ff);
   border: none;
 }
 
@@ -1112,13 +1112,13 @@ RESPONSIVO
 /* EFEITO HOVER */
 .checkbox-area:hover .checkmark {
   transform: scale(1.1);
-  box-shadow: 0 0 8px rgba(255, 0, 0, 0.5);
+  box-shadow: 0 0 8px rgba(0, 4, 255, 0.5);
 }
 
 /* BOTÃO */
 #btnFecharModal {
   width: 100%;
-  background: linear-gradient(90deg, #ff0000, #ff0000);
+  background: linear-gradient(90deg, #0044ff, #0026ff);
   border: none;
   padding: 12px;
   border-radius: 12px;
@@ -1131,7 +1131,7 @@ RESPONSIVO
 
 #btnFecharModal:hover {
   transform: translateY(-2px);
-  box-shadow: 0 10px 25px rgba(255, 0, 0, 0.4);
+  box-shadow: 0 10px 25px rgba(0, 47, 255, 0.4);
 }
 
 /* RODAPÉ */
@@ -1166,7 +1166,7 @@ RESPONSIVO
   display: flex;
   align-items: center;
   justify-content: center;
-  color: #ff0000;
+  color: #0059ff;
 }
 
 /* TAMANHO DO SVG */

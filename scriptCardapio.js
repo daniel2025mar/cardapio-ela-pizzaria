@@ -435,7 +435,7 @@ document.addEventListener("DOMContentLoaded", () => {
   }, 1000);
 });
 
-
+ // funçao de boas vindas
   const modal = document.getElementById("modalBoasVindas");
   const btnFechar = document.getElementById("btnFecharModal");
   const checkbox = document.getElementById("naoMostrar");
