@@ -156,26 +156,33 @@ async function carregarCardapio() {
   }
 }
 
-async function carregarNomeEmpresa() {
 
-  const { data, error } = await supabase
-    .from("empresa")
-    .select("nome")
-    .limit(1)
-    .single();
+    // ✅ FUNÇÃO PARA CARREGAR NOME DA EMPRESA
+    async function carregarNomeEmpresa() {
 
-  if (error) {
-    console.error("Erro ao buscar empresa:", error);
-    return;
-  }
+      const { data, error } = await supabase
+        .from("empresa")
+        .select("nome")
+        .limit(1)
+        .single();
 
-  const elementoNome = document.querySelector(".nome-restaurante");
+      if (error) {
+        console.error("Erro ao buscar empresa:", error);
+        return;
+      }
 
-  if (elementoNome && data) {
-    elementoNome.textContent = data.nome;
-  }
+      const elementoNome = document.querySelector(".nome-restaurante");
 
-}
+      // 👉 Nome no topo
+      if (elementoNome && data) {
+        elementoNome.textContent = data.nome;
+      }
+
+      // 👉 Nome na aba do navegador
+      if (data && data.nome) {
+        document.title = data.nome + " - Cardápio";
+      }
+    }
 
 const botaoPesquisa = document.querySelector(".btn-pesquisa");
 const campoPesquisa = document.getElementById("campoPesquisa");
@@ -427,3 +434,26 @@ document.addEventListener("DOMContentLoaded", () => {
     carregarCardapio();
   }, 1000);
 });
+
+
+  const modal = document.getElementById("modalBoasVindas");
+  const btnFechar = document.getElementById("btnFecharModal");
+  const checkbox = document.getElementById("naoMostrar");
+
+  // Verifica se já marcou para não mostrar
+  window.onload = () => {
+    const naoMostrar = localStorage.getItem("naoMostrarModal");
+
+    if (naoMostrar === "true") {
+      modal.style.display = "none";
+    }
+  };
+
+  // Fechar modal
+  btnFechar.addEventListener("click", () => {
+    if (checkbox.checked) {
+      localStorage.setItem("naoMostrarModal", "true");
+    }
+
+    modal.style.display = "none";
+  });

@@ -124,7 +124,7 @@ CATEGORIA
 }
 
 .titulo-categoria i{
-  color:#e63946;
+  color:#5939e6;
 }
 
 
@@ -248,7 +248,7 @@ BOTÃO
 }
 
 .horario-restaurante i {
-    color: #28a745; /* verde do ícone */
+    color: #41a728; /* verde do ícone */
 }
 
 /* Esconde no celular */
@@ -898,6 +898,270 @@ RESPONSIVO
   }
 
 }
+
+.instagram-restaurante{
+    display:inline-flex;
+    align-items:center;
+    gap:6px;
+    margin-top:8px;
+    font-size:14px;
+    text-decoration:none;
+    color:#E1306C;
+    font-weight:500;
+}
+
+.instagram-restaurante i{
+    font-size:18px;
+}
+
+.instagram-restaurante:hover{
+    opacity:0.8;
+}
+
+/* FUNDO ESCURO COM BLUR */
+.modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(10, 10, 15, 0.85);
+  backdrop-filter: blur(6px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 9999;
+}
+
+/* CARD */
+.modal-box {
+  background: linear-gradient(180deg, #1c1c22, #111114);
+  width: 92%;
+  max-width: 400px;
+  border-radius: 20px;
+  padding: 22px;
+  text-align: center;
+  color: #eee;
+  box-shadow: 0 20px 60px rgba(0,0,0,0.6);
+  animation: aparecer 0.4s ease;
+}
+
+/* ANIMAÇÃO */
+@keyframes aparecer {
+  from {
+    opacity: 0;
+    transform: translateY(40px) scale(0.95);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+/* ÍCONE TOPO */
+
+.icone-topo {
+  width: 65px;
+  height: 65px;
+  margin: 0 auto 12px;
+  border-radius: 18px;
+
+  background: linear-gradient(135deg, #ff0000, #ff0000);
+  
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  box-shadow: 0 10px 30px rgba(255, 0, 0, 0.4);
+}
+
+/* SVG */
+.icone-topo svg {
+  width: 28px;
+  height: 28px;
+}
+
+
+/* TÍTULO */
+.modal-box h2 {
+  font-size: 20px;
+  margin-bottom: 8px;
+}
+
+/* BADGE */
+.badge-beta {
+  display: inline-block;
+  background: rgba(255, 140, 0, 0.15);
+  color: #ff0000;
+  padding: 6px 12px;
+  border-radius: 999px;
+  font-size: 12px;
+  margin-bottom: 15px;
+}
+
+/* TEXTO */
+.modal-box p {
+  font-size: 14px;
+  color: #ccc;
+  text-align: left;
+  margin-bottom: 12px;
+  line-height: 1.5;
+}
+
+.feito {
+  text-align: center !important;
+}
+
+.linha-divisoria {
+  width: 100%;
+  height: 1px;
+  background: rgba(255, 255, 255, 0.1);
+  margin: 15px 0 10px;
+}
+
+/* CAIXA DE DESTAQUE */
+.box-dica {
+  background: #2a2a2f;
+  padding: 12px;
+  border-radius: 12px;
+  font-size: 13px;
+  color: #ddd;
+  margin-bottom: 12px;
+}
+
+
+
+/* CHECKBOX */
+.checkbox-area {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  justify-content: center;
+  font-size: 13px;
+  cursor: pointer;
+   margin-bottom: 15px;
+  color: #ccc;
+  user-select: none;
+}
+
+/* ESCONDE O CHECKBOX PADRÃO */
+.checkbox-area input {
+  display: none;
+}
+
+/* BOLINHA */
+.checkmark {
+  width: 18px;
+  height: 18px;
+  border-radius: 50%;
+  border: 2px solid #ff0000;
+  display: inline-block;
+  position: relative;
+  transition: 0.3s;
+}
+
+/* FUNDO QUANDO MARCADO */
+.checkbox-area input:checked + .checkmark {
+  background: linear-gradient(135deg, #ff0000, #ff0000);
+  border: none;
+}
+
+/* CHECK (✔) */
+.checkmark::after {
+  content: "";
+  position: absolute;
+  display: none;
+}
+
+/* MOSTRA O CHECK */
+.checkbox-area input:checked + .checkmark::after {
+  display: block;
+}
+
+/* DESENHO DO CHECK */
+.checkbox-area .checkmark::after {
+  left: 5px;
+  top: 2px;
+  width: 4px;
+  height: 8px;
+  border: solid #fff;
+  border-width: 0 2px 2px 0;
+  transform: rotate(45deg);
+}
+
+/* EFEITO HOVER */
+.checkbox-area:hover .checkmark {
+  transform: scale(1.1);
+  box-shadow: 0 0 8px rgba(255, 0, 0, 0.5);
+}
+
+/* BOTÃO */
+#btnFecharModal {
+  width: 100%;
+  background: linear-gradient(90deg, #ff0000, #ff0000);
+  border: none;
+  padding: 12px;
+  border-radius: 12px;
+  font-weight: bold;
+  color: #fff;
+  cursor: pointer;
+  font-size: 15px;
+  transition: 0.3s;
+}
+
+#btnFecharModal:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 10px 25px rgba(255, 0, 0, 0.4);
+}
+
+/* RODAPÉ */
+.feito {
+  margin-top: 12px;
+  font-size: 12px;
+  color: #888;
+}
+
+/* BOX DICA PROFISSIONAL */
+.box-dica {
+  background: #2a2a2f;
+  border-radius: 14px;
+  padding: 14px;
+  margin-bottom: 14px;
+}
+
+/* CONTEÚDO FLEX */
+.dica-conteudo {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+}
+
+/* ÍCONE BONITO */
+.icone-dica {
+  width: 36px;
+  height: 36px;
+  min-width: 36px;
+  border-radius: 10px;
+  
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #ff0000;
+}
+
+/* TAMANHO DO SVG */
+.icone-dica svg {
+  width: 18px;
+  height: 18px;
+}
+
+/* TEXTO */
+.box-dica p {
+  font-size: 13px;
+  color: #ddd;
+  line-height: 1.5;
+  margin: 0;
+}
 /* =========================
 RESPONSIVO
 ========================= */
@@ -950,6 +1214,8 @@ RESPONSIVO
   .produtos-container{
     grid-template-columns:1fr;
   }
+
+  
 
   .topo-cardapio{
     padding:70px 15px;
