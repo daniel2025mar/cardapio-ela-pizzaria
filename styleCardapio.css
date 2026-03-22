@@ -988,15 +988,35 @@ RESPONSIVO
   margin-bottom: 8px;
 }
 
-/* BADGE */
+/* BADGE MODERNA */
 .badge-beta {
-  display: inline-block;
-  background: rgba(255, 140, 0, 0.15);
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+
+  background: rgba(255, 0, 0, 0.12);
   color: #ff0000;
+
   padding: 6px 12px;
   border-radius: 999px;
+
   font-size: 12px;
+  font-weight: 600;
+
   margin-bottom: 15px;
+}
+
+/* ÍCONE */
+.icone-beta {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* TAMANHO DO SVG */
+.icone-beta svg {
+  width: 14px;
+  height: 14px;
 }
 
 /* TEXTO */
