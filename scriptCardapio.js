@@ -435,25 +435,43 @@ document.addEventListener("DOMContentLoaded", () => {
   }, 1000);
 });
 
- // funçao de boas vindas
+// ===============================
+// MODAL BOAS-VINDAS (CORRIGIDO)
+// ===============================
+
+document.addEventListener("DOMContentLoaded", () => {
+
   const modal = document.getElementById("modalBoasVindas");
   const btnFechar = document.getElementById("btnFecharModal");
   const checkbox = document.getElementById("naoMostrar");
 
-  // Verifica se já marcou para não mostrar
-  window.onload = () => {
-    const naoMostrar = localStorage.getItem("naoMostrarModal");
+  // 🔹 Verifica se usuário marcou "não mostrar novamente"
+  const naoMostrar = localStorage.getItem("naoMostrarModal");
 
-    if (naoMostrar === "true") {
-      modal.style.display = "none";
-    }
-  };
+  if (naoMostrar === "true") {
+    modal.style.display = "none";
+    return; // não executa mais nada
+  }
 
-  // Fechar modal
+  // 🔹 Garante que o modal fique aberto
+  modal.style.display = "flex";
+
+  // 🔹 Travar scroll enquanto modal estiver aberto
+  document.body.style.overflow = "hidden";
+
+  // 🔹 Fechar SOMENTE ao clicar no botão
   btnFechar.addEventListener("click", () => {
+
+    // Se marcou checkbox, salva no localStorage
     if (checkbox.checked) {
       localStorage.setItem("naoMostrarModal", "true");
     }
 
+    // Fecha modal
     modal.style.display = "none";
+
+    // Libera scroll
+    document.body.style.overflow = "auto";
   });
+
+});
