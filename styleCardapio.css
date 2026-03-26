@@ -481,6 +481,17 @@ BARRA SUPERIOR
   border-radius:7px;
   border:1px solid #ddd;
   transition:0.3s;
+  position: relative;
+  z-index: 2;
+}
+
+.lista-sugestoes::-webkit-scrollbar {
+  width: 6px;
+}
+
+.lista-sugestoes::-webkit-scrollbar-thumb {
+  background: #0ea5e9;
+  border-radius: 10px;
 }
 
 /* =========================
@@ -1141,6 +1152,15 @@ RESPONSIVO
   color: #888;
 }
 
+.container-pesquisa{
+  width:100%;
+  max-width:500px;
+  margin:25px auto;
+  display:flex;
+  align-items:center;
+  gap:10px;
+  position: relative; /* 🔥 ESSENCIAL */
+}
 /* BOX DICA PROFISSIONAL */
 .box-dica {
   background: #2a2a2f;
@@ -1181,6 +1201,118 @@ RESPONSIVO
   color: #ddd;
   line-height: 1.5;
   margin: 0;
+}
+
+/* LISTA */
+.lista-sugestoes {
+  display: none;
+  position: absolute;
+  top: 100%; /* 🔥 fica abaixo do input */
+  left: 0;
+  width: 100%;
+
+  background: #fff;
+  border-radius: 12px;
+  margin-top: 6px;
+  z-index: 9999;
+
+  box-shadow: 0 10px 30px rgba(0,0,0,0.15);
+
+  max-height: 25vh; /* 🔥 responsivo */
+  overflow-y: auto;
+}
+
+/* SCROLL BONITO */
+.lista-sugestoes::-webkit-scrollbar {
+  width: 6px;
+}
+
+.lista-sugestoes::-webkit-scrollbar-thumb {
+  background: #ccc;
+  border-radius: 10px;
+}
+
+.lista-sugestoes::-webkit-scrollbar-thumb:hover {
+  background: #999;
+}
+
+/* CARD */
+.card-sugestao {
+  list-style: none;
+  padding: 10px;
+  cursor: pointer;
+  transition: 0.2s;
+}
+
+.card-sugestao:hover {
+  background: #f5f7fa;
+}
+
+/* CONTEÚDO */
+.card-conteudo {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  height: 60px;
+}
+
+/* IMAGEM */
+.card-img {
+  width: 55px;
+  height: 55px;
+  border-radius: 10px;
+  object-fit: cover;
+}
+
+/* INFO */
+.card-info {
+  flex: 1;
+  display: flex;
+  align-items: center;
+}
+
+/* NOME */
+.card-nome {
+  font-size: 14px;
+  font-weight: 600;
+  color: #222;
+}
+
+/* SETA */
+.card-arrow {
+  font-size: 18px;
+  color: #ccc;
+  transition: 0.2s;
+}
+
+.card-sugestao:hover .card-arrow {
+  color: #007bff;
+  transform: translateX(4px);
+}
+
+/* 📱 CELULARES PEQUENOS */
+@media (max-width: 480px) {
+  .lista-sugestoes {
+    max-height: 25vh;
+    overflow-y: auto;
+
+    left: 10px;   /* 🔥 espaço da esquerda */
+    right: 10px;  /* 🔥 espaço da direita */
+    width: auto;  /* 🔥 ajusta automaticamente */
+  }
+
+  .card-conteudo {
+    height: 55px;
+  }
+
+  .card-img {
+    width: 48px;
+    height: 48px;
+  }
+
+  .card-nome {
+    font-size: 13px;
+  }
 }
 /* =========================
 RESPONSIVO

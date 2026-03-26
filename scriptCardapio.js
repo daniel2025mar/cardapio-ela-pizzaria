@@ -183,21 +183,96 @@ async function carregarCardapio() {
         document.title = data.nome + " - Cardápio";
       }
     }
-
+// =========================
+// ELEMENTOS
+// =========================
 const botaoPesquisa = document.querySelector(".btn-pesquisa");
 const campoPesquisa = document.getElementById("campoPesquisa");
+const listaSugestoes = document.getElementById("listaSugestoes");
 
+// =========================
+// ABRIR CAMPO
+// =========================
 function abrirPesquisa(){
   campoPesquisa.style.width = "200px";
   campoPesquisa.style.opacity = "1";
-  campoPesquisa.focus(); // coloca o cursor dentro
+  campoPesquisa.focus();
 }
 
-// abre ao passar o mouse
 botaoPesquisa.addEventListener("mouseenter", abrirPesquisa);
-
-// abre ao clicar
 botaoPesquisa.addEventListener("click", abrirPesquisa);
+
+// =========================
+// BUSCA EM TEMPO REAL
+// =========================
+campoPesquisa.addEventListener("input", async () => {
+  const termo = campoPesquisa.value.trim();
+
+  if (termo === "") {
+    listaSugestoes.innerHTML = "";
+    listaSugestoes.style.display = "none";
+    return;
+  }
+
+  const { data, error } = await supabase
+    .from("produtos")
+    .select("nome, foto_url")
+    .ilike("nome", `%${termo}%`)
+    .limit(10);
+
+  if (error) {
+    console.error("Erro ao buscar:", error);
+    return;
+  }
+
+  listaSugestoes.innerHTML = "";
+
+  if (!data || data.length === 0) {
+    listaSugestoes.style.display = "none";
+    return;
+  }
+
+  listaSugestoes.style.display = "block";
+
+  data.forEach(produto => {
+    const li = document.createElement("li");
+    li.classList.add("card-sugestao");
+
+    li.innerHTML = `
+      <div class="card-conteudo">
+        
+        <img 
+          src="${produto.foto_url || 'https://via.placeholder.com/60'}" 
+          class="card-img"
+        >
+
+        <div class="card-info">
+          <span class="card-nome">${produto.nome}</span>
+        </div>
+
+        <div class="card-arrow">➜</div>
+
+      </div>
+    `;
+
+    li.addEventListener("click", () => {
+      campoPesquisa.value = produto.nome;
+      listaSugestoes.innerHTML = "";
+      listaSugestoes.style.display = "none";
+    });
+
+    listaSugestoes.appendChild(li);
+  });
+});
+
+// =========================
+// FECHAR AO CLICAR FORA
+// =========================
+document.addEventListener("click", (e) => {
+  if (!document.querySelector(".container-pesquisa").contains(e.target)) {
+    listaSugestoes.style.display = "none";
+  }
+});
 
 document.addEventListener("DOMContentLoaded", function () {
 
@@ -475,3 +550,4 @@ document.addEventListener("DOMContentLoaded", () => {
   });
 
 });
+
