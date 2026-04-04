@@ -766,12 +766,50 @@ AREA DAS CATEGORIAS
 
 /* container dos cards */
 
-.categorias-container{
-  display:grid;
-  grid-template-columns:repeat(auto-fit,minmax(95px,1fr));
-  gap:12px;
+/* =========================
+AREA DAS CATEGORIAS
+========================= */
+
+.area-categorias{
+  width:100%;
+  padding:20px 15px;
+  background:#f8f8f8;
 }
 
+/* =========================
+AREA DAS CATEGORIAS
+========================= */
+
+.area-categorias{
+  width:100%;
+  padding:20px 15px;
+  background:#f8f8f8;
+  overflow:hidden;
+}
+
+/* =========================
+CONTAINER DOS CARDS
+========================= */
+
+.categorias-container{
+  display:flex;
+  overflow-x:auto;
+  gap:12px;
+  padding:10px 5px;
+  scroll-behavior:smooth;
+
+  justify-content:flex-start; /* mobile */
+}
+
+/* scrollbar bonito */
+.categorias-container::-webkit-scrollbar{
+  height:6px;
+}
+
+.categorias-container::-webkit-scrollbar-thumb{
+  background:#ccc;
+  border-radius:10px;
+}
 
 /* =========================
 CARD DA CATEGORIA
@@ -794,6 +832,104 @@ CARD DA CATEGORIA
   box-shadow:0 3px 12px rgba(0,0,0,0.06);
 
   transition:all .25s ease;
+
+  /* 🔥 ESSENCIAL */
+  min-width:95px;
+  flex:0 0 auto;
+
+  /* snap */
+  scroll-snap-align:start;
+}
+
+/* hover */
+
+.categoria-card:hover{
+  transform:translateY(-5px);
+  box-shadow:0 10px 22px rgba(0,0,0,0.12);
+  border-color:#e63946;
+}
+
+/* =========================
+ICONE DA CATEGORIA
+========================= */
+
+.categoria-icone{
+  width:52px;
+  height:52px;
+  border-radius:50%;
+  background:linear-gradient(135deg,#ff4d4d,#e63946);
+
+  display:flex;
+  align-items:center;
+  justify-content:center;
+
+  margin-bottom:8px;
+}
+
+.categoria-icone i{
+  font-size:20px;
+  color:#fff;
+}
+
+/* =========================
+NOME DA CATEGORIA
+========================= */
+
+.categoria-nome{
+  font-size:13px;
+  font-weight:600;
+  color:#333;
+  letter-spacing:0.3px;
+}
+
+/* =========================
+SCROLL SNAP (efeito app)
+========================= */
+
+.categorias-container{
+  scroll-snap-type:x mandatory;
+}
+
+/* =========================
+DESKTOP (🔥 CENTRALIZA)
+========================= */
+
+@media (min-width:768px){
+
+  .area-categorias{
+    display:flex;
+    justify-content:center;
+  }
+
+  .categorias-container{
+    justify-content:center;   /* 🔥 centraliza */
+    overflow-x:visible;       /* remove scroll */
+    max-width:900px;
+  }
+}
+
+/* =========================
+RESPONSIVO MOBILE
+========================= */
+
+@media(max-width:480px){
+  .categoria-card{
+    min-width:85px;
+    padding:12px 8px;
+  }
+
+  .categoria-icone{
+    width:45px;
+    height:45px;
+  }
+
+  .categoria-icone i{
+    font-size:18px;
+  }
+
+  .categoria-nome{
+    font-size:12px;
+  }
 }
 
 /* hover */
