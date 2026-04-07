@@ -187,9 +187,12 @@ INFO PRODUTO
   margin-bottom:6px;
 
   display: -webkit-box;
-  -webkit-line-clamp: 2; /* 🔥 limita em 2 linhas */
+  -webkit-line-clamp: 2; /* 🔥 mostra só 2 linhas */
   -webkit-box-orient: vertical;
   overflow: hidden;
+
+  text-overflow: ellipsis; /* 🔥 coloca ... */
+  min-height: 34px; /* 🔥 mantém todos iguais */
 }
 
 .produto-preco{
