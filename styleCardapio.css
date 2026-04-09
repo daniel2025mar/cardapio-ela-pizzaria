@@ -195,6 +195,166 @@ INFO PRODUTO
   min-height: 34px; /* 🔥 mantém todos iguais */
 }
 
+/* =========================
+MODAL FUNDO
+========================= */
+.modal {
+  display: none;
+  position: fixed;
+  z-index: 9999;
+  left: 0;
+  top: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0,0,0,0.6);
+  backdrop-filter: blur(4px);
+}
+
+/* =========================
+CONTEÚDO DO MODAL
+========================= */
+.modal-content {
+  background: #fff;
+  margin: 10% auto;
+  padding: 20px;
+  border-radius: 16px;
+  width: 90%;
+  max-width: 420px;
+  animation: aparecer 0.3s ease;
+}
+
+/* animação suave */
+@keyframes aparecer {
+  from {
+    opacity: 0;
+    transform: translateY(30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* botão fechar */
+.fechar {
+  float: right;
+  font-size: 24px;
+  cursor: pointer;
+  color: #999;
+}
+
+.fechar:hover {
+  color: #000;
+}
+
+/* título */
+#nomePizza {
+  margin-top: 10px;
+  text-align: center;
+}
+
+/* =========================
+CONTAINER DOS CARDS
+========================= */
+.cards-tamanho {
+  display: flex;
+  gap: 12px;
+  margin-top: 20px;
+}
+
+/* =========================
+CARD TAMANHO
+========================= */
+.card-tamanho {
+  flex: 1;
+  background: #fff;
+  border: 2px solid #eee;
+  border-radius: 14px;
+  padding: 10px;
+  text-align: center;
+  cursor: pointer;
+  transition: 0.3s;
+}
+
+/* hover bonito */
+.card-tamanho:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+}
+
+/* imagem */
+.card-tamanho img {
+  width: 100%;
+  height: 110px;
+  object-fit: cover;
+  border-radius: 10px;
+}
+
+/* título */
+.card-tamanho h3 {
+  margin: 8px 0 4px;
+  font-size: 16px;
+}
+
+/* descrição */
+.card-tamanho p {
+  font-size: 12px;
+  color: #666;
+  min-height: 30px;
+}
+
+/* preço */
+.card-tamanho span {
+  display: block;
+  margin-top: 8px;
+  font-weight: bold;
+  color: #ff3c3c;
+  font-size: 15px;
+}
+
+/* =========================
+CARD SELECIONADO
+========================= */
+.card-tamanho.selecionado {
+  border: 2px solid #ff3c3c;
+  background: #fff5f5;
+  transform: scale(1.05);
+}
+
+/* =========================
+BOTÃO
+========================= */
+.modal-content button {
+  width: 100%;
+  margin-top: 20px;
+  padding: 12px;
+  background: #ff3c3c;
+  color: #fff;
+  border: none;
+  border-radius: 10px;
+  font-size: 16px;
+  cursor: pointer;
+  transition: 0.3s;
+}
+
+.modal-content button:hover {
+  background: #e62e2e;
+}
+.titulo-tamanho {
+  font-size: 16px;
+  font-weight: 600;
+  margin-top: 15px;
+  text-align: center;
+  color: #333;
+}
+/* =========================
+RESPONSIVO (CELULAR)
+========================= */
+@media (max-width: 400px) {
+  .cards-tamanho {
+    flex-direction: column;
+  }
+}
 .produto-preco{
   font-size:16px;
   font-weight:700;

@@ -134,19 +134,30 @@ async function carregarCardapio() {
       const preco = produto.promocao ? produto.promocao : produto.preco;
 
       const card = document.createElement("div");
-      card.className = "card-produto";
+card.className = "card-produto";
 
-      card.innerHTML = `
-        <img src="${produto.foto_url || './Imagem/default.jpg'}" class="produto-img">
-        <div class="produto-info">
-          <h3 class="produto-nome">${produto.nome}</h3>
-          <p class="produto-desc">${produto.descricao || ""}</p>
-          <div class="produto-preco">R$ ${Number(preco).toFixed(2).replace(".", ",")}</div>
-        </div>
-        <button class="btn-adicionar">Adicionar</button>
-      `;
+card.innerHTML = `
+  <img src="${produto.foto_url || './Imagem/default.jpg'}" class="produto-img">
+  <div class="produto-info">
+    <h3 class="produto-nome">${produto.nome}</h3>
+    <p class="produto-desc">${produto.descricao || ""}</p>
+    <div class="produto-preco">R$ ${Number(preco).toFixed(2).replace(".", ",")}</div>
+  </div>
+  <button class="btn-adicionar">Adicionar</button>
+`;
 
-      categoriaDiv.appendChild(card);
+// 🔥 ABRIR MODAL AO CLICAR NO CARD
+card.addEventListener("click", () => {
+  document.getElementById("modalPizza").style.display = "block";
+});
+
+// ❌ EVITA QUE O BOTÃO ATIVE O MODAL
+card.querySelector(".btn-adicionar").addEventListener("click", (e) => {
+  e.stopPropagation();
+});
+
+
+categoriaDiv.appendChild(card);
     });
 
   } catch (erro) {
@@ -156,6 +167,39 @@ async function carregarCardapio() {
   }
 }
 
+// ABRIR MODAL
+function abrirModal() {
+  const modal = document.getElementById("modalPizza");
+  modal.style.display = "block";
+
+  // 🔒 trava scroll do fundo
+  document.body.style.overflow = "hidden";
+}
+
+// FECHAR MODAL
+function fecharModal() {
+  const modal = document.getElementById("modalPizza");
+  modal.style.display = "none";
+
+  // 🔓 libera scroll
+  document.body.style.overflow = "auto";
+}
+
+// FECHAR CLICANDO FORA
+window.addEventListener("click", function (event) {
+  const modal = document.getElementById("modalPizza");
+
+  if (event.target === modal) {
+    fecharModal();
+  }
+});
+
+// FECHAR COM ESC
+document.addEventListener("keydown", function (event) {
+  if (event.key === "Escape") {
+    fecharModal();
+  }
+});
 
     // ✅ FUNÇÃO PARA CARREGAR NOME DA EMPRESA
     async function carregarNomeEmpresa() {
