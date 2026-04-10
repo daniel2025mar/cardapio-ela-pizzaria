@@ -337,6 +337,132 @@ BOTÃO
   transition: 0.3s;
 }
 
+#containerTamanhos {
+  margin-top: 12px;
+}
+
+/* =========================
+LINHA DO TAMANHO
+========================= */
+.linha-tamanho {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 14px;
+  border: 2px solid #e5e5e5;
+  border-radius: 12px;
+  margin-bottom: 12px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  background: #fff;
+}
+
+/* HOVER */
+.linha-tamanho:hover {
+  border-color: #ff6600;
+}
+
+/* SELECIONADO */
+.linha-tamanho.selecionado {
+  border-color: #ff6600;
+  background: #fff5f0;
+}
+
+/* RADIO */
+.linha-tamanho input[type="radio"] {
+  accent-color: #ff6600;
+  transform: scale(1.1);
+}
+
+/* NOME */
+.nome-tamanho {
+  flex: 1;
+  font-size: 15px;
+  font-weight: 500;
+}
+
+/* PREÇO */
+.preco-tamanho {
+  font-weight: bold;
+  min-width: 85px;
+  text-align: right;
+  font-size: 15px;
+}
+
+/* =========================
+CONTROLE DE QUANTIDADE (NOVO)
+========================= */
+.controle-qtd {
+  display: flex;
+  align-items: center;
+  background: #f3f3f3;
+  border-radius: 20px;
+  padding: 4px 8px;
+  gap: 10px;
+}
+
+/* BOTÕES + - */
+.controle-qtd button {
+  width: 28px;
+  height: 28px;
+  border: none;
+  background: #ffffff;
+  color: #ff6600;
+  font-size: 16px;
+  font-weight: bold;
+  border-radius: 50%;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.2s ease;
+}
+
+/* HOVER BOTÃO */
+.controle-qtd button:hover {
+  background: #ff6600;
+  color: #fff;
+  transform: scale(1.1);
+}
+
+/* CLICK EFFECT */
+.controle-qtd button:active {
+  transform: scale(0.95);
+}
+
+/* NUMERO */
+.qtd {
+  min-width: 22px;
+  text-align: center;
+  font-weight: bold;
+  font-size: 14px;
+}
+
+/* =========================
+RESPONSIVO (CELULAR)
+========================= */
+@media (max-width: 480px) {
+  .linha-tamanho {
+    padding: 12px;
+    gap: 8px;
+  }
+
+  .preco-tamanho {
+    min-width: 70px;
+    font-size: 14px;
+  }
+
+  .controle-qtd {
+    gap: 6px;
+    padding: 3px 6px;
+  }
+
+  .controle-qtd button {
+    width: 24px;
+    height: 24px;
+    font-size: 14px;
+  }
+}
 .modal-content button:hover {
   background: #e62e2e;
 }

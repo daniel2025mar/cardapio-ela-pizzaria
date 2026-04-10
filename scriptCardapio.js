@@ -148,8 +148,194 @@ card.innerHTML = `
 
 // 🔥 ABRIR MODAL AO CLICAR NO CARD
 card.addEventListener("click", () => {
-  document.getElementById("modalPizza").style.display = "block";
+  abrirModalProduto(produto.id);
 });
+
+async function abrirModalProduto(produtoId) {
+
+  const { data, error } = await supabase
+    .from('produtos')
+    .select(`
+      id,
+      nome,
+      descricao,
+      foto_url,
+      preco,
+      tamanho,
+      produto_variacoes (
+        id,
+        tamanho,
+        preco
+      )
+    `)
+    .eq('id', produtoId)
+    .single();
+
+  if (error) {
+    console.error("Erro:", error);
+    return;
+  }
+
+  // 🔥 Nome do produto
+  document.getElementById("nomePizza").innerText = data.nome;
+
+  const container = document.getElementById("containerTamanhos");
+  container.innerHTML = "";
+
+  // 🔥 Função para criar cada linha (SEM onclick nos botões)
+  function criarOpcao(id, nome, preco, checked = false) {
+    return `
+      <div class="linha-tamanho ${checked ? 'selecionado' : ''}">
+        
+        <input type="radio" name="tamanho" value="${id}" ${checked ? "checked" : ""}>
+
+        <span class="nome-tamanho">${nome}</span>
+
+        <span class="preco-tamanho">
+          R$ ${Number(preco || 0).toFixed(2).replace(".", ",")}
+        </span>
+
+        <div class="controle-qtd">
+          <button type="button" class="btn-menos">−</button>
+          <span class="qtd">1</span>
+          <button type="button" class="btn-mais">+</button>
+        </div>
+
+      </div>
+    `;
+  }
+
+  // 🔥 Produto principal
+  container.innerHTML += criarOpcao(
+    "principal",
+    data.tamanho || "Grande",
+    data.preco,
+    true
+  );
+
+  // 🔥 Variações
+  if (data.produto_variacoes && data.produto_variacoes.length > 0) {
+    data.produto_variacoes.forEach(v => {
+      container.innerHTML += criarOpcao(
+        v.id,
+        v.tamanho,
+        v.preco
+      );
+    });
+  }
+
+  // 🔥 ATIVAR EVENTOS (ESSENCIAL)
+  ativarEventosModal();
+
+  abrirModal();
+}
+
+function ativarEventosModal() {
+
+  // SELECIONAR TAMANHO
+  document.querySelectorAll(".linha-tamanho").forEach(linha => {
+    linha.addEventListener("click", function () {
+
+      document.querySelectorAll(".linha-tamanho").forEach(l => {
+        l.classList.remove("selecionado");
+        l.querySelector("input").checked = false;
+      });
+
+      this.classList.add("selecionado");
+      this.querySelector("input").checked = true;
+    });
+  });
+
+  // BOTÃO +
+  document.querySelectorAll(".btn-mais").forEach(btn => {
+    btn.addEventListener("click", function (e) {
+      e.stopPropagation();
+
+      const linha = this.closest(".linha-tamanho");
+      const qtdEl = linha.querySelector(".qtd");
+
+      let qtd = parseInt(qtdEl.innerText);
+      qtdEl.innerText = qtd + 1;
+    });
+  });
+
+  // BOTÃO -
+  document.querySelectorAll(".btn-menos").forEach(btn => {
+    btn.addEventListener("click", function (e) {
+      e.stopPropagation();
+
+      const linha = this.closest(".linha-tamanho");
+      const qtdEl = linha.querySelector(".qtd");
+
+      let qtd = parseInt(qtdEl.innerText);
+
+      if (qtd > 1) {
+        qtdEl.innerText = qtd - 1;
+      }
+    });
+  });
+}
+
+// =========================
+// SELECIONAR TAMANHO
+// =========================
+function selecionarLinha(el) {
+  document.querySelectorAll(".linha-tamanho").forEach(l => {
+    l.classList.remove("selecionado");
+    l.querySelector("input").checked = false;
+  });
+
+  el.classList.add("selecionado");
+  el.querySelector("input").checked = true;
+}
+
+// =========================
+// AUMENTAR QUANTIDADE
+// =========================
+function aumentarQtd(btn) {
+  const linha = btn.closest(".linha-tamanho");
+  const qtdEl = linha.querySelector(".qtd");
+
+  let qtd = parseInt(qtdEl.innerText);
+  qtdEl.innerText = qtd + 1;
+}
+
+// =========================
+// DIMINUIR QUANTIDADE
+// =========================
+function diminuirQtd(btn) {
+  const linha = btn.closest(".linha-tamanho");
+  const qtdEl = linha.querySelector(".qtd");
+
+  let qtd = parseInt(qtdEl.innerText);
+
+  if (qtd > 1) {
+    qtdEl.innerText = qtd - 1;
+  }
+}
+
+function aumentarQtd(btn) {
+  // pega o elemento da quantidade da mesma linha
+  const qtdEl = btn.parentElement.querySelector(".qtd");
+
+  let qtd = parseInt(qtdEl.innerText);
+  qtd++;
+
+  qtdEl.innerText = qtd;
+}
+
+function diminuirQtd(btn) {
+  const qtdEl = btn.parentElement.querySelector(".qtd");
+
+  let qtd = parseInt(qtdEl.innerText);
+
+  if (qtd > 1) {
+    qtd--;
+    qtdEl.innerText = qtd;
+  }
+}
+
+
 
 // ❌ EVITA QUE O BOTÃO ATIVE O MODAL
 card.querySelector(".btn-adicionar").addEventListener("click", (e) => {
