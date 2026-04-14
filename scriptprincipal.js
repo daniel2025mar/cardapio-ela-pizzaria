@@ -41,6 +41,7 @@ function formatarValor(valor) {
   return new Intl.NumberFormat("pt-BR",{style:"currency",currency:"BRL"}).format(valor);
 }
 
+let ultimaPendencia = null;
 // ===================== SCRIPT PRINCIPAL =====================
 document.addEventListener("DOMContentLoaded", async () => {
 
@@ -57,7 +58,11 @@ document.addEventListener("DOMContentLoaded", async () => {
   somToast.volume = 0.6;
   somToast.preload = "auto";
 
-  const hoje = new Date().toISOString().split("T")[0];
+  // 🔥 DATA CORRIGIDA (timezone Brasil)
+  const hoje = new Date().toLocaleDateString("sv-SE");
+
+  // 🔥 ID DA EMPRESA (ajuste se necessário)
+  const empresaIdAtual = 1;
 
   // ===== BUSCAR PENDÊNCIAS EM ATRASO =====
   try {
@@ -66,6 +71,7 @@ document.addEventListener("DOMContentLoaded", async () => {
       .select("*")
       .lt("data_vencimento", hoje)
       .eq("status", "pendente")
+      .eq("empresa_id", empresaIdAtual) // 🔥 filtro importante
       .order("data_vencimento", { ascending: true });
 
     if (error) throw error;
@@ -76,19 +82,34 @@ document.addEventListener("DOMContentLoaded", async () => {
     }
 
     // existe pelo menos uma pendência
-    ultimaPendencia = pendencias[0]; // pegar a mais antiga
+    ultimaPendencia = pendencias[0]; // mais antiga
     btnPagarMensalidade.style.display = "inline-flex";
 
     lista.innerHTML = "";
+
     pendencias.forEach(p => {
+
+      // 🔥 calcular dias em atraso
+      const dataVenc = new Date(p.data_vencimento);
+      const dataHoje = new Date();
+      const diffTime = dataHoje - dataVenc;
+      const diasAtraso = Math.floor(diffTime / (1000 * 60 * 60 * 24));
+
       const li = document.createElement("li");
-      li.textContent = `${p.empresa_id} está com pendência em atraso na data ${formatarData(p.data_vencimento)}. Evita o bloqueio do sistema.`;
+      li.textContent = `Empresa ${p.empresa_id} está com pendência em atraso desde ${formatarData(p.data_vencimento)} (${diasAtraso} dias em atraso). Evite o bloqueio do sistema.`;
+
       lista.appendChild(li);
     });
 
     toast.style.display = "block";
+
+    // 🔊 tocar som
     somToast.play().catch(() => {});
-    setTimeout(() => { toast.style.display = "none"; }, 15000);
+
+    // ⏱ fechar automático
+    setTimeout(() => {
+      toast.style.display = "none";
+    }, 15000);
 
   } catch (err) {
     console.error("Erro ao buscar pendências:", err);
@@ -106,6 +127,8 @@ document.addEventListener("DOMContentLoaded", async () => {
     else alert("Nenhuma pendência em atraso.");
   });
 
+  console.log("Hoje:", hoje);
+console.log("Pendências:", pendencias);
 });
 
 // ===================== ABRIR MODAL PAGAMENTO =====================
