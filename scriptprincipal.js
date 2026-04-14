@@ -42,6 +42,26 @@ function formatarValor(valor) {
 }
 
 let ultimaPendencia = null;
+
+// 🔥 FUNÇÃO SEGURA PARA CALCULAR ATRASO (SEM BUG)
+function calcularDiasAtraso(dataVencimento) {
+  if (!dataVencimento) return 0;
+
+  // remove hora se vier do Supabase
+  const dataLimpa = dataVencimento.split("T")[0];
+
+  const hoje = new Date();
+  const venc = new Date(dataLimpa);
+
+  // zerar horas (ESSENCIAL)
+  hoje.setHours(0, 0, 0, 0);
+  venc.setHours(0, 0, 0, 0);
+
+  const diff = hoje.getTime() - venc.getTime();
+
+  return Math.max(Math.floor(diff / (1000 * 60 * 60 * 24)), 0);
+}
+
 // ===================== SCRIPT PRINCIPAL =====================
 document.addEventListener("DOMContentLoaded", async () => {
 
@@ -58,55 +78,63 @@ document.addEventListener("DOMContentLoaded", async () => {
   somToast.volume = 0.6;
   somToast.preload = "auto";
 
-  // 🔥 DATA CORRIGIDA (timezone Brasil)
-  const hoje = new Date().toLocaleDateString("sv-SE");
+  // 🔥 DATA CORRETA (formato ISO)
+  const hoje = new Date().toISOString().split("T")[0];
 
-  // 🔥 ID DA EMPRESA (ajuste se necessário)
+  // 🔥 ID DA EMPRESA
   const empresaIdAtual = 1;
+
+  let pendencias = [];
 
   // ===== BUSCAR PENDÊNCIAS EM ATRASO =====
   try {
-    const { data: pendencias, error } = await supabase
+    const { data, error } = await supabase
       .from("pagamentos_mensalidade")
       .select("*")
       .lt("data_vencimento", hoje)
       .eq("status", "pendente")
-      .eq("empresa_id", empresaIdAtual) // 🔥 filtro importante
+      .eq("empresa_id", empresaIdAtual)
       .order("data_vencimento", { ascending: true });
 
     if (error) throw error;
 
-    if (!pendencias || pendencias.length === 0) {
+    pendencias = data || [];
+
+    console.log("Hoje:", hoje);
+    console.log("Pendências:", pendencias);
+
+    if (pendencias.length === 0) {
       btnPagarMensalidade.style.display = "none";
       return;
     }
 
-    // existe pelo menos uma pendência
-    ultimaPendencia = pendencias[0]; // mais antiga
+    // 🔥 pega a mais antiga
+    ultimaPendencia = pendencias[0];
     btnPagarMensalidade.style.display = "inline-flex";
 
     lista.innerHTML = "";
 
     pendencias.forEach(p => {
 
-      // 🔥 calcular dias em atraso
-      const dataVenc = new Date(p.data_vencimento);
-      const dataHoje = new Date();
-      const diffTime = dataHoje - dataVenc;
-      const diasAtraso = Math.floor(diffTime / (1000 * 60 * 60 * 24));
+      const diasAtraso = calcularDiasAtraso(p.data_vencimento);
+
+      console.log("DATA:", p.data_vencimento);
+      console.log("ATRASO:", diasAtraso);
 
       const li = document.createElement("li");
+
       li.textContent = `Empresa ${p.empresa_id} está com pendência em atraso desde ${formatarData(p.data_vencimento)} (${diasAtraso} dias em atraso). Evite o bloqueio do sistema.`;
 
       lista.appendChild(li);
     });
 
+    // 🔥 mostrar toast
     toast.style.display = "block";
 
-    // 🔊 tocar som
+    // 🔊 som
     somToast.play().catch(() => {});
 
-    // ⏱ fechar automático
+    // ⏱ auto fechar
     setTimeout(() => {
       toast.style.display = "none";
     }, 15000);
@@ -121,29 +149,51 @@ document.addEventListener("DOMContentLoaded", async () => {
     if (ultimaPendencia) abrirModalPagamento(ultimaPendencia);
   });
 
-  // ===== BOTÃO PAGAR MENSALIDADE =====
+  // ===== BOTÃO PAGAR =====
   btnPagarMensalidade.addEventListener("click", () => {
-    if (ultimaPendencia) abrirModalPagamento(ultimaPendencia);
-    else alert("Nenhuma pendência em atraso.");
+    if (ultimaPendencia) {
+      abrirModalPagamento(ultimaPendencia);
+    } else {
+      alert("Nenhuma pendência em atraso.");
+    }
   });
 
-  console.log("Hoje:", hoje);
-console.log("Pendências:", pendencias);
 });
 
 // ===================== ABRIR MODAL PAGAMENTO =====================
+// 🔥 variável global (IMPORTANTE)
+let pendenciaAtualId = null;
+
+// 🔥 função para abrir modal
 async function abrirModalPagamento(pendencia) {
   if (!pendencia) return;
 
-  const modalPagamento = document.getElementById("modalPagamento");
-  modalPagamento.style.display = "block";
+  try {
+    const modalPagamento = document.getElementById("modalPagamento");
 
-  pendenciaAtualId = pendencia.id;
+    // 🔥 salvar ID da pendência
+    pendenciaAtualId = pendencia.id;
 
-  document.getElementById("valorPagamento").value = formatarValor(pendencia.valor);
-  document.getElementById("dataPagamento").valueAsDate = new Date();
+    // 🔥 preencher valor (garante número válido)
+    document.getElementById("valorPagamento").value =
+      typeof formatarValor === "function"
+        ? formatarValor(pendencia.valor)
+        : pendencia.valor;
 
-  await carregarDadosEmpresa(pendencia.empresa_id);
+    // 🔥 preencher data corretamente (input type="date")
+    document.getElementById("dataPagamento").value =
+      new Date().toISOString().split("T")[0];
+
+    // 🔥 carregar dados da empresa
+    await carregarDadosEmpresa(pendencia.empresa_id);
+
+    // 🔥 abrir modal (DEPOIS de carregar tudo)
+    modalPagamento.style.display = "block";
+
+  } catch (erro) {
+    console.error("Erro ao abrir modal:", erro);
+    alert("Erro ao abrir o modal de pagamento.");
+  }
 }
 
 // ===================== FECHAR MODAL =====================
@@ -192,6 +242,8 @@ formPagamento.addEventListener("submit", async (e) => {
   }
 
 });
+
+
 
 // ===================== BUSCAR DADOS DA EMPRESA =====================
 async function carregarDadosEmpresa(empresaId) {
