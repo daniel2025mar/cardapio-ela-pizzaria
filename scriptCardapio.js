@@ -184,34 +184,34 @@ async function abrirModalProduto(produtoId) {
 
   // 🔥 Função para criar cada linha (SEM onclick nos botões)
   function criarOpcao(id, nome, preco, checked = false) {
-    return `
-      <div class="linha-tamanho ${checked ? 'selecionado' : ''}">
-        
-        <input type="radio" name="tamanho" value="${id}" ${checked ? "checked" : ""}>
+  return `
+    <div class="linha-tamanho ${checked ? 'selecionado' : ''}">
+      
+      <input type="checkbox" value="${id}" ${checked ? "checked" : ""}>
 
-        <span class="nome-tamanho">${nome}</span>
+      <span class="nome-tamanho">${nome}</span>
 
-        <span class="preco-tamanho">
-          R$ ${Number(preco || 0).toFixed(2).replace(".", ",")}
-        </span>
+      <span class="preco-tamanho">
+        R$ ${Number(preco || 0).toFixed(2).replace(".", ",")}
+      </span>
 
-        <div class="controle-qtd">
-          <button type="button" class="btn-menos">−</button>
-          <span class="qtd">1</span>
-          <button type="button" class="btn-mais">+</button>
-        </div>
-
+      <div class="controle-qtd">
+        <button type="button" class="btn-menos">−</button>
+        <span class="qtd">1</span>
+        <button type="button" class="btn-mais">+</button>
       </div>
-    `;
-  }
 
-  // 🔥 Produto principal
-  container.innerHTML += criarOpcao(
-    "principal",
-    data.tamanho || "Grande",
-    data.preco,
-    true
-  );
+    </div>
+  `;
+}
+
+ // 🔥 Produto principal (AGORA DESMARCADO)
+container.innerHTML += criarOpcao(
+  "principal",
+  data.tamanho || "Grande",
+  data.preco,
+  false
+);
 
   // 🔥 Variações
   if (data.produto_variacoes && data.produto_variacoes.length > 0) {
@@ -232,40 +232,77 @@ async function abrirModalProduto(produtoId) {
 
 function ativarEventosModal() {
 
-  // SELECIONAR TAMANHO
+  // ✅ CONTROLE DE SELEÇÃO
   document.querySelectorAll(".linha-tamanho").forEach(linha => {
-    linha.addEventListener("click", function () {
 
-      document.querySelectorAll(".linha-tamanho").forEach(l => {
-        l.classList.remove("selecionado");
-        l.querySelector("input").checked = false;
-      });
+    const input = linha.querySelector("input");
 
-      this.classList.add("selecionado");
-      this.querySelector("input").checked = true;
+    // 🔹 Clique na linha (exceto botão/checkbox)
+    linha.addEventListener("click", function (e) {
+
+      if (e.target.tagName === "INPUT" || e.target.tagName === "BUTTON") return;
+
+      input.checked = !input.checked;
+      atualizarVisual(linha, input);
     });
+
+    // 🔹 Clique direto no checkbox
+    input.addEventListener("change", function () {
+      atualizarVisual(linha, input);
+    });
+
   });
 
-  // BOTÃO +
+  // 🔹 Atualiza visual
+  function atualizarVisual(linha, input) {
+    if (input.checked) {
+      linha.classList.add("selecionado");
+    } else {
+      linha.classList.remove("selecionado");
+    }
+  }
+
+  // 🔥 BOTÃO +
   document.querySelectorAll(".btn-mais").forEach(btn => {
     btn.addEventListener("click", function (e) {
       e.stopPropagation();
 
       const linha = this.closest(".linha-tamanho");
+      const input = linha.querySelector("input");
       const qtdEl = linha.querySelector(".qtd");
 
+      // 🚫 BLOQUEIA SE NÃO ESTIVER SELECIONADO
+      if (!input.checked) {
+        mostrarMensagem("Selecione o item antes de alterar a quantidade.");
+        return;
+      }
+
       let qtd = parseInt(qtdEl.innerText);
+
+      // 🚫 LIMITE MÁXIMO
+      if (qtd >= 10) {
+        mostrarMensagem("Você atingiu o limite máximo de 10 unidades para este item.");
+        return;
+      }
+
       qtdEl.innerText = qtd + 1;
     });
   });
 
-  // BOTÃO -
+  // 🔥 BOTÃO -
   document.querySelectorAll(".btn-menos").forEach(btn => {
     btn.addEventListener("click", function (e) {
       e.stopPropagation();
 
       const linha = this.closest(".linha-tamanho");
+      const input = linha.querySelector("input");
       const qtdEl = linha.querySelector(".qtd");
+
+      // 🚫 BLOQUEIA SE NÃO ESTIVER SELECIONADO
+      if (!input.checked) {
+        mostrarMensagem("Selecione o item antes de alterar a quantidade.");
+        return;
+      }
 
       let qtd = parseInt(qtdEl.innerText);
 
@@ -274,6 +311,20 @@ function ativarEventosModal() {
       }
     });
   });
+
+}
+
+function mostrarMensagem(texto) {
+  const modal = document.getElementById("modalMensagem");
+  const textoEl = document.getElementById("textoMensagem");
+
+  textoEl.innerText = texto;
+  modal.style.display = "flex";
+
+  // fecha automático depois de 2 segundos
+  setTimeout(() => {
+    modal.style.display = "none";
+  }, 2000);
 }
 
 // =========================
