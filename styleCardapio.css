@@ -359,13 +359,29 @@ LINHA DO TAMANHO
 
 /* HOVER */
 .linha-tamanho:hover {
-  border-color: #ff6600;
+  border-color: #000000;
+}
+
+/* INFO DO DESENVOLVEDOR */
+.info-dev{
+  text-align:center;
+  font-size:12px;
+  color:#888;
+  margin-top:10px;
+  margin-bottom:10px;
+  opacity:0.8;
+}
+
+/* destaque no nome */
+.info-dev strong{
+  color:#e63946;
+  font-weight:600;
 }
 
 /* SELECIONADO */
 .linha-tamanho.selecionado {
-  border-color: #ff6600;
-  background: #fff5f0;
+  border-color: #000000;
+  background: #e4e4e4;
 }
 
 /* RADIO */

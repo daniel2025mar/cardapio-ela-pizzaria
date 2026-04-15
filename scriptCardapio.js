@@ -277,14 +277,26 @@ function ativarEventosModal() {
         return;
       }
 
-      let qtd = parseInt(qtdEl.innerText);
+      // 🔥 SOMA TOTAL DE TODOS OS ITENS SELECIONADOS
+      let total = 0;
 
-      // 🚫 LIMITE MÁXIMO
-      if (qtd >= 10) {
+      document.querySelectorAll(".linha-tamanho").forEach(l => {
+        const inp = l.querySelector("input");
+        const qtdLinha = parseInt(l.querySelector(".qtd").innerText);
+
+        if (inp.checked) {
+          total += qtdLinha;
+        }
+      });
+
+      // 🚫 LIMITE GLOBAL (10 NO TOTAL)
+      if (total >= 10) {
         mostrarMensagem("Você atingiu o limite máximo de 10 unidades para este item.");
         return;
       }
 
+      // ✅ AUMENTA NORMAL
+      let qtd = parseInt(qtdEl.innerText);
       qtdEl.innerText = qtd + 1;
     });
   });
