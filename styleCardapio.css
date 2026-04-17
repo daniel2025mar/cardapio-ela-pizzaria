@@ -890,9 +890,10 @@ CONTEUDO MODAL
   padding:20px;
   box-shadow:0 10px 30px rgba(0,0,0,0.3);
   animation:abrirCarrinho .3s ease;
+
   max-height:85vh;
-  overflow-y:auto;
-  position:relative;
+  display:flex;
+  flex-direction:column;
 }
 
 /* animação */
@@ -942,16 +943,64 @@ LISTA PRODUTOS
   display:flex;
   flex-direction:column;
   gap:15px;
+
+  max-height:300px; /* 🔥 altura da lista */
+  overflow-y:auto;
+
+  padding-right:5px; /* espaço pro scroll */
+}
+
+.lista-carrinho::-webkit-scrollbar{
+  width:6px;
+}
+
+.lista-carrinho::-webkit-scrollbar-thumb{
+  background:#ccc;
+  border-radius:10px;
+}
+
+.lista-carrinho::-webkit-scrollbar-thumb:hover{
+  background:#999;
 }
 
 /* item produto */
 
 .item-carrinho{
-  display:flex;
-  align-items:center;
-  gap:12px;
+  padding:12px 0;
   border-bottom:1px solid #eee;
-  padding-bottom:10px;
+}
+
+/* 🔥 NOVO LAYOUT DO CARRINHO */
+.item-linha{
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+}
+
+/* 📦 info */
+.info-item{
+  display:flex;
+  flex-direction:column;
+  gap:4px;
+}
+
+.info-item strong{
+  font-size:16px;
+  color:#333;
+}
+
+.info-item span{
+  font-size:14px;
+  color:#666;
+}
+
+/* 💰 preço bonito */
+.preco-item{
+  font-size:16px;
+  font-weight:bold;
+  color:#e63946; /* vermelho */
+  min-width:100px;
+  text-align:right;
 }
 
 /* foto */

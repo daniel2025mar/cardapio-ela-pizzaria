@@ -24,6 +24,132 @@ let cacheFundo = "";
 let cacheLogo = "";
 
 // =============================
+// CARRINHO GLOBAL
+// =============================
+let carrinho = [];
+
+
+// =============================
+// MOSTRAR MENSAGEM (COM CALLBACK)
+// =============================
+function mostrarMensagem(texto, callback) {
+  const modal = document.getElementById("modalMensagem");
+  const textoEl = document.getElementById("textoMensagem");
+
+  textoEl.innerText = texto;
+  modal.style.display = "flex";
+
+  setTimeout(() => {
+    modal.style.display = "none";
+
+    if (callback) callback();
+
+  }, 2000);
+}
+
+
+// =============================
+// ADICIONAR AO CARRINHO
+// =============================
+function adicionarCarrinho() {
+
+  const nomeProduto = document.getElementById("nomePizza").innerText;
+  const linhas = document.querySelectorAll(".linha-tamanho");
+
+  let itensAdicionados = [];
+
+  linhas.forEach(linha => {
+
+    const input = linha.querySelector("input");
+
+    if (input.checked) {
+
+      const tamanho = linha.querySelector(".nome-tamanho").innerText;
+      const precoTexto = linha.querySelector(".preco-tamanho").innerText;
+      const qtd = parseInt(linha.querySelector(".qtd").innerText);
+
+      const preco = parseFloat(
+        precoTexto.replace("R$", "").replace(",", ".").trim()
+      );
+
+      itensAdicionados.push({
+        nome: nomeProduto,
+        tamanho,
+        preco,
+        quantidade: qtd
+      });
+
+    }
+
+  });
+
+  if (itensAdicionados.length === 0) {
+    mostrarMensagem("Selecione pelo menos um item.");
+    return;
+  }
+
+  carrinho.push(...itensAdicionados);
+
+  atualizarCarrinho();
+
+  mostrarMensagem("Enviado para o carrinho 🛒", () => {
+    fecharModal();
+  });
+
+}
+
+
+// =============================
+// ATUALIZAR CARRINHO
+// =============================
+function atualizarCarrinho() {
+
+  const lista = document.getElementById("listaCarrinho");
+  const subtotalEl = document.getElementById("subtotalCarrinho");
+  const totalEl = document.getElementById("totalCarrinho");
+
+  lista.innerHTML = "";
+
+  let subtotal = 0;
+
+  carrinho.forEach((item) => {
+
+    const totalItem = item.preco * item.quantidade;
+    subtotal += totalItem;
+
+    const div = document.createElement("div");
+    div.classList.add("item-carrinho");
+
+    div.innerHTML = `
+      <div class="item-linha">
+
+        <div class="info-item">
+          <strong>${item.nome}</strong>
+          <span>${item.tamanho}</span>
+          <span>Qtd: ${item.quantidade}</span>
+        </div>
+
+        <div class="preco-item">
+          R$ ${totalItem.toFixed(2).replace(".", ",")}
+        </div>
+
+      </div>
+    `;
+
+    lista.appendChild(div);
+
+  });
+
+  // 🔥 Atualiza valores
+  subtotalEl.innerText = `R$ ${subtotal.toFixed(2).replace(".", ",")}`;
+  totalEl.innerText = `R$ ${subtotal.toFixed(2).replace(".", ",")}`;
+}
+
+
+// 🔥 CORREÇÃO FINAL (ESSENCIAL)
+window.adicionarCarrinho = adicionarCarrinho;
+
+// =============================
 // FUNÇÃO SEPARADA: CARREGAR IMAGEM DE FUNDO
 // =============================
 async function carregarImagemFundo() {
