@@ -146,59 +146,90 @@ async function abrirModalEmpresa(dadosEmpresa) {
   ];
 
   const hoje = new Date();
-  const anoAtual = hoje.getFullYear();
+
+  // 🔥 pega o ano baseado nos dados
+  const anoAtual = pagamentos.length > 0
+    ? new Date(pagamentos[0].data_vencimento).getFullYear()
+    : hoje.getFullYear();
 
   for (let i = 0; i < 12; i++) {
     const mesNumero = i + 1;
+
     const pagamentoMes = pagamentos.find(p => {
       const data = new Date(p.data_vencimento);
-      return data.getMonth() + 1 === mesNumero && data.getFullYear() === anoAtual;
+      return data.getMonth() + 1 === mesNumero;
     });
 
     const tr = document.createElement('tr');
     let dataVencimento;
     let corStatus = "";
 
-    // TD do mês
+    // MÊS
     const tdMes = document.createElement('td');
     tdMes.textContent = meses[i];
     tr.appendChild(tdMes);
 
-    // TD da data
+    // DATA
     const tdData = document.createElement('td');
+
     if (pagamentoMes) {
       dataVencimento = pagamentoMes.data_vencimento;
     } else {
       dataVencimento = `${anoAtual}-${String(mesNumero).padStart(2,'0')}-10`;
     }
+
     tdData.textContent = dataVencimento;
     tr.appendChild(tdData);
 
-    // TD do status com ícone
+    // STATUS
     const tdStatus = document.createElement('td');
     const icone = document.createElement('i');
     let textoStatus = "";
 
     if (pagamentoMes) {
+      const vencimento = new Date(pagamentoMes.data_vencimento);
+
       if (pagamentoMes.status.toLowerCase() === "pendente") {
-        icone.className = "fa-solid fa-circle-xmark";
-        icone.style.color = "red";
-        textoStatus = " Não pago";
-        corStatus = "status-pendente";
+
+        if (hoje > vencimento) {
+          icone.className = "fa-solid fa-triangle-exclamation";
+          icone.style.color = "orange";
+          textoStatus = " Atrasado";
+          corStatus = "status-atrasado";
+        } else if (
+          hoje.getDate() === vencimento.getDate() &&
+          hoje.getMonth() === vencimento.getMonth()
+        ) {
+          icone.className = "fa-solid fa-hourglass-half";
+          icone.style.color = "blue";
+          textoStatus = " Vence hoje";
+          corStatus = "status-hoje";
+        } else {
+          icone.className = "fa-solid fa-circle-xmark";
+          icone.style.color = "red";
+          textoStatus = " Não pago";
+          corStatus = "status-pendente";
+        }
+
       } else {
         icone.className = "fa-solid fa-circle-check";
         icone.style.color = "green";
         textoStatus = " Pago";
         corStatus = "status-pago";
       }
+
     } else {
       const vencimento = new Date(dataVencimento);
+
       if (hoje > vencimento) {
         icone.className = "fa-solid fa-triangle-exclamation";
         icone.style.color = "orange";
         textoStatus = " Atrasado";
         corStatus = "status-atrasado";
-      } else if (hoje.getDate() === vencimento.getDate() && hoje.getMonth() === vencimento.getMonth()) {
+      } else if (
+        hoje.getDate() === vencimento.getDate() &&
+        hoje.getMonth() === vencimento.getMonth()
+      ) {
         icone.className = "fa-solid fa-hourglass-half";
         icone.style.color = "blue";
         textoStatus = " Vence hoje";
@@ -253,6 +284,42 @@ botaoTema.addEventListener("click", () => {
   }
 });
 
+
+async function verificarBloqueiosAutomaticos() {
+  const hoje = new Date();
+
+  // 🔍 Buscar pagamentos pendentes
+  const { data: pagamentos, error } = await supabase
+    .from('pagamentos_mensalidade')
+    .select('*')
+    .eq('status', 'pendente');
+
+  if (error) {
+    console.error("Erro ao buscar pagamentos:", error);
+    return;
+  }
+
+  for (const p of pagamentos) {
+    const vencimento = new Date(p.data_vencimento);
+
+    // adiciona 10 dias
+    vencimento.setDate(vencimento.getDate() + 8);
+
+    if (hoje > vencimento) {
+      console.log("Empresa atrasada:", p.empresa_id);
+
+      // 🔒 BLOQUEAR EMPRESA
+      const { error: erroUpdate } = await supabase
+        .from('empresa')
+        .update({ bloqueado: true })
+        .eq('id', p.empresa_id);
+
+      if (erroUpdate) {
+        console.error("Erro ao bloquear:", erroUpdate);
+      }
+    }
+  }
+}
 // =============================
 // FILTRAR EMPRESAS
 // =============================
@@ -269,4 +336,7 @@ function filtrarEmpresas() {
 // =============================
 // INICIAR SISTEMA
 // =============================
-window.addEventListener("load", carregarEmpresas);
+window.addEventListener("load", async () => {
+  await verificarBloqueiosAutomaticos(); // 🔥 NOVO
+  await carregarEmpresas();
+});
