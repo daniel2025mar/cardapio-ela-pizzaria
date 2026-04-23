@@ -149,6 +149,153 @@ function atualizarCarrinho() {
 // 🔥 CORREÇÃO FINAL (ESSENCIAL)
 window.adicionarCarrinho = adicionarCarrinho;
 
+
+
+// ===============================
+// ABRIR / FECHAR MODAL
+// ===============================
+
+window.abrirMontePizza = async function () {
+  const modal = document.getElementById("modalMontePizza");
+  modal.style.display = "block";
+  document.body.style.overflow = "hidden";
+
+  await carregarSabores(); // 🔥 carrega do banco
+};
+
+window.fecharMontePizza = function () {
+  document.getElementById("modalMontePizza").style.display = "none";
+  document.body.style.overflow = "auto";
+};
+
+// ===============================
+// CARREGAR SABORES DO BANCO
+// ===============================
+
+async function carregarSabores() {
+  const container = document.querySelector(".lista-sabores");
+
+  container.innerHTML = "<p>Carregando sabores...</p>";
+
+  const { data, error } = await supabase
+    .from("produtos")
+    .select("*")
+    .limit(10);
+
+  if (error) {
+    container.innerHTML = "<p>Erro ao carregar sabores</p>";
+    console.error("ERRO SUPABASE:", error); // 🔥 IMPORTANTE
+    alert(error.message); // 🔥 MOSTRA NA TELA
+    return;
+  }
+
+  console.log("DADOS:", data);
+
+  container.innerHTML = "";
+
+  data.forEach((produto) => {
+    const item = document.createElement("label");
+
+    item.innerHTML = `
+      <input type="checkbox" value="${produto.nome}" onchange="atualizarResumo()">
+      ${produto.nome} - R$ ${produto.preco}
+    `;
+
+    container.appendChild(item);
+  });
+}
+
+// ===============================
+// FECHAR AO CLICAR FORA
+// ===============================
+
+window.addEventListener("click", function (event) {
+  const modal = document.getElementById("modalMontePizza");
+  if (event.target === modal) fecharMontePizza();
+});
+
+// ===============================
+// ATUALIZAR RESUMO (MEIO A MEIO)
+// ===============================
+
+window.atualizarResumo = function () {
+  const tamanho = document.querySelector('input[name="tamanho"]:checked');
+  const borda = document.querySelector('input[name="borda"]:checked');
+  const saboresSelecionados = document.querySelectorAll('.lista-sabores input:checked');
+
+  let listaSabores = [];
+
+  saboresSelecionados.forEach((s) => listaSabores.push(s.value));
+
+  // limitar 2 sabores
+  if (listaSabores.length > 2) {
+    alert("Máximo 2 sabores (meio a meio)");
+    saboresSelecionados[saboresSelecionados.length - 1].checked = false;
+    return atualizarResumo();
+  }
+
+  document.getElementById("resumoTamanho").textContent =
+    tamanho ? tamanho.value : "-";
+
+  document.getElementById("resumoBorda").textContent =
+    borda ? borda.value : "-";
+
+  let texto = "-";
+
+  if (listaSabores.length === 1) {
+    texto = listaSabores[0];
+  } else if (listaSabores.length === 2) {
+    texto = `Meio a meio: ${listaSabores[0]} + ${listaSabores[1]}`;
+  }
+
+  document.getElementById("resumoSabores").textContent = texto;
+};
+
+// ===============================
+// FINALIZAR PIZZA
+// ===============================
+
+window.finalizarPizza = function () {
+  const tamanho = document.querySelector('input[name="tamanho"]:checked');
+  const borda = document.querySelector('input[name="borda"]:checked');
+  const sabores = document.querySelectorAll('.lista-sabores input:checked');
+
+  if (!tamanho || sabores.length === 0) {
+    alert("Selecione tamanho e sabor!");
+    return;
+  }
+
+  let listaSabores = [];
+  let precos = [];
+
+  sabores.forEach((s) => {
+    listaSabores.push(s.value);
+    precos.push(parseFloat(s.dataset.preco));
+  });
+
+  // 🔥 REGRA PROFISSIONAL (MEIO A MEIO)
+  const precoFinal = Math.max(...precos);
+
+  let descricao =
+    listaSabores.length === 2
+      ? `Meio a meio: ${listaSabores[0]} + ${listaSabores[1]}`
+      : listaSabores[0];
+
+  const pizza = {
+    nome: "Pizza Personalizada",
+    tamanho: tamanho.value,
+    borda: borda ? borda.value : "Sem borda",
+    sabores: listaSabores,
+    preco: precoFinal,
+    descricao: descricao
+  };
+
+  console.log("Pizza:", pizza);
+
+  alert(`Pizza adicionada 🍕\nTotal: R$ ${precoFinal}`);
+
+  fecharMontePizza();
+};
 // =============================
 // FUNÇÃO SEPARADA: CARREGAR IMAGEM DE FUNDO
 // =============================
