@@ -177,19 +177,31 @@ async function carregarSabores() {
 
   container.innerHTML = "<p>Carregando sabores...</p>";
 
-  const { data, error } = await supabase
-    .from("produtos")
-    .select("*")
-    .limit(10);
+  // 🔥 BUSCA ID DA CATEGORIA "Pizza"
+  const { data: categorias } = await supabase
+    .from("categorias")
+    .select("id")
+    .ilike("titulo", "%pizza%")
+    .limit(1);
 
-  if (error) {
-    container.innerHTML = "<p>Erro ao carregar sabores</p>";
-    console.error("ERRO SUPABASE:", error); // 🔥 IMPORTANTE
-    alert(error.message); // 🔥 MOSTRA NA TELA
+  if (!categorias || categorias.length === 0) {
+    container.innerHTML = "<p>Categoria de pizza não encontrada</p>";
     return;
   }
 
-  console.log("DADOS:", data);
+  const categoriaPizzaId = categorias[0].id;
+
+  // 🔥 BUSCA SOMENTE PRODUTOS DA CATEGORIA PIZZA
+  const { data, error } = await supabase
+    .from("produtos")
+    .select("*")
+    .eq("categoria_id", categoriaPizzaId);
+
+  if (error) {
+    container.innerHTML = "<p>Erro ao carregar sabores</p>";
+    console.error(error);
+    return;
+  }
 
   container.innerHTML = "";
 
@@ -197,7 +209,12 @@ async function carregarSabores() {
     const item = document.createElement("label");
 
     item.innerHTML = `
-      <input type="checkbox" value="${produto.nome}" onchange="atualizarResumo()">
+      <input 
+        type="checkbox" 
+        value="${produto.nome}" 
+        data-preco="${produto.preco}"
+        onchange="atualizarResumo()"
+      >
       ${produto.nome} - R$ ${produto.preco}
     `;
 
@@ -214,6 +231,18 @@ window.addEventListener("click", function (event) {
   if (event.target === modal) fecharMontePizza();
 });
 
+function mostrarAlerta(msg) {
+  const modal = document.getElementById("modalAlerta");
+  const texto = document.getElementById("mensagemAlerta");
+
+  texto.textContent = msg; // 🔥 atualiza o texto
+  modal.style.display = "flex"; // abre modal corretamente
+}
+
+window.fecharAlerta = function () {
+  const modal = document.getElementById("modalAlerta");
+  modal.style.display = "none";
+};
 // ===============================
 // ATUALIZAR RESUMO (MEIO A MEIO)
 // ===============================
@@ -229,7 +258,7 @@ window.atualizarResumo = function () {
 
   // limitar 2 sabores
   if (listaSabores.length > 2) {
-    alert("Máximo 2 sabores (meio a meio)");
+    mostrarAlerta("Seleção limitada a até 2 sabores para a opção meio a meio.");
     saboresSelecionados[saboresSelecionados.length - 1].checked = false;
     return atualizarResumo();
   }

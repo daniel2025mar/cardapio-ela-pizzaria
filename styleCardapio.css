@@ -78,6 +78,97 @@ body{
   border-radius: 8px;
   cursor: pointer;
 }
+
+/* ===============================
+   MODAL ALERTA (SUPERIOR A TUDO)
+================================ */
+/* ===============================
+   MODAL ALERTA (SUPERIOR A TUDO)
+================================ */
+.modal-alerta {
+  display: none; /* 🔥 padrão: escondido */
+
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+
+  background: rgba(0, 0, 0, 0.6);
+
+  z-index: 999999;
+
+  align-items: center;
+  justify-content: center;
+}
+
+/* ===============================
+   CONTEÚDO DO MODAL
+================================ */
+.modal-alerta-content {
+  position: relative;
+  z-index: 1000000;
+
+  background: #fff;
+  padding: 25px 20px;
+  border-radius: 14px;
+
+  width: 85%;
+  max-width: 320px;
+
+  text-align: center;
+
+  box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+
+  animation: scaleIn 0.25s ease;
+}
+
+/* ===============================
+   TEXTO
+================================ */
+.modal-alerta-content p {
+  margin-bottom: 20px;
+  font-weight: 600;
+  font-size: 16px;
+  color: #333;
+}
+
+/* ===============================
+   BOTÃO
+================================ */
+.modal-alerta-content button {
+  background: #ff3c3c;
+  color: white;
+  border: none;
+
+  padding: 10px 25px;
+  border-radius: 8px;
+
+  font-size: 14px;
+  font-weight: bold;
+
+  cursor: pointer;
+  transition: 0.2s;
+}
+
+.modal-alerta-content button:hover {
+  background: #e62e2e;
+  transform: scale(1.05);
+}
+
+/* ===============================
+   ANIMAÇÃO
+================================ */
+@keyframes scaleIn {
+  from {
+    opacity: 0;
+    transform: scale(0.8);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
 /* =========================
 TOPO
 ========================= */
