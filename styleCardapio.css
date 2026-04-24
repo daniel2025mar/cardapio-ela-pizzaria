@@ -26,6 +26,22 @@ body{
   transition: 0.3s;
 }
 
+.lista-sabores {
+  max-height: 180px;
+  overflow-y: auto;
+  padding-right: 6px;
+  scroll-behavior: smooth;
+}
+
+/* estilo da barra de scroll (Chrome) */
+.lista-sabores::-webkit-scrollbar {
+  width: 6px;
+}
+
+.lista-sabores::-webkit-scrollbar-thumb {
+  background: #ccc;
+  border-radius: 10px;
+}
 .btn-pizza-topo:hover {
   background: #c1121f;
 }
@@ -49,8 +65,32 @@ body{
   margin: 30px auto;
   padding: 20px;
   border-radius: 12px;
-  max-height: 90vh;
-  overflow-y: auto;
+
+  max-height: 90vh;   /* 🔥 limita altura na tela */
+  overflow-y: auto;   /* 🔥 ativa scroll no modal */
+}
+
+/* SCROLL MODERNO */
+.lista-sabores::-webkit-scrollbar,
+.modal-pizza-content::-webkit-scrollbar {
+  width: 6px;
+}
+
+.lista-sabores::-webkit-scrollbar-track,
+.modal-pizza-content::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.lista-sabores::-webkit-scrollbar-thumb,
+.modal-pizza-content::-webkit-scrollbar-thumb {
+  background: #ddd;
+  border-radius: 10px;
+  transition: 0.3s;
+}
+
+.lista-sabores::-webkit-scrollbar-thumb:hover,
+.modal-pizza-content::-webkit-scrollbar-thumb:hover {
+  background: #640101;
 }
 
 .opcoes label,
@@ -79,9 +119,6 @@ body{
   cursor: pointer;
 }
 
-/* ===============================
-   MODAL ALERTA (SUPERIOR A TUDO)
-================================ */
 /* ===============================
    MODAL ALERTA (SUPERIOR A TUDO)
 ================================ */
