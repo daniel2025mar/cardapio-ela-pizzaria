@@ -81,6 +81,28 @@ body{
   background: transparent;
 }
 
+.preco {
+  color: #8B0000; /* vermelho escuro */
+  font-weight: bold;
+}
+
+.preview-total {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-top: 15px;
+  padding: 10px;
+  border-top: 1px solid #ccc;
+  font-size: 16px;
+}
+
+.preview-label {
+  font-weight: bold;
+}
+
+.preview-valor {
+  font-weight: bold;
+}
 .lista-sabores::-webkit-scrollbar-thumb,
 .modal-pizza-content::-webkit-scrollbar-thumb {
   background: #ddd;

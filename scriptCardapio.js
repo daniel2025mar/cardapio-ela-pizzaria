@@ -177,7 +177,6 @@ async function carregarSabores() {
 
   container.innerHTML = "<p>Carregando sabores...</p>";
 
-  // 🔥 BUSCA ID DA CATEGORIA "Pizza"
   const { data: categorias } = await supabase
     .from("categorias")
     .select("id")
@@ -191,7 +190,6 @@ async function carregarSabores() {
 
   const categoriaPizzaId = categorias[0].id;
 
-  // 🔥 BUSCA SOMENTE PRODUTOS DA CATEGORIA PIZZA
   const { data, error } = await supabase
     .from("produtos")
     .select("*")
@@ -208,14 +206,16 @@ async function carregarSabores() {
   data.forEach((produto) => {
     const item = document.createElement("label");
 
+    const precoMetade = produto.preco / 2;
+
     item.innerHTML = `
       <input 
         type="checkbox" 
         value="${produto.nome}" 
-        data-preco="${produto.preco}"
+        data-preco="${produto.preco}" 
         onchange="atualizarResumo()"
       >
-      ${produto.nome} - R$ ${produto.preco}
+     ${produto.nome} - <span class="preco">R$ ${precoMetade.toFixed(2)}</span>
     `;
 
     container.appendChild(item);
@@ -253,22 +253,29 @@ window.atualizarResumo = function () {
   const saboresSelecionados = document.querySelectorAll('.lista-sabores input:checked');
 
   let listaSabores = [];
+  let precos = [];
 
-  saboresSelecionados.forEach((s) => listaSabores.push(s.value));
+  saboresSelecionados.forEach((s) => {
+    listaSabores.push(s.value);
+    precos.push(parseFloat(s.dataset.preco)); // preço cheio
+  });
 
-  // limitar 2 sabores
+  // 🔥 limitar 2 sabores
   if (listaSabores.length > 2) {
     mostrarAlerta("Seleção limitada a até 2 sabores para a opção meio a meio.");
     saboresSelecionados[saboresSelecionados.length - 1].checked = false;
     return atualizarResumo();
   }
 
+  // 🔥 Atualizar tamanho
   document.getElementById("resumoTamanho").textContent =
     tamanho ? tamanho.value : "-";
 
+  // 🔥 Atualizar borda
   document.getElementById("resumoBorda").textContent =
     borda ? borda.value : "-";
 
+  // 🔥 Atualizar sabores
   let texto = "-";
 
   if (listaSabores.length === 1) {
@@ -278,6 +285,33 @@ window.atualizarResumo = function () {
   }
 
   document.getElementById("resumoSabores").textContent = texto;
+
+  // ===============================
+  // 🔥 PREÇO (SOMA DAS METADES)
+  // ===============================
+  let precoPreview = 0;
+
+  if (precos.length === 1) {
+    // 👉 mostra metade
+    precoPreview = precos[0] / 2;
+  } else if (precos.length === 2) {
+    // 👉 soma das metades (CORRETO PRA VOCÊ)
+    precoPreview = (precos[0] / 2) + (precos[1] / 2);
+  }
+
+  const valorFormatado = "R$ " + precoPreview.toFixed(2);
+
+  // 🔥 Atualiza PREVIEW (acima do botão)
+  const elPreview = document.getElementById("previewPreco");
+  if (elPreview) {
+    elPreview.textContent = valorFormatado;
+  }
+
+  // 🔥 Atualiza RESUMO (se existir)
+  const elResumo = document.getElementById("resumoPreco");
+  if (elResumo) {
+    elResumo.textContent = valorFormatado;
+  }
 };
 
 // ===============================
@@ -299,12 +333,21 @@ window.finalizarPizza = function () {
 
   sabores.forEach((s) => {
     listaSabores.push(s.value);
-    precos.push(parseFloat(s.dataset.preco));
+    precos.push(parseFloat(s.dataset.preco)); // preço cheio
   });
 
-  // 🔥 REGRA PROFISSIONAL (MEIO A MEIO)
-  const precoFinal = Math.max(...precos);
+  // ===============================
+  // 🔥 REGRA (SOMA DAS METADES)
+  // ===============================
+  let precoFinal = 0;
 
+  if (precos.length === 1) {
+    precoFinal = precos[0]; // pizza inteira
+  } else if (precos.length === 2) {
+    precoFinal = (precos[0] / 2) + (precos[1] / 2); // soma das metades
+  }
+
+  // 🔥 descrição
   let descricao =
     listaSabores.length === 2
       ? `Meio a meio: ${listaSabores[0]} + ${listaSabores[1]}`
@@ -321,7 +364,7 @@ window.finalizarPizza = function () {
 
   console.log("Pizza:", pizza);
 
-  alert(`Pizza adicionada 🍕\nTotal: R$ ${precoFinal}`);
+  alert(`Pizza adicionada 🍕\nTotal: R$ ${precoFinal.toFixed(2)}`);
 
   fecharMontePizza();
 };
