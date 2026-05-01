@@ -317,6 +317,7 @@ window.fecharAlerta = function () {
 window.atualizarResumo = function () {
   const tamanho = document.querySelector('input[name="tamanho"]:checked');
   const borda = document.querySelector('input[name="borda"]:checked');
+  const tipoPedido = document.querySelector('input[name="tipoPedido"]:checked');
   const saboresSelecionados = document.querySelectorAll('.lista-sabores input:checked');
 
   let listaSabores = [];
@@ -334,7 +335,6 @@ window.atualizarResumo = function () {
   const bordaContainer = document.querySelector('.borda-container');
 
   if (listaSabores.length === 0) {
-    // 🔒 BLOQUEIA
     inputsBorda.forEach(b => {
       b.disabled = true;
       b.checked = false;
@@ -345,7 +345,6 @@ window.atualizarResumo = function () {
     }
 
   } else {
-    // 🔓 LIBERA
     const estavaDesativado = inputsBorda[0].disabled;
 
     inputsBorda.forEach(b => {
@@ -355,7 +354,6 @@ window.atualizarResumo = function () {
     if (bordaContainer) {
       bordaContainer.classList.remove("borda-desativada");
 
-      // 🔥 animação só quando muda de bloqueado → liberado
       if (estavaDesativado) {
         bordaContainer.classList.add("borda-ativa");
 
@@ -375,15 +373,19 @@ window.atualizarResumo = function () {
     return atualizarResumo();
   }
 
-  // 🔥 Atualizar tamanho
+  // ===============================
+  // 🔥 ATUALIZAR RESUMO TEXTO
+  // ===============================
+
   document.getElementById("resumoTamanho").textContent =
     tamanho ? tamanho.value : "-";
 
-  // 🔥 Atualizar borda
   document.getElementById("resumoBorda").textContent =
     borda ? borda.value : "-";
 
-  // 🔥 Atualizar sabores
+  document.getElementById("resumoTipo").textContent =
+    tipoPedido ? tipoPedido.value : "-";
+
   let texto = "-";
 
   if (listaSabores.length === 1) {
@@ -395,7 +397,7 @@ window.atualizarResumo = function () {
   document.getElementById("resumoSabores").textContent = texto;
 
   // ===============================
-  // 🔥 PREÇO BASE (SABORES)
+  // 🔥 PREÇO BASE
   // ===============================
   let precoPreview = 0;
 
@@ -416,6 +418,29 @@ window.atualizarResumo = function () {
 
   precoPreview += precoBorda;
 
+  // ===============================
+  // 🚚 TAXA DE ENTREGA
+  // ===============================
+  let taxaEntrega = 0;
+  const linhaTaxa = document.getElementById("linhaTaxa");
+
+  if (tipoPedido && tipoPedido.value === "Entrega") {
+    taxaEntrega = 3;
+
+    if (linhaTaxa) linhaTaxa.style.display = "block";
+
+    document.getElementById("resumoTaxa").textContent =
+      "R$ " + taxaEntrega.toFixed(2);
+
+  } else {
+    if (linhaTaxa) linhaTaxa.style.display = "none";
+  }
+
+  precoPreview += taxaEntrega;
+
+  // ===============================
+  // 💰 TOTAL FINAL
+  // ===============================
   const valorFormatado = "R$ " + precoPreview.toFixed(2);
 
   document.getElementById("previewPreco").textContent = valorFormatado;
@@ -430,13 +455,19 @@ window.atualizarResumo = function () {
 // FINALIZAR PIZZA
 // ===============================
 
-window.finalizarPizza = function () {
+window.finalizarPizza = async function () {
   const tamanho = document.querySelector('input[name="tamanho"]:checked');
   const borda = document.querySelector('input[name="borda"]:checked');
+  const tipoPedido = document.querySelector('input[name="tipoPedido"]:checked');
   const sabores = document.querySelectorAll('.lista-sabores input:checked');
 
   if (!tamanho || sabores.length === 0) {
     alert("Selecione tamanho e sabor!");
+    return;
+  }
+
+  if (!tipoPedido) {
+    alert("Selecione o tipo de pedido!");
     return;
   }
 
@@ -445,41 +476,99 @@ window.finalizarPizza = function () {
 
   sabores.forEach((s) => {
     listaSabores.push(s.value);
-    precos.push(parseFloat(s.dataset.preco)); // preço cheio
+    precos.push(parseFloat(s.dataset.preco));
   });
 
   // ===============================
-  // 🔥 REGRA (SOMA DAS METADES)
+  // 💰 PREÇO BASE
   // ===============================
   let precoFinal = 0;
 
   if (precos.length === 1) {
-    precoFinal = precos[0]; // pizza inteira
+    precoFinal = precos[0];
   } else if (precos.length === 2) {
-    precoFinal = (precos[0] / 2) + (precos[1] / 2); // soma das metades
+    precoFinal = (precos[0] / 2) + (precos[1] / 2);
   }
 
-  // 🔥 descrição
+  // ===============================
+  // 🚚 TAXA DE ENTREGA
+  // ===============================
+  let taxaEntrega = 0;
+
+  if (tipoPedido.value === "Entrega") {
+    taxaEntrega = 3;
+    precoFinal += taxaEntrega;
+  }
+
+  // ===============================
+  // 📝 DESCRIÇÃO
+  // ===============================
   let descricao =
     listaSabores.length === 2
       ? `Meio a meio: ${listaSabores[0]} + ${listaSabores[1]}`
       : listaSabores[0];
 
-  const pizza = {
-    nome: "Pizza Personalizada",
-    tamanho: tamanho.value,
-    borda: borda ? borda.value : "Sem borda",
-    sabores: listaSabores,
-    preco: precoFinal,
-    descricao: descricao
-  };
+  // ===============================
+  // 📱 BUSCAR WHATSAPP
+  // ===============================
+  let numeroEmpresa = await buscarWhatsAppEmpresa();
 
-  console.log("Pizza:", pizza);
+  if (!numeroEmpresa) {
+    alert("Erro ao obter WhatsApp da empresa");
+    return;
+  }
 
-  alert(`Pizza adicionada 🍕\nTotal: R$ ${precoFinal.toFixed(2)}`);
+  // 🔥 limpar e adicionar 55
+  numeroEmpresa = numeroEmpresa.replace(/\D/g, '');
+
+  if (!numeroEmpresa.startsWith("55")) {
+    numeroEmpresa = "55" + numeroEmpresa;
+  }
+
+  // ===============================
+  // ✉️ MENSAGEM (SEM ENCODE AQUI)
+  // ===============================
+  let mensagemTexto = `🍕 Novo Pedido
+
+📦 Tipo: ${tipoPedido.value}
+📏 Tamanho: ${tamanho.value}
+🧀 Borda: ${borda ? borda.value : "Sem borda"}
+🍕 Sabores: ${descricao}
+`;
+
+  if (tipoPedido.value === "Entrega") {
+    mensagemTexto += `🚚 Taxa de entrega: R$ ${taxaEntrega.toFixed(2)}\n`;
+  }
+
+  mensagemTexto += `\n💰 Total: R$ ${precoFinal.toFixed(2)}`;
+
+  // 🔥 CORREÇÃO DOS ÍCONES (AQUI ESTÁ O SEGREDO)
+  const mensagem = encodeURIComponent(mensagemTexto);
+
+  // ===============================
+  // 🚀 ABRIR WHATSAPP
+  // ===============================
+  const url = `https://wa.me/${numeroEmpresa}?text=${mensagem}`;
+
+  window.open(url, "_blank");
 
   fecharMontePizza();
 };
+
+async function buscarWhatsAppEmpresa() {
+  const { data, error } = await supabase
+    .from("empresa")
+    .select("whatsapp")
+    .limit(1)
+    .single();
+
+  if (error) {
+    console.error("Erro ao buscar WhatsApp:", error);
+    return null;
+  }
+
+  return data.whatsapp;
+}
 // =============================
 // FUNÇÃO SEPARADA: CARREGAR IMAGEM DE FUNDO
 // =============================
@@ -933,6 +1022,10 @@ document.addEventListener("keydown", function (event) {
         document.title = data.nome + " - Cardápio";
       }
     }
+
+    
+
+    
 // =========================
 // ELEMENTOS
 // =========================
@@ -1301,6 +1394,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
 });
 
+
 // ===============================
 // 🔥 CONFIGURAÇÃO DE VERSÃO
 // ===============================
@@ -1344,6 +1438,7 @@ window.fecharModalAtualizacoes = function () {
 // ===============================
 document.addEventListener("DOMContentLoaded", () => {
 
+  carregarNomeEmpresa();
   const barra = document.querySelector(".barra-atualizacoes");
   const versaoSalva = localStorage.getItem("versaoAtualizacoes");
 
@@ -1363,3 +1458,6 @@ document.addEventListener("DOMContentLoaded", () => {
     }
   }
 });
+
+
+

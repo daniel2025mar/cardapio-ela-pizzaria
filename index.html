@@ -58,31 +58,37 @@ href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"
 
       <div class="card-update novo">
         <span class="badge">NOVO</span>
+        <p>📤 Agora é possível enviar pedidos diretamente para a empresa de forma rápida e segura</p>
+        <small>Atualizado hoje</small>
+      </div>
+
+      <div class="card-update novo">
+        <span class="badge">NOVO</span>
         <p>🍕 Agora você pode montar sua pizza personalizada</p>
         <small>Atualizado hoje</small>
       </div>
 
       <div class="card-update melhoria">
         <span class="badge">MELHORIA</span>
-        <p>⚡ Sistema mais rápido e otimizado</p>
+        <p>⚡ Sistema mais rápido e otimizado para melhor desempenho</p>
         <small>Atualizado recentemente</small>
       </div>
 
       <div class="card-update novo">
         <span class="badge">NOVO</span>
-        <p>🧀 Bordas recheadas adicionadas</p>
+        <p>🧀 Bordas recheadas adicionadas ao sistema de personalização</p>
         <small>Nova funcionalidade</small>
       </div>
 
       <div class="card-update update">
         <span class="badge">UPDATE</span>
-        <p>🎨 Novo visual mais moderno</p>
+        <p>🎨 Novo visual mais moderno e intuitivo para melhor experiência</p>
         <small>Interface redesenhada</small>
       </div>
 
     </div>
 
-  </div>
+</div>
 
 </div>
 <!-- ======================= TOPO DO RESTAURANTE ======================= -->
@@ -158,92 +164,102 @@ href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"
     <h3>Tamanho</h3>
     <div class="opcoes">
       <label>
-  <input type="radio" name="tamanho" value="Pequena" onchange="trocarTamanho()"> 
-  Pequena
-</label>
+        <input type="radio" name="tamanho" value="Pequena" onchange="trocarTamanho()"> 
+        Pequena
+      </label>
 
-<label>
-  <input type="radio" name="tamanho" value="Grande" onchange="trocarTamanho()"> 
-  Grande
-</label>
+      <label>
+        <input type="radio" name="tamanho" value="Grande" onchange="trocarTamanho()"> 
+        Grande
+      </label>
     </div>
 
     <!-- SABORES -->
     <h3>Escolha os Sabores</h3>
-    <div class="lista-sabores">
-
-      <label><input type="checkbox" value="Calabresa" onchange="atualizarResumo()"> Calabresa</label>
-      <label><input type="checkbox" value="Frango" onchange="atualizarResumo()"> Frango</label>
-      <label><input type="checkbox" value="Mussarela" onchange="atualizarResumo()"> Mussarela</label>
-      <label><input type="checkbox" value="Portuguesa" onchange="atualizarResumo()"> Portuguesa</label>
-      <label><input type="checkbox" value="4 Queijos" onchange="atualizarResumo()"> 4 Queijos</label>
-
-    </div>
+    <div class="lista-sabores"></div>
 
     <!-- BORDA -->
     <h3>Borda</h3>
     <div class="opcoes borda-container borda-desativada">
 
-  <label>
-    <input 
-      type="radio" 
-      name="borda" 
-      value="Sem borda" 
-      data-preco="0"
-      onchange="atualizarResumo()" 
-      disabled
-    > 
-    Sem borda
-  </label>
+      <label>
+        <input 
+          type="radio" 
+          name="borda" 
+          value="Sem borda" 
+          data-preco="0"
+          onchange="atualizarResumo()" 
+          disabled
+        > 
+        Sem borda
+      </label>
 
-  <label>
-    <input 
-      type="radio" 
-      name="borda" 
-      value="Requeijão" 
-      data-preco="13" 
-      onchange="atualizarResumo()" 
-      disabled
-    > 
-    Requeijão (+R$ 13,00)
-  </label>
+      <label>
+        <input 
+          type="radio" 
+          name="borda" 
+          value="Requeijão" 
+          data-preco="13" 
+          onchange="atualizarResumo()" 
+          disabled
+        > 
+        Requeijão (+R$ 13,00)
+      </label>
 
-  <label>
-    <input 
-      type="radio" 
-      name="borda" 
-      value="Chocolate" 
-      data-preco="13" 
-      onchange="atualizarResumo()" 
-      disabled
-    > 
-    Chocolate (+R$ 13,00)
-  </label>
+      <label>
+        <input 
+          type="radio" 
+          name="borda" 
+          value="Chocolate" 
+          data-preco="13" 
+          onchange="atualizarResumo()" 
+          disabled
+        > 
+        Chocolate (+R$ 13,00)
+      </label>
 
-</div>
+    </div>
 
-    <!-- 🔥 RESUMO DA PIZZA -->
+    <!-- 🔥 TIPO DE PEDIDO -->
+    <h3>Tipo de Pedido</h3>
+    <div class="opcoes">
+      <label>
+        <input type="radio" name="tipoPedido" value="Retirar no balcão" onchange="atualizarResumo()">
+        Retirar no balcão
+      </label>
+
+      <label>
+        <input type="radio" name="tipoPedido" value="Entrega" onchange="atualizarResumo()">
+        Entrega
+      </label>
+    </div>
+
+    <p id="linhaTaxa" style="display: none;">
+  <strong>Taxa:</strong> <span id="resumoTaxa">R$ 0,00</span>
+</p>
+    <!-- 🔥 RESUMO -->
     <div class="resumo-pizza">
       <h3>Sua Pizza</h3>
 
+      <p><strong>Tipo:</strong> <span id="resumoTipo">-</span></p>
       <p><strong>Tamanho:</strong> <span id="resumoTamanho">-</span></p>
       <p><strong>Sabores:</strong> <span id="resumoSabores">-</span></p>
       <p><strong>Borda:</strong> <span id="resumoBorda">-</span></p>
 
     </div>
 
-
-    <!--Previa do pedido-->
+    <!-- PREVIEW DO TOTAL -->
     <div class="preview-total">
-  <span class="preview-label">Preview:</span>
-  <span class="preview-valor">
-    Total: <span id="previewPreco" class="preco">R$ 0,00</span>
-  </span>
-</div>
+      <span class="preview-label">Preview:</span>
+      <span class="preview-valor">
+        Total: <span id="previewPreco" class="preco">R$ 0,00</span>
+      </span>
+    </div>
+
     <!-- BOTÃO -->
-    <button class="btn-add-pizza" onclick="finalizarPizza()">
-      Adicionar ao Carrinho
-    </button>
+   <button class="btn-add-pizza" onclick="finalizarPizza()">
+  <i class="fa-solid fa-paper-plane"></i> Enviar Pedido
+</button>
 
   </div>
 
