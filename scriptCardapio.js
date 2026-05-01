@@ -1304,7 +1304,7 @@ document.addEventListener("DOMContentLoaded", () => {
 // ===============================
 // 🔥 CONFIGURAÇÃO DE VERSÃO
 // ===============================
-const VERSAO_ATUAL = "1.0.1";
+const VERSAO_ATUAL = "1.0.0";
 
 // ===============================
 // 🔥 ABRIR MODAL
