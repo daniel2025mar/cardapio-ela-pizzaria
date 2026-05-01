@@ -103,6 +103,125 @@ body{
 .preview-valor {
   font-weight: bold;
 }
+
+@keyframes piscarVermelho {
+  0% { opacity: 1; }
+  50% { opacity: 0.2; }
+  100% { opacity: 1; }
+}
+
+.alerta-tamanho {
+  color: red;
+  font-weight: bold;
+  animation: piscarVermelho 1s infinite;
+  text-align: center;
+}
+
+/* animação de destaque */
+/* container */
+.borda-container {
+  transition: all 0.3s ease;
+}
+
+/* desativado */
+.borda-desativada {
+  opacity: 0.4;
+  pointer-events: none;
+}
+
+/* labels base */
+.borda-container label {
+  display: block;
+  padding: 12px;
+  border-radius: 12px;
+  margin-bottom: 6px;
+  cursor: pointer;
+
+  background: #fff;
+  color: #000;
+
+  border: 1px solid rgba(0,0,0,0.1);
+
+  transition: all 0.3s ease;
+  transform: translateY(0);
+
+  position: relative;
+  overflow: hidden;
+}
+
+/* 🔥 ANIMAÇÃO AO LIBERAR */
+.borda-ativa label {
+  animation: itemRise 0.4s ease;
+  opacity: 1;
+}
+
+/* animação de entrada */
+@keyframes itemRise {
+  0% {
+    transform: translateY(10px);
+    opacity: 0;
+  }
+  60% {
+    transform: translateY(-2px);
+    opacity: 1;
+  }
+  100% {
+    transform: translateY(0);
+  }
+}
+
+/* ========================= */
+/* 🔥 HOVER PREMIUM */
+/* ========================= */
+
+.borda-container label:hover {
+  transform: translateY(-3px) scale(1.02);
+
+  background: linear-gradient(135deg, #ffffff, #f8f8f8);
+
+  box-shadow: 
+    0 8px 20px rgba(0,0,0,0.12),
+    0 0 0 1px rgba(255, 200, 0, 0.3);
+
+  border: 1px solid rgba(255, 200, 0, 0.5);
+}
+
+/* 🔥 brilho animado no hover */
+.borda-container label::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: -100%;
+
+  width: 100%;
+  height: 100%;
+
+  background: linear-gradient(
+    120deg,
+    transparent,
+    rgba(255, 215, 0, 0.4),
+    transparent
+  );
+
+  transition: 0.5s;
+}
+
+/* ativa brilho ao passar mouse */
+.borda-container label:hover::before {
+  left: 100%;
+}
+
+/* ========================= */
+/* 🔥 QUANDO SELECIONADO */
+/* ========================= */
+
+.borda-container input:checked + span {
+  font-weight: bold;
+}
+
+.borda-container input:checked {
+  accent-color: #ff9800;
+}
 .lista-sabores::-webkit-scrollbar-thumb,
 .modal-pizza-content::-webkit-scrollbar-thumb {
   background: #ddd;

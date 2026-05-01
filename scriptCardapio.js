@@ -160,7 +160,13 @@ window.abrirMontePizza = async function () {
   modal.style.display = "block";
   document.body.style.overflow = "hidden";
 
-  await carregarSabores(); // 🔥 carrega do banco
+  // 🔒 desativa bordas no início
+  document.querySelectorAll('input[name="borda"]').forEach(b => {
+    b.disabled = true;
+    b.checked = false;
+  });
+
+  await carregarSabores();
 };
 
 window.fecharMontePizza = function () {
@@ -193,7 +199,11 @@ async function carregarSabores() {
   console.log("Tamanho selecionado:", tamanhoSelecionado);
 
   if (!tamanhoSelecionado) {
-    container.innerHTML = "<p>Escolha o tamanho primeiro 👆</p>";
+    container.innerHTML = `
+  <p class="alerta-tamanho">
+    ⚠️ Escolha o tamanho primeiro 👆
+  </p>
+`;
     return;
   }
 
@@ -314,10 +324,51 @@ window.atualizarResumo = function () {
 
   saboresSelecionados.forEach((s) => {
     listaSabores.push(s.value);
-    precos.push(parseFloat(s.dataset.preco)); // preço cheio
+    precos.push(parseFloat(s.dataset.preco));
   });
 
+  // ===============================
+  // 🔒 CONTROLE + ANIMAÇÃO DA BORDA
+  // ===============================
+  const inputsBorda = document.querySelectorAll('input[name="borda"]');
+  const bordaContainer = document.querySelector('.borda-container');
+
+  if (listaSabores.length === 0) {
+    // 🔒 BLOQUEIA
+    inputsBorda.forEach(b => {
+      b.disabled = true;
+      b.checked = false;
+    });
+
+    if (bordaContainer) {
+      bordaContainer.classList.add("borda-desativada");
+    }
+
+  } else {
+    // 🔓 LIBERA
+    const estavaDesativado = inputsBorda[0].disabled;
+
+    inputsBorda.forEach(b => {
+      b.disabled = false;
+    });
+
+    if (bordaContainer) {
+      bordaContainer.classList.remove("borda-desativada");
+
+      // 🔥 animação só quando muda de bloqueado → liberado
+      if (estavaDesativado) {
+        bordaContainer.classList.add("borda-ativa");
+
+        setTimeout(() => {
+          bordaContainer.classList.remove("borda-ativa");
+        }, 600);
+      }
+    }
+  }
+
+  // ===============================
   // 🔥 limitar 2 sabores
+  // ===============================
   if (listaSabores.length > 2) {
     mostrarAlerta("Seleção limitada a até 2 sabores para a opção meio a meio.");
     saboresSelecionados[saboresSelecionados.length - 1].checked = false;
@@ -344,27 +395,31 @@ window.atualizarResumo = function () {
   document.getElementById("resumoSabores").textContent = texto;
 
   // ===============================
-  // 🔥 PREÇO (SOMA DAS METADES)
+  // 🔥 PREÇO BASE (SABORES)
   // ===============================
   let precoPreview = 0;
 
   if (precos.length === 1) {
-    // 👉 mostra metade
     precoPreview = precos[0] / 2;
   } else if (precos.length === 2) {
-    // 👉 soma das metades (CORRETO PRA VOCÊ)
     precoPreview = (precos[0] / 2) + (precos[1] / 2);
   }
 
-  const valorFormatado = "R$ " + precoPreview.toFixed(2);
+  // ===============================
+  // 🔥 PREÇO DA BORDA
+  // ===============================
+  let precoBorda = 0;
 
-  // 🔥 Atualiza PREVIEW (acima do botão)
-  const elPreview = document.getElementById("previewPreco");
-  if (elPreview) {
-    elPreview.textContent = valorFormatado;
+  if (borda) {
+    precoBorda = parseFloat(borda.dataset.preco) || 0;
   }
 
-  // 🔥 Atualiza RESUMO (se existir)
+  precoPreview += precoBorda;
+
+  const valorFormatado = "R$ " + precoPreview.toFixed(2);
+
+  document.getElementById("previewPreco").textContent = valorFormatado;
+
   const elResumo = document.getElementById("resumoPreco");
   if (elResumo) {
     elResumo.textContent = valorFormatado;

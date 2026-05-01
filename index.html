@@ -134,11 +134,45 @@ href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"
 
     <!-- BORDA -->
     <h3>Borda</h3>
-    <div class="opcoes">
-      <label><input type="radio" name="borda" value="Sem borda" onchange="atualizarResumo()"> Sem borda</label>
-      <label><input type="radio" name="borda" value="Catupiry" onchange="atualizarResumo()"> Requeijão</label>
-      <label><input type="radio" name="borda" value="Cheddar" onchange="atualizarResumo()"> Chocolate</label>
-    </div>
+    <div class="opcoes borda-container borda-desativada">
+
+  <label>
+    <input 
+      type="radio" 
+      name="borda" 
+      value="Sem borda" 
+      data-preco="0"
+      onchange="atualizarResumo()" 
+      disabled
+    > 
+    Sem borda
+  </label>
+
+  <label>
+    <input 
+      type="radio" 
+      name="borda" 
+      value="Requeijão" 
+      data-preco="13" 
+      onchange="atualizarResumo()" 
+      disabled
+    > 
+    Requeijão (+R$ 13,00)
+  </label>
+
+  <label>
+    <input 
+      type="radio" 
+      name="borda" 
+      value="Chocolate" 
+      data-preco="13" 
+      onchange="atualizarResumo()" 
+      disabled
+    > 
+    Chocolate (+R$ 13,00)
+  </label>
+
+</div>
 
     <!-- 🔥 RESUMO DA PIZZA -->
     <div class="resumo-pizza">
