@@ -36,7 +36,55 @@ href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"
     </div>
 </div>
 
+<div class="barra-atualizacoes" onclick="abrirModalAtualizacoes()">
+  <span>🚀 Atualizações do Cardápio</span>
+</div>
 
+<!-- ================= MODAL ATUALIZAÇÕES ================= -->
+<div id="modalAtualizacoes" class="modal-atualizacoes">
+
+  <div class="modal-atualizacoes-content">
+
+    <!-- fechar -->
+    <span class="fechar" onclick="fecharModalAtualizacoes()">&times;</span>
+
+    <h2>🚀 Atualizações do Cardápio</h2>
+
+    <p class="subtitulo-update">
+      Confira as novidades mais recentes do sistema
+    </p>
+
+    <div class="lista-updates">
+
+      <div class="card-update novo">
+        <span class="badge">NOVO</span>
+        <p>🍕 Agora você pode montar sua pizza personalizada</p>
+        <small>Atualizado hoje</small>
+      </div>
+
+      <div class="card-update melhoria">
+        <span class="badge">MELHORIA</span>
+        <p>⚡ Sistema mais rápido e otimizado</p>
+        <small>Atualizado recentemente</small>
+      </div>
+
+      <div class="card-update novo">
+        <span class="badge">NOVO</span>
+        <p>🧀 Bordas recheadas adicionadas</p>
+        <small>Nova funcionalidade</small>
+      </div>
+
+      <div class="card-update update">
+        <span class="badge">UPDATE</span>
+        <p>🎨 Novo visual mais moderno</p>
+        <small>Interface redesenhada</small>
+      </div>
+
+    </div>
+
+  </div>
+
+</div>
 <!-- ======================= TOPO DO RESTAURANTE ======================= -->
 <header class="topo-cardapio">
     <div class="img-fundo">

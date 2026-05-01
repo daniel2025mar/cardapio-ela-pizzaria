@@ -1301,3 +1301,65 @@ document.addEventListener("DOMContentLoaded", () => {
 
 });
 
+// ===============================
+// 🔥 CONFIGURAÇÃO DE VERSÃO
+// ===============================
+const VERSAO_ATUAL = "1.0.1";
+
+// ===============================
+// 🔥 ABRIR MODAL
+// ===============================
+window.abrirModalAtualizacoes = function () {
+  const modal = document.getElementById("modalAtualizacoes");
+  const barra = document.querySelector(".barra-atualizacoes");
+
+  if (!modal) return;
+
+  modal.style.display = "flex";
+  document.body.style.overflow = "hidden";
+
+  // 🔥 MARCA COMO VISTO
+  localStorage.setItem("versaoAtualizacoes", VERSAO_ATUAL);
+
+  // 🔥 ESCONDE A BARRA
+  if (barra) {
+    barra.style.display = "none";
+  }
+};
+
+// ===============================
+// 🔥 FECHAR MODAL
+// ===============================
+window.fecharModalAtualizacoes = function () {
+  const modal = document.getElementById("modalAtualizacoes");
+
+  if (!modal) return;
+
+  modal.style.display = "none";
+  document.body.style.overflow = "auto";
+};
+
+// ===============================
+// 🔥 INICIALIZAÇÃO
+// ===============================
+document.addEventListener("DOMContentLoaded", () => {
+
+  const barra = document.querySelector(".barra-atualizacoes");
+  const versaoSalva = localStorage.getItem("versaoAtualizacoes");
+
+  // 🔥 SE FOR NOVA ATUALIZAÇÃO
+  if (versaoSalva !== VERSAO_ATUAL) {
+
+    // 👉 MOSTRA A BARRA
+    if (barra) {
+      barra.style.display = "block";
+    }
+
+  } else {
+
+    // 👉 ESCONDE
+    if (barra) {
+      barra.style.display = "none";
+    }
+  }
+});
