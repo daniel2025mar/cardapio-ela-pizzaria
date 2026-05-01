@@ -109,9 +109,15 @@ href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"
     <!-- TAMANHO -->
     <h3>Tamanho</h3>
     <div class="opcoes">
-      <label><input type="radio" name="tamanho" value="Pequena"> Pequena</label>
-      
-      <label><input type="radio" name="tamanho" value="Grande"> Grande</label>
+      <label>
+  <input type="radio" name="tamanho" value="Pequena" onchange="trocarTamanho()"> 
+  Pequena
+</label>
+
+<label>
+  <input type="radio" name="tamanho" value="Grande" onchange="trocarTamanho()"> 
+  Grande
+</label>
     </div>
 
     <!-- SABORES -->

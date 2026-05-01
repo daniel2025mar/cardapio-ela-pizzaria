@@ -172,11 +172,32 @@ window.fecharMontePizza = function () {
 // CARREGAR SABORES DO BANCO
 // ===============================
 
+window.trocarTamanho = function () {
+  console.log("trocou tamanho");
+
+  document.querySelectorAll('.lista-sabores input').forEach(input => {
+    input.checked = false;
+  });
+
+  carregarSabores();
+  atualizarResumo();
+};
+
 async function carregarSabores() {
   const container = document.querySelector(".lista-sabores");
-
   container.innerHTML = "<p>Carregando sabores...</p>";
 
+  // 🔥 pegar tamanho selecionado
+  const tamanhoSelecionado = document.querySelector('input[name="tamanho"]:checked')?.value;
+
+  console.log("Tamanho selecionado:", tamanhoSelecionado);
+
+  if (!tamanhoSelecionado) {
+    container.innerHTML = "<p>Escolha o tamanho primeiro 👆</p>";
+    return;
+  }
+
+  // 🔥 buscar categoria pizza
   const { data: categorias } = await supabase
     .from("categorias")
     .select("id")
@@ -190,38 +211,74 @@ async function carregarSabores() {
 
   const categoriaPizzaId = categorias[0].id;
 
-  const { data, error } = await supabase
+  // 🔥 buscar produtos (AGORA COM PREÇO)
+  const { data: produtos, error } = await supabase
     .from("produtos")
-    .select("*")
+    .select("id, nome, preco")
     .eq("categoria_id", categoriaPizzaId);
 
   if (error) {
-    container.innerHTML = "<p>Erro ao carregar sabores</p>";
+    container.innerHTML = "<p>Erro ao carregar produtos</p>";
     console.error(error);
+    return;
+  }
+
+  // 🔥 buscar variações (preços por tamanho)
+  const { data: variacoes, error: errorVar } = await supabase
+    .from("produto_variacoes")
+    .select("*")
+    .ilike("tamanho", tamanhoSelecionado); // 🔥 mais seguro que .eq
+
+  console.log("Variações do banco:", variacoes);
+
+  if (errorVar) {
+    container.innerHTML = "<p>Erro ao carregar preços</p>";
+    console.error(errorVar);
     return;
   }
 
   container.innerHTML = "";
 
-  data.forEach((produto) => {
-    const item = document.createElement("label");
+  produtos.forEach((produto) => {
 
-    const precoMetade = produto.preco / 2;
+    let preco = 0;
+
+    if (tamanhoSelecionado.toLowerCase() === "pequena") {
+
+      // 🔥 preço vem da tabela produto_variacoes
+      const variacao = variacoes.find(v => 
+        String(v.produto_id) === String(produto.id)
+      );
+
+      if (!variacao) return;
+
+      preco = parseFloat(variacao.preco);
+
+    } else {
+
+      // 🔥 preço vem direto da tabela produtos (GRANDE)
+      preco = parseFloat(produto.preco);
+
+      if (!preco) return;
+    }
+
+    const precoMetade = preco / 2;
+
+    const item = document.createElement("label");
 
     item.innerHTML = `
       <input 
         type="checkbox" 
         value="${produto.nome}" 
-        data-preco="${produto.preco}" 
+        data-preco="${preco}" 
         onchange="atualizarResumo()"
       >
-     ${produto.nome} - <span class="preco">R$ ${precoMetade.toFixed(2)}</span>
+      ${produto.nome} - <span class="preco">R$ ${precoMetade.toFixed(2)}</span>
     `;
 
     container.appendChild(item);
   });
 }
-
 // ===============================
 // FECHAR AO CLICAR FORA
 // ===============================
