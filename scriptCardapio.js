@@ -9,6 +9,117 @@ const SUPABASE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZ
 const supabase = createClient(SUPABASE_URL, SUPABASE_KEY);
 
 // =============================
+// VALIDAÇÃO GLOBAL DE DADOS
+// =============================
+function semDados(data) {
+  return (
+    data === null ||
+    data === undefined ||
+    (Array.isArray(data) && data.length === 0)
+  );
+}
+
+// =============================
+// MODAL ERRO CONEXÃO
+// =============================
+function mostrarErroConexao(mensagem = "") {
+  const modal = document.getElementById("modalErroConexao");
+  const texto = modal.querySelector("p");
+
+  let codigoErro = "ERROR";
+
+  // 🔥 IDENTIFICA O TIPO DE ERRO
+  if (mensagem.includes("exceed_egress_quota")) {
+    codigoErro = "ERROR 503"; // servidor indisponível
+  }
+  else if (mensagem.includes("Failed to fetch")) {
+    codigoErro = "ERROR 500"; // falha de conexão
+  }
+  else if (mensagem.includes("permission denied")) {
+    codigoErro = "ERROR 403"; // acesso negado
+  }
+  else if (mensagem.includes("Project is paused")) {
+    codigoErro = "ERROR 503";
+  }
+  else if (mensagem.includes("404")) {
+    codigoErro = "ERROR 404";
+  }
+
+  // 🔥 MOSTRA NO MODAL
+  if (texto) {
+    texto.innerText = `${codigoErro}\n\nNão foi possível carregar o cardápio.`;
+  }
+
+  modal.style.display = "flex";
+  document.body.style.overflow = "hidden";
+}
+
+function fecharErroConexao() {
+  const modal = document.getElementById("modalErroConexao");
+
+  if (modal) {
+    modal.style.display = "none";
+    document.body.style.overflow = "auto";
+  }
+}
+
+async function tentarNovamente() {
+
+  // fecha o modal
+  const modal = document.getElementById("modalErroConexao");
+  if (modal) {
+    modal.style.display = "none";
+    document.body.style.overflow = "auto";
+  }
+
+  // mostra loading novamente
+  if (loading) loading.style.display = "block";
+
+  try {
+    // 🔥 tenta recarregar tudo
+    await carregarImagemFundo();
+    await carregarLogoRestaurante();
+    await carregarNomeEmpresa();
+    await carregarCategorias();
+    await carregarCardapio();
+
+  } catch (erro) {
+    console.error("Erro ao tentar novamente:", erro);
+
+    // se falhar de novo, mostra erro novamente
+    mostrarErroConexao(
+      "Falha novamente ao tentar carregar.\n\n" + (erro.message || "")
+    );
+  } finally {
+    if (loading) loading.style.display = "none";
+  }
+}
+
+async function testarConexaoSupabase() {
+  try {
+    const { data, error } = await supabase
+      .from("empresa")
+      .select("id")
+      .limit(1);
+
+    if (error) {
+      return {
+        ok: false,
+        mensagem: "Erro no banco: " + error.message
+      };
+    }
+
+    return { ok: true };
+
+  } catch (err) {
+    return {
+      ok: false,
+      mensagem: "Servidor indisponível ou conexão falhou."
+    };
+  }
+}
+
+// =============================
 // ELEMENTOS
 // =============================
 const container = document.getElementById("cardapioContainer");
@@ -99,6 +210,7 @@ function adicionarCarrinho() {
 }
 
 
+
 // =============================
 // ATUALIZAR CARRINHO
 // =============================
@@ -156,6 +268,7 @@ window.adicionarCarrinho = adicionarCarrinho;
 // ===============================
 
 window.abrirMontePizza = async function () {
+  resetarMontePizza(); // 🔥 limpa antes de abrir
   const modal = document.getElementById("modalMontePizza");
   modal.style.display = "block";
   document.body.style.overflow = "hidden";
@@ -172,6 +285,9 @@ window.abrirMontePizza = async function () {
 window.fecharMontePizza = function () {
   document.getElementById("modalMontePizza").style.display = "none";
   document.body.style.overflow = "auto";
+
+   // 🔥 RESETAR TUDO AO FECHAR
+  resetarMontePizza();
 };
 
 // ===============================
@@ -555,6 +671,48 @@ window.finalizarPizza = async function () {
   fecharMontePizza();
 };
 
+function resetarMontePizza() {
+  // 🔄 Resetar tamanho
+  document.querySelectorAll('input[name="tamanho"]').forEach(input => {
+    input.checked = false;
+  });
+
+  // 🔄 Resetar sabores
+  const containerSabores = document.querySelector('.lista-sabores');
+  containerSabores.innerHTML = '<p class="alerta-tamanho">⚠️ Escolha o tamanho primeiro 👆</p>';
+
+  // 🔄 Resetar borda
+  document.querySelectorAll('input[name="borda"]').forEach(input => {
+    input.checked = false;
+    input.disabled = true;
+  });
+
+  const bordaContainer = document.querySelector('.borda-container');
+  if (bordaContainer) {
+    bordaContainer.classList.add("borda-desativada");
+  }
+
+  // 🔄 Resetar tipo de pedido
+  document.querySelectorAll('input[name="tipoPedido"]').forEach(input => {
+    input.checked = false;
+  });
+
+  // 🔄 Resetar resumo
+  document.getElementById("resumoTipo").textContent = "-";
+  document.getElementById("resumoTamanho").textContent = "-";
+  document.getElementById("resumoSabores").textContent = "-";
+  document.getElementById("resumoBorda").textContent = "-";
+
+  // 🔄 Resetar taxa
+  const linhaTaxa = document.getElementById("linhaTaxa");
+  if (linhaTaxa) linhaTaxa.style.display = "none";
+
+  document.getElementById("resumoTaxa").textContent = "R$ 0,00";
+
+  // 🔄 Resetar total
+  document.getElementById("previewPreco").textContent = "R$ 0,00";
+}
+
 async function buscarWhatsAppEmpresa() {
   const { data, error } = await supabase
     .from("empresa")
@@ -626,7 +784,37 @@ async function carregarLogoRestaurante() {
 // =============================
 async function carregarCardapio() {
   try {
+
+    // =============================
+    // 🔥 TESTAR CONEXÃO COM SUPABASE
+    // =============================
+    try {
+      const { error: erroTeste } = await supabase
+        .from("empresa")
+        .select("id")
+        .limit(1);
+
+      if (erroTeste) {
+        console.error("Erro conexão banco:", erroTeste);
+
+        mostrarErroConexao(
+          "Falha ao conectar ao servidor:\n" + erroTeste.message
+        );
+        return;
+      }
+
+    } catch (err) {
+      console.error("Servidor não responde:", err);
+
+      mostrarErroConexao(
+        "Servidor indisponível no momento.\nTente novamente mais tarde."
+      );
+      return;
+    }
+
+    // =============================
     // BUSCAR CATEGORIAS
+    // =============================
     const { data: categorias, error: erroCategorias } = await supabase
       .from("categorias")
       .select("id, titulo")
@@ -634,33 +822,61 @@ async function carregarCardapio() {
 
     if (erroCategorias) {
       console.error("Erro categorias:", erroCategorias);
+
+      mostrarErroConexao(
+        "Erro ao carregar categorias:\n" + erroCategorias.message
+      );
       return;
     }
 
+    if (!categorias || categorias.length === 0) {
+      mostrarErroConexao("Nenhuma categoria cadastrada no sistema.");
+      return;
+    }
+
+    // =============================
     // BUSCAR PRODUTOS
+    // =============================
     const { data: produtos, error: erroProdutos } = await supabase
       .from("produtos")
       .select("id, nome, descricao, preco, promocao, foto_url, categoria_id");
 
     if (erroProdutos) {
       console.error("Erro produtos:", erroProdutos);
+
+      mostrarErroConexao(
+        "Erro ao carregar produtos:\n" + erroProdutos.message
+      );
       return;
     }
 
-    // VERIFICAR SE MUDOU ALGUMA COISA
+    if (!produtos || produtos.length === 0) {
+      mostrarErroConexao("Nenhum produto cadastrado no cardápio.");
+      return;
+    }
+
+    // =============================
+    // CACHE (evita piscar)
+    // =============================
     const dadosAtuais = JSON.stringify({ categorias, produtos });
-    if (dadosAtuais === cacheCardapio) return; // nada mudou
+    if (dadosAtuais === cacheCardapio) return;
     cacheCardapio = dadosAtuais;
 
-    // MOSTRAR LOADING APENAS NA PRIMEIRA VEZ
+    // =============================
+    // LOADING
+    // =============================
     if (container.innerHTML === "") {
       if (loading) loading.style.display = "block";
     }
 
+    // =============================
     // LIMPAR CARDÁPIO
+    // =============================
     container.innerHTML = "";
 
+    // =============================
     // CRIAR CATEGORIAS
+    // =============================
     categorias.forEach(categoria => {
       const section = document.createElement("section");
       section.className = "categoria";
@@ -669,10 +885,13 @@ async function carregarCardapio() {
         <h2 class="titulo-categoria">${categoria.titulo}</h2>
         <div class="produtos-container" id="categoria-${categoria.id}"></div>
       `;
+
       container.appendChild(section);
     });
 
+    // =============================
     // INSERIR PRODUTOS
+    // =============================
     produtos.forEach(produto => {
       const categoriaDiv = document.getElementById(`categoria-${produto.categoria_id}`);
       if (!categoriaDiv) return;
@@ -680,283 +899,38 @@ async function carregarCardapio() {
       const preco = produto.promocao ? produto.promocao : produto.preco;
 
       const card = document.createElement("div");
-card.className = "card-produto";
+      card.className = "card-produto";
 
-card.innerHTML = `
-  <img src="${produto.foto_url || './Imagem/default.jpg'}" class="produto-img">
-  <div class="produto-info">
-    <h3 class="produto-nome">${produto.nome}</h3>
-    <p class="produto-desc">${produto.descricao || ""}</p>
-    <div class="produto-preco">R$ ${Number(preco).toFixed(2).replace(".", ",")}</div>
-  </div>
-  <button class="btn-adicionar">Adicionar</button>
-`;
+      card.innerHTML = `
+        <img src="${produto.foto_url || './Imagem/default.jpg'}" class="produto-img">
+        <div class="produto-info">
+          <h3 class="produto-nome">${produto.nome}</h3>
+          <p class="produto-desc">${produto.descricao || ""}</p>
+          <div class="produto-preco">R$ ${Number(preco).toFixed(2).replace(".", ",")}</div>
+        </div>
+        <button class="btn-adicionar">Adicionar</button>
+      `;
 
-// 🔥 ABRIR MODAL AO CLICAR NO CARD
-card.addEventListener("click", () => {
-  abrirModalProduto(produto.id);
-});
-
-async function abrirModalProduto(produtoId) {
-
-  const { data, error } = await supabase
-    .from('produtos')
-    .select(`
-      id,
-      nome,
-      descricao,
-      foto_url,
-      preco,
-      tamanho,
-      produto_variacoes (
-        id,
-        tamanho,
-        preco
-      )
-    `)
-    .eq('id', produtoId)
-    .single();
-
-  if (error) {
-    console.error("Erro:", error);
-    return;
-  }
-
-  // 🔥 Nome do produto
-  document.getElementById("nomePizza").innerText = data.nome;
-
-  const container = document.getElementById("containerTamanhos");
-  container.innerHTML = "";
-
-  // 🔥 Função para criar cada linha (SEM onclick nos botões)
-  function criarOpcao(id, nome, preco, checked = false) {
-  return `
-    <div class="linha-tamanho ${checked ? 'selecionado' : ''}">
-      
-      <input type="checkbox" value="${id}" ${checked ? "checked" : ""}>
-
-      <span class="nome-tamanho">${nome}</span>
-
-      <span class="preco-tamanho">
-        R$ ${Number(preco || 0).toFixed(2).replace(".", ",")}
-      </span>
-
-      <div class="controle-qtd">
-        <button type="button" class="btn-menos">−</button>
-        <span class="qtd">1</span>
-        <button type="button" class="btn-mais">+</button>
-      </div>
-
-    </div>
-  `;
-}
-
- // 🔥 Produto principal (AGORA DESMARCADO)
-container.innerHTML += criarOpcao(
-  "principal",
-  data.tamanho || "Grande",
-  data.preco,
-  false
-);
-
-  // 🔥 Variações
-  if (data.produto_variacoes && data.produto_variacoes.length > 0) {
-    data.produto_variacoes.forEach(v => {
-      container.innerHTML += criarOpcao(
-        v.id,
-        v.tamanho,
-        v.preco
-      );
-    });
-  }
-
-  // 🔥 ATIVAR EVENTOS (ESSENCIAL)
-  ativarEventosModal();
-
-  abrirModal();
-}
-
-function ativarEventosModal() {
-
-  // ✅ CONTROLE DE SELEÇÃO
-  document.querySelectorAll(".linha-tamanho").forEach(linha => {
-
-    const input = linha.querySelector("input");
-
-    // 🔹 Clique na linha (exceto botão/checkbox)
-    linha.addEventListener("click", function (e) {
-
-      if (e.target.tagName === "INPUT" || e.target.tagName === "BUTTON") return;
-
-      input.checked = !input.checked;
-      atualizarVisual(linha, input);
-    });
-
-    // 🔹 Clique direto no checkbox
-    input.addEventListener("change", function () {
-      atualizarVisual(linha, input);
-    });
-
-  });
-
-  // 🔹 Atualiza visual
-  function atualizarVisual(linha, input) {
-    if (input.checked) {
-      linha.classList.add("selecionado");
-    } else {
-      linha.classList.remove("selecionado");
-    }
-  }
-
-  // 🔥 BOTÃO +
-  document.querySelectorAll(".btn-mais").forEach(btn => {
-    btn.addEventListener("click", function (e) {
-      e.stopPropagation();
-
-      const linha = this.closest(".linha-tamanho");
-      const input = linha.querySelector("input");
-      const qtdEl = linha.querySelector(".qtd");
-
-      // 🚫 BLOQUEIA SE NÃO ESTIVER SELECIONADO
-      if (!input.checked) {
-        mostrarMensagem("Selecione o item antes de alterar a quantidade.");
-        return;
-      }
-
-      // 🔥 SOMA TOTAL DE TODOS OS ITENS SELECIONADOS
-      let total = 0;
-
-      document.querySelectorAll(".linha-tamanho").forEach(l => {
-        const inp = l.querySelector("input");
-        const qtdLinha = parseInt(l.querySelector(".qtd").innerText);
-
-        if (inp.checked) {
-          total += qtdLinha;
-        }
+      // 🔥 ABRIR MODAL
+      card.addEventListener("click", () => {
+        abrirModalProduto(produto.id);
       });
 
-      // 🚫 LIMITE GLOBAL (10 NO TOTAL)
-      if (total >= 10) {
-        mostrarMensagem("Você atingiu o limite máximo de 10 unidades para este item.");
-        return;
-      }
+      // ❌ NÃO abrir modal no botão
+      card.querySelector(".btn-adicionar").addEventListener("click", (e) => {
+        e.stopPropagation();
+      });
 
-      // ✅ AUMENTA NORMAL
-      let qtd = parseInt(qtdEl.innerText);
-      qtdEl.innerText = qtd + 1;
-    });
-  });
-
-  // 🔥 BOTÃO -
-  document.querySelectorAll(".btn-menos").forEach(btn => {
-    btn.addEventListener("click", function (e) {
-      e.stopPropagation();
-
-      const linha = this.closest(".linha-tamanho");
-      const input = linha.querySelector("input");
-      const qtdEl = linha.querySelector(".qtd");
-
-      // 🚫 BLOQUEIA SE NÃO ESTIVER SELECIONADO
-      if (!input.checked) {
-        mostrarMensagem("Selecione o item antes de alterar a quantidade.");
-        return;
-      }
-
-      let qtd = parseInt(qtdEl.innerText);
-
-      if (qtd > 1) {
-        qtdEl.innerText = qtd - 1;
-      }
-    });
-  });
-
-}
-
-function mostrarMensagem(texto) {
-  const modal = document.getElementById("modalMensagem");
-  const textoEl = document.getElementById("textoMensagem");
-
-  textoEl.innerText = texto;
-  modal.style.display = "flex";
-
-  // fecha automático depois de 2 segundos
-  setTimeout(() => {
-    modal.style.display = "none";
-  }, 2000);
-}
-
-// =========================
-// SELECIONAR TAMANHO
-// =========================
-function selecionarLinha(el) {
-  document.querySelectorAll(".linha-tamanho").forEach(l => {
-    l.classList.remove("selecionado");
-    l.querySelector("input").checked = false;
-  });
-
-  el.classList.add("selecionado");
-  el.querySelector("input").checked = true;
-}
-
-// =========================
-// AUMENTAR QUANTIDADE
-// =========================
-function aumentarQtd(btn) {
-  const linha = btn.closest(".linha-tamanho");
-  const qtdEl = linha.querySelector(".qtd");
-
-  let qtd = parseInt(qtdEl.innerText);
-  qtdEl.innerText = qtd + 1;
-}
-
-// =========================
-// DIMINUIR QUANTIDADE
-// =========================
-function diminuirQtd(btn) {
-  const linha = btn.closest(".linha-tamanho");
-  const qtdEl = linha.querySelector(".qtd");
-
-  let qtd = parseInt(qtdEl.innerText);
-
-  if (qtd > 1) {
-    qtdEl.innerText = qtd - 1;
-  }
-}
-
-function aumentarQtd(btn) {
-  // pega o elemento da quantidade da mesma linha
-  const qtdEl = btn.parentElement.querySelector(".qtd");
-
-  let qtd = parseInt(qtdEl.innerText);
-  qtd++;
-
-  qtdEl.innerText = qtd;
-}
-
-function diminuirQtd(btn) {
-  const qtdEl = btn.parentElement.querySelector(".qtd");
-
-  let qtd = parseInt(qtdEl.innerText);
-
-  if (qtd > 1) {
-    qtd--;
-    qtdEl.innerText = qtd;
-  }
-}
-
-
-
-// ❌ EVITA QUE O BOTÃO ATIVE O MODAL
-card.querySelector(".btn-adicionar").addEventListener("click", (e) => {
-  e.stopPropagation();
-});
-
-
-categoriaDiv.appendChild(card);
+      categoriaDiv.appendChild(card);
     });
 
   } catch (erro) {
     console.error("Erro geral:", erro);
+
+    mostrarErroConexao(
+      "Erro inesperado:\n" + (erro.message || "Falha desconhecida")
+    );
+
   } finally {
     if (loading) loading.style.display = "none";
   }
